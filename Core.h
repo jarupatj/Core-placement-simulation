@@ -11,7 +11,9 @@ class Core {
       ~Core();
 
       Coordinate getPosition();
-      void setPosition(int x, int y);
+      void setPosition(Coordinate newPos);
+
+      void printCore();
 
    private:
       Coordinate position;

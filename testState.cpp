@@ -7,6 +7,10 @@ using namespace std;
 int main(int argc, char *argv[]) {
    State b;
 
+   cout << &b << endl;
+   b.printAddr();
+
+   cout << "after" << endl;
    {
       State a;
       a.init();

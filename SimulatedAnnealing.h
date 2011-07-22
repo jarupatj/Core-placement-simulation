@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RandomGenerator.h"
+#include "State.h"
 
 class SimulatedAnnealing {
    public:
@@ -8,8 +9,8 @@ class SimulatedAnnealing {
       ~SimulatedAnnealing();
 
       void init();
-
       void run();
+      void printResult();
 
    private:
       //constant
@@ -17,18 +18,13 @@ class SimulatedAnnealing {
       int MAX_STATE_CHANGE_PER_TEMP;
       int SUCCESS_PER_TEMP;
       int TEMP_CHANGE_FACTOR;
-      //all links assume to have same latency and bandwidth
-      int LINK_LATENCY;
-      int LINK_BANDWIDTH;
 
       //variable
       State currentState;
       RandomGenerator random;
       double temp;
 
-
       //function
-      void changeState();
       int getCost();
-      int acceptChange();
+      int acceptChange(int cost);
 };
