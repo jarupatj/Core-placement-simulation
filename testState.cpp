@@ -13,9 +13,12 @@ int main(int argc, char *argv[]) {
 
       b = a;
       cout << &a << endl;
+      a.printAddr();
    }
 
    cout << &b << endl;
+   b.printAddr();
+
 
    return 0;
 }

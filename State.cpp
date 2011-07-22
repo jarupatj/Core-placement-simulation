@@ -159,7 +159,11 @@ void State::init(){
 
 }
 
-void State:: printAddr() {
+void State::printAddr() {
+   cout << "b/w : " << bandwidth << endl;
+   cout << "laten : " << latency << endl;
+   cout << "meshSize: " << meshSize<< endl;
+   cout << "core: " << &core[0] << endl;
 }
 
 void State::generateNewState() {

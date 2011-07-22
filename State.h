@@ -24,10 +24,14 @@ class State {
       void printAddr();
       
    private:
+      //variable
       int **bandwidth;
       int **latency;
       int meshSize;
 
       int numCore;//total number of core
       vector<Core> core; 
+
+      //function
+      void calculateCost();
 };
