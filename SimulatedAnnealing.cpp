@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "SimulatedAnnealing.h"
+#include "SimulatedAnnealing.hpp"
 
 SimulatedAnnealing::SimulatedAnnealing() {
 }

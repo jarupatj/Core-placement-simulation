@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "State.h"
+#include "State.hpp"
 
 using namespace std;
 
@@ -10,7 +10,8 @@ State::State() {
    alpha = 1;
    bandwidth = NULL;
    latency = NULL;
-   meshSize = 0;
+   meshRow= 0;
+   meshCol= 0;
    numCore = 0;
 }
 
@@ -27,9 +28,11 @@ State::~State(){
 State::State(const State& sourceState) {
    cost = sourceState.cost;
    alpha = sourceState.alpha;
-   meshSize = sourceState.meshSize;
+   meshRow= sourceState.meshRow;
+   meshCol= sourceState.meshCol;
    numCore = sourceState.numCore;
    core = sourceState.core;
+   network = sourceState.network;
 
    if(sourceState.bandwidth) {
       //allocate memory
@@ -62,9 +65,6 @@ State::State(const State& sourceState) {
    } else {
       latency = 0;
    }
-
-   if(!sourceState.core.empty()) {
-   }
 }
 
 State& State::operator=(const State& sourceState) {
@@ -85,9 +85,11 @@ State& State::operator=(const State& sourceState) {
 
    cost = sourceState.cost;
    alpha = sourceState.alpha;
-   meshSize = sourceState.meshSize;
+   meshRow= sourceState.meshRow;
+   meshCol= sourceState.meshCol;
    numCore = sourceState.numCore;
    core = sourceState.core;
+   network = sourceState.network;
 
    if(sourceState.bandwidth) {
       //allocate memory
@@ -125,8 +127,10 @@ State& State::operator=(const State& sourceState) {
 }
 
 void State::init(){
-   meshSize = 4;
+   meshRow= 4;
+   meshCol= 4;
    numCore = 4;
+   network.init(meshRow, meshCol);
    
    bandwidth = new int* [numCore];
    latency = new int* [numCore];
@@ -159,6 +163,18 @@ void State::init(){
    core.push_back(Core(2, 1));
    core.push_back(Core(0, 3));
 
+   //set router in the network
+   Coordinate pos = {0,0};
+   network.addCore(pos);
+   pos.x = 3;
+   pos.y = 3;
+   network.addCore(pos);
+   pos.x = 2;
+   pos.y = 1;
+   network.addCore(pos);
+   pos.x = 0;
+   pos.y = 3;
+   network.addCore(pos);
    //calculate initial cost
    calculateCost();
 
@@ -208,8 +224,8 @@ void State::generateNewState(RandomGenerator random) {
    int changedCore = random.uniform_n(numCore);
    //randomly select new position
    Coordinate newPos;
-   newPos.x = random.uniform_n(meshSize);
-   newPos.y = random.uniform_n(meshSize);
+   newPos.x = random.uniform_n(meshCol);
+   newPos.y = random.uniform_n(meshRow);
    //check if that pos is empty or not
 
    cout << "c core: " << changedCore << " newPos: " << newPos.x << "," << newPos.y << endl;
@@ -231,7 +247,8 @@ void State::printState() {
 void State::printAddr() {
    cout << "b/w : " << bandwidth << endl;
    cout << "laten : " << latency << endl;
-   cout << "meshSize: " << meshSize<< endl;
+   cout << "meshRow: " << meshRow<< endl;
+   cout << "meshCol: " << meshCol<< endl;
    for(unsigned int i = 0; i < core.size(); i++) {
       core[i].printCore();
       cout << &core[i] << endl;

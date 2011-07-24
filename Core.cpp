@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Core.h"
+#include "Core.hpp"
 
 Core::Core(int x, int y) {
    position.x = x;

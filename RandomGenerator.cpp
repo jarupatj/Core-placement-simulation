@@ -3,7 +3,7 @@
 #include <ctime>
 #include <cassert>
 
-#include "RandomGenerator.h"
+#include "RandomGenerator.hpp"
 
 RandomGenerator::RandomGenerator() {
    srand(time(NULL));
