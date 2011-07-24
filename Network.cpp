@@ -82,13 +82,19 @@ int Network::getCol() {
 }
 
 void Network::addCore(Coordinate pos) {
+   assert(pos.y < row);
+   assert(pos.x < col);
    routers[pos.y][pos.x].setCore(true);
 }
 
 void Network::removeCore(Coordinate pos) {
+   assert(pos.y < row);
+   assert(pos.x < col);
    routers[pos.y][pos.x].setCore(false);
 }
 
 bool Network::hasCore(Coordinate pos) {
+   assert(pos.y < row);
+   assert(pos.x < col);
    return routers[pos.y][pos.x].getCore();
 }
