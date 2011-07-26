@@ -9,11 +9,19 @@ using namespace std;
 State::State() {
    cost = 0;
    alpha = 1;
+   beta = 0.5;
+   gamma = 0.5;
+   theta = 0.5;
    bandwidth = NULL;
    latency = NULL;
    meshRow= 0;
    meshCol= 0;
    numCore = 0;
+   compaction = 0;
+   dilation = 0;
+   slack = 0;
+   proximity = 0;
+   utilization = 0;
 }
 
 State::~State(){
@@ -27,47 +35,7 @@ State::~State(){
 }
 
 State::State(const State& sourceState) {
-   LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
-   LINK_LATENCY = sourceState.LINK_LATENCY;
-   cost = sourceState.cost;
-   alpha = sourceState.alpha;
-   meshRow= sourceState.meshRow;
-   meshCol= sourceState.meshCol;
-   numCore = sourceState.numCore;
-   core = sourceState.core;
-   network = sourceState.network;
-
-   if(sourceState.bandwidth) {
-      //allocate memory
-      bandwidth = new int* [numCore];
-      for(int i = 0; i < numCore; i++) {
-         bandwidth[i] = new int [numCore];
-      }
-      //copy 
-      for(int i = 0; i < numCore; i++) {
-         for(int j = 0; j < numCore; j++) {
-            bandwidth[i][j] = sourceState.bandwidth[i][j];
-         }
-      }
-   } else {
-      bandwidth = 0;
-   }
-   
-   if(sourceState.latency) {
-      //allocate memory
-      latency = new int* [numCore];
-      for(int i = 0; i < numCore; i++) {
-         latency[i] = new int [numCore];
-      }
-      //copy 
-      for(int i = 0; i < numCore; i++) {
-         for(int j = 0; j < numCore; j++) {
-            latency[i][j] = sourceState.latency[i][j];
-         }
-      }
-   } else {
-      latency = 0;
-   }
+   deepCopy(sourceState);
 }
 
 State& State::operator=(const State& sourceState) {
@@ -85,14 +53,30 @@ State& State::operator=(const State& sourceState) {
    delete latency;
 
    core.clear();
+   
+   deepCopy(sourceState);
 
+   return *this;
+}
+
+void State::deepCopy(const State& sourceState) {
    LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
    LINK_LATENCY = sourceState.LINK_LATENCY;
    cost = sourceState.cost;
    alpha = sourceState.alpha;
+   beta = sourceState.beta;
+   gamma = sourceState.gamma;
+   theta = sourceState.theta;
+
    meshRow= sourceState.meshRow;
    meshCol= sourceState.meshCol;
    numCore = sourceState.numCore;
+   compaction = sourceState.compaction;
+   dilation = sourceState.dilation;
+   slack = sourceState.slack;
+   proximity = sourceState.proximity;
+   utilization = sourceState.utilization;
+
    core = sourceState.core;
    network = sourceState.network;
 
@@ -109,7 +93,7 @@ State& State::operator=(const State& sourceState) {
          }
       }
    } else {
-      bandwidth = 0;
+      bandwidth = NULL;
    }
    
    if(sourceState.latency) {
@@ -125,10 +109,8 @@ State& State::operator=(const State& sourceState) {
          }
       }
    } else {
-      latency = 0;
+      latency = NULL;
    }
-
-   return *this;
 }
 
 int State::init(char* filename, RandomGenerator random){
@@ -250,7 +232,9 @@ int State::init(char* filename, RandomGenerator random){
 }
 
 void State::calculateCost() {
-   cost = alpha * compactionCost() + (1-alpha) * dilationCost();
+   compaction = compactionCost();
+   dilation = dilationCost();
+   cost = alpha * compaction + (1-alpha) * dilation;
 }
 
 int State::compactionCost() {
@@ -270,22 +254,60 @@ int State::getHops(Coordinate a, Coordinate b) {
 }
 
 int State::dilationCost() {
+   slack = slackCost();
+   proximity = proximityCost();
+   utilization = utilizationCost();
+   return beta * slack + gamma * proximity + theta * utilization;
+}
+
+int State::slackCost() {
+   int sum = 0;
+   int hops;
+   for(int i = 0; i < numCore; i++) {
+      for(int j = 0; j < numCore; j++) {
+         if(bandwidth[i][j] != 0) {
+            hops = getHops(core[i].getPosition(),core[j].getPosition());
+            sum += latency[i][j] - hops * LINK_LATENCY;
+         }
+      }
+   }
+   return sum;
+}
+
+int State::proximityCost() {
+   int sum = 0;
+   int dist;
+   for(int i = 0; i < numCore; i++) {
+      for(int j = i+1; j < numCore; j++) {
+         //check that there are no connections between core i and core j
+         if((bandwidth[i][j] == 0) && (bandwidth[j][i] == 0)) {
+            Coordinate posi = core[i].getPosition();
+            Coordinate posj = core[j].getPosition();
+            dist = fabs(posi.x - posj.x) + fabs(posi.y - posj.y); 
+            sum -= dist;
+         }
+      }
+   }
+   return sum;
+}
+
+int State::utilizationCost() {
    return 0;
 }
 
-int State::isLegal() {
+bool State::isLegal() {
    int hops;
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
          if(latency[i][j] != 0) {
             hops = getHops(core[i].getPosition(), core[j].getPosition());
             if(latency[i][j] < hops * LINK_LATENCY) {
-               return 0;
+               return false;
             }
          }
       }
    }
-   return 1;
+   return true;
 }
 
 void State::generateNewState(RandomGenerator random) {
@@ -329,6 +351,11 @@ void State::printState() {
       core[i].printCore();
    }
    cout << "cost: " << cost << endl;
+   cout << "compaction: " << compaction << endl;
+   cout << "dilation: " << dilation << endl;
+   cout << "slack: " << slack<< endl;
+   cout << "proximity: " << proximity << endl;
+   cout << "utilization: " << utilization << endl;
 }
 
 void State::printAddr() {

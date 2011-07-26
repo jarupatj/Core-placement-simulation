@@ -16,7 +16,7 @@ class State {
    public:
       //variable
       int cost;
-      float alpha;
+      float alpha, beta, gamma, theta;
 
       //function
       State();
@@ -26,7 +26,7 @@ class State {
 
       int init(char* filename, RandomGenerator random);
       void generateNewState(RandomGenerator random);
-      int isLegal();
+      bool isLegal();
       void printState();
       
       void printAddr();//for dubug only
@@ -39,6 +39,7 @@ class State {
       int **latency;
       int meshRow;
       int meshCol;
+      int compaction, dilation, slack, proximity, utilization;
 
       int numCore;//total number of core
       vector<Core> core; 
@@ -46,8 +47,12 @@ class State {
       Network network;
 
       //function
+      void deepCopy(const State& sourceState);
       void calculateCost();
       int compactionCost();
       int dilationCost();
+      int slackCost();
+      int proximityCost();
+      int utilizationCost();
       int getHops(Coordinate a, Coordinate b);
 };
