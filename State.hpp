@@ -7,8 +7,8 @@
 #include "Network.hpp"
 
 //all links assume to have same latency and bandwidth
-#define LINK_LATENCY 10
-#define LINK_BANDWIDTH 20
+//#define LINK_LATENCY 10
+//#define LINK_BANDWIDTH 40
 
 using std::vector;
 
@@ -24,13 +24,16 @@ class State {
       State& operator=(const State& sourceState); 
       ~State();
 
-      void init();
+      int init(char* filename, RandomGenerator random);
       void generateNewState(RandomGenerator random);
       int isLegal();
       void printState();
       
       void printAddr();//for dubug only
    private:
+      int LINK_BANDWIDTH;
+      int LINK_LATENCY;
+      
       //variable
       int **bandwidth;
       int **latency;

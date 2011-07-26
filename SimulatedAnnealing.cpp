@@ -9,7 +9,7 @@ SimulatedAnnealing::SimulatedAnnealing() {
 SimulatedAnnealing::~SimulatedAnnealing() {
 }
 
-void SimulatedAnnealing::init() {
+int SimulatedAnnealing::init(char* filename) {
    //init const
    TEMP_STEP = 100;
    MAX_STATE_CHANGE_PER_TEMP = 400;
@@ -18,7 +18,11 @@ void SimulatedAnnealing::init() {
 
    temp = 0.5;
    //init currentState
-   currentState.init();
+   int err = currentState.init(filename, random);
+   if( err != 0 ) {
+      return err;
+   }
+   return 0;
 }
 
 void SimulatedAnnealing::run() {

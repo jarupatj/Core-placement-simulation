@@ -8,7 +8,7 @@ class SimulatedAnnealing {
       SimulatedAnnealing();
       ~SimulatedAnnealing();
 
-      void init();
+      int init(char* filename);
       void run();
       void printResult();
 

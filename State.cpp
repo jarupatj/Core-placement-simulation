@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <cstdio>
 
 #include "State.hpp"
 
@@ -26,6 +27,8 @@ State::~State(){
 }
 
 State::State(const State& sourceState) {
+   LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
+   LINK_LATENCY = sourceState.LINK_LATENCY;
    cost = sourceState.cost;
    alpha = sourceState.alpha;
    meshRow= sourceState.meshRow;
@@ -83,6 +86,8 @@ State& State::operator=(const State& sourceState) {
 
    core.clear();
 
+   LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
+   LINK_LATENCY = sourceState.LINK_LATENCY;
    cost = sourceState.cost;
    alpha = sourceState.alpha;
    meshRow= sourceState.meshRow;
@@ -126,7 +131,58 @@ State& State::operator=(const State& sourceState) {
    return *this;
 }
 
-void State::init(){
+int State::init(char* filename, RandomGenerator random){
+   FILE *fp = fopen(filename, "r");
+   if(fp == NULL) {
+      cout << "error can't open inputfile" << endl;
+      return 1;
+   }
+   fscanf(fp, "%d%d", &LINK_BANDWIDTH, &LINK_LATENCY);
+   cout << "link bw/laten: " << LINK_BANDWIDTH << " " << LINK_LATENCY<< endl;
+
+   fscanf(fp, "%d%d", &meshRow, &meshCol);
+   cout << "meshRow/Col: " << meshRow << " " << meshCol << endl;
+   fscanf(fp, "%d", &numCore);
+   cout << "numCore: " << numCore << endl;
+
+   bandwidth = new int* [numCore];
+   latency = new int* [numCore];
+   for(int i = 0; i < numCore; i++) {
+      bandwidth[i] = new int [numCore];
+      latency[i] =  new int [numCore];
+   }
+
+   for(int i = 0; i < numCore; i++) {
+      for(int j = 0; j < numCore; j++) {
+         bandwidth[i][j] = 0;
+         latency[i][j] = 0;
+      }
+   }
+   
+   int from, to, bw, laten;
+   while( !feof(fp) ) {
+      fscanf(fp, "%d%d%d%d", &from, &to, &bw, &laten);
+      bandwidth[from-1][to-1] = bw;
+      latency[from-1][to-1] = laten;
+   }
+   fclose(fp);
+
+   Coordinate pos;
+   network.init(meshRow, meshCol);
+   cout << "initial position" << endl;
+   for(int i = 0; i < numCore; i++) {
+      pos.x = random.uniform_n(meshCol);
+      pos.y = random.uniform_n(meshRow);
+      while( network.hasCore(pos) ) {
+         pos.x = random.uniform_n(meshCol);
+         pos.y = random.uniform_n(meshRow);
+      }
+      cout << "x,y: " << pos.x << " " << pos.y << endl;
+      core.push_back(Core(pos.x, pos.y));
+      network.addCore(pos, i);
+   }
+
+   /*
    meshRow= 4;
    meshCol= 4;
    numCore = 5;
@@ -185,9 +241,12 @@ void State::init(){
    pos.x = 1;
    pos.y = 3;
    network.addCore(pos, 4);
+   */
+
    //calculate initial cost
    calculateCost();
 
+   return 0;
 }
 
 void State::calculateCost() {
@@ -247,8 +306,9 @@ void State::generateNewState(RandomGenerator random) {
       int swapIndex = network.getCoreIndex(newPos);
       //place core on new pos
       core[swapIndex].setPosition(oldPos);
-      core[changedCore].setPosition(newPos);
       network.addCore(oldPos, swapIndex);
+
+      core[changedCore].setPosition(newPos);
       network.addCore(newPos, changedCore);
    } else {
       //remove old cost
