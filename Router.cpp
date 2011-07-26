@@ -4,7 +4,7 @@ Router::Router() {
    for(int i = 0; i < MAX_TURNS; i++) {
       turns[i] = 0;
    }
-   hasCore = false;
+   coreIndex = NO_CORE;
 }
 
 Router::~Router() {
@@ -22,10 +22,10 @@ int Router::isPsudonode() {
    return 0;
 }
 
-bool Router::getCore() {
-   return hasCore;
+int Router::getCoreIndex() {
+   return coreIndex;
 }
 
-void Router::setCore(bool set) {
-   hasCore = set;
+void Router::setCore(int index) {
+   coreIndex = index;
 }

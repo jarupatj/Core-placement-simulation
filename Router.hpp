@@ -1,6 +1,7 @@
 #pragma once
 
 #define MAX_TURNS 8
+#define NO_CORE -1
 
 class Router {
    public:
@@ -10,10 +11,10 @@ class Router {
       int getTurns(int index); //get turns[index]
       void setTurns(int index, int num); //set turns[index] = num 
       int isPsudonode();
-      bool getCore();
-      void setCore(bool set);
+      int getCoreIndex();
+      void setCore(int index);
 
    private:
       int turns[MAX_TURNS];
-      bool hasCore;
+      int coreIndex;
 };

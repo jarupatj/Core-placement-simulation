@@ -129,7 +129,7 @@ State& State::operator=(const State& sourceState) {
 void State::init(){
    meshRow= 4;
    meshCol= 4;
-   numCore = 4;
+   numCore = 5;
    network.init(meshRow, meshCol);
    
    bandwidth = new int* [numCore];
@@ -158,23 +158,33 @@ void State::init(){
    bandwidth[3][0] = 10;
    latency[3][0] = 10;
 
+   bandwidth[3][4] = 10;
+   latency[3][4] = 10;
+
+   bandwidth[4][1] = 20;
+   latency[4][1] = 10;
+
    core.push_back(Core(0, 0));
    core.push_back(Core(3, 3));
    core.push_back(Core(2, 1));
    core.push_back(Core(0, 3));
+   core.push_back(Core(1, 3));
 
    //set router in the network
    Coordinate pos = {0,0};
-   network.addCore(pos);
+   network.addCore(pos, 0);
    pos.x = 3;
    pos.y = 3;
-   network.addCore(pos);
+   network.addCore(pos, 1);
    pos.x = 2;
    pos.y = 1;
-   network.addCore(pos);
+   network.addCore(pos, 2);
    pos.x = 0;
    pos.y = 3;
-   network.addCore(pos);
+   network.addCore(pos, 3);
+   pos.x = 1;
+   pos.y = 3;
+   network.addCore(pos, 4);
    //calculate initial cost
    calculateCost();
 
@@ -226,12 +236,29 @@ void State::generateNewState(RandomGenerator random) {
    Coordinate newPos;
    newPos.x = random.uniform_n(meshCol);
    newPos.y = random.uniform_n(meshRow);
+   
+   //cout << "c core: " << changedCore << " newPos: " << newPos.x << "," << newPos.y << endl;
+
    //check if that pos is empty or not
+   if( network.hasCore(newPos) ) {
+      //remove old cost
+      //swap
+      Coordinate oldPos = core[changedCore].getPosition();
+      int swapIndex = network.getCoreIndex(newPos);
+      //place core on new pos
+      core[swapIndex].setPosition(oldPos);
+      core[changedCore].setPosition(newPos);
+      network.addCore(oldPos, swapIndex);
+      network.addCore(newPos, changedCore);
+   } else {
+      //remove old cost
 
-   cout << "c core: " << changedCore << " newPos: " << newPos.x << "," << newPos.y << endl;
-   //remove old cost
-
-   core[changedCore].setPosition(newPos);
+      //move core from old pos
+      network.removeCore(core[changedCore].getPosition());
+      //place core on new pos
+      core[changedCore].setPosition(newPos);
+      network.addCore(core[changedCore].getPosition(), changedCore);
+   }
    //calculate new cost
    calculateCost();
 }

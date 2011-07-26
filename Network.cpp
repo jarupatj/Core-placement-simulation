@@ -46,6 +46,9 @@ Network& Network::operator=(const Network& sourceNetwork) {
    }
    delete routers;
 
+   row = sourceNetwork.row;
+   col = sourceNetwork.col;
+
    if(sourceNetwork.routers) {
       routers = new Router* [row];
       for(int i = 0; i < row; i++) {
@@ -82,20 +85,26 @@ int Network::getCol() {
    return col;
 }
 
-void Network::addCore(Coordinate pos) {
+void Network::addCore(Coordinate pos, int coreIndex) {
    assert(pos.y < row);
    assert(pos.x < col);
-   routers[pos.y][pos.x].setCore(true);
+   routers[pos.y][pos.x].setCore(coreIndex);
 }
 
 void Network::removeCore(Coordinate pos) {
    assert(pos.y < row);
    assert(pos.x < col);
-   routers[pos.y][pos.x].setCore(false);
+   routers[pos.y][pos.x].setCore(NO_CORE);
+}
+
+int Network::getCoreIndex(Coordinate pos) {
+   assert(pos.y < row);
+   assert(pos.x < col);
+   return routers[pos.y][pos.x].getCoreIndex();
 }
 
 bool Network::hasCore(Coordinate pos) {
    assert(pos.y < row);
    assert(pos.x < col);
-   return routers[pos.y][pos.x].getCore();
+   return routers[pos.y][pos.x].getCoreIndex() != NO_CORE;
 }

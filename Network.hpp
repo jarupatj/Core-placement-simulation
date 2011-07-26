@@ -13,9 +13,10 @@ class Network{
       void init(int r, int c);
       int getRow();
       int getCol();
-      void addCore(Coordinate pos);
+      void addCore(Coordinate pos, int coreIndex);
       void removeCore(Coordinate pos);
-      bool hasCore(Coordinate pos); //check if that router has a core or not
+      int getCoreIndex(Coordinate pos); //check if that router has a core or not
+      bool hasCore(Coordinate pos);
       
    private:
       int row;

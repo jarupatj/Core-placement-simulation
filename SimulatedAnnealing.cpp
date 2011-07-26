@@ -11,9 +11,9 @@ SimulatedAnnealing::~SimulatedAnnealing() {
 
 void SimulatedAnnealing::init() {
    //init const
-   TEMP_STEP = 1;
+   TEMP_STEP = 100;
    MAX_STATE_CHANGE_PER_TEMP = 400;
-   SUCCESS_PER_TEMP = 40;
+   SUCCESS_PER_TEMP = 50;
    TEMP_CHANGE_FACTOR = 0.9;
 
    temp = 0.5;
@@ -37,12 +37,10 @@ void SimulatedAnnealing::run() {
 
          if( newState.isLegal() && changeCost < 0) {
             currentState = newState; //deep copy
-            currentState.printState();
             numSuccess++;
          } else {
             if( acceptChange(changeCost) ) {
                currentState = newState; //deep copy
-               currentState.printState();
                numSuccess++;
             }
          }

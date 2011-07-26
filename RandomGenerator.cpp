@@ -13,12 +13,12 @@ RandomGenerator::~RandomGenerator() {
 }
 
 double RandomGenerator::uniform_0_1() {
-   return rand() / (double) RAND_MAX;
+   return (double) rand() / RAND_MAX;
 }
 
 int RandomGenerator::uniform_n(int n) {
    assert(n > 0);
 
-   return uniform_0_1() * (n-1);
+   return (int) (uniform_0_1() * (n));
    //return uniform_0_1() * (n-1) + 1; //from [1,...,n]
 }

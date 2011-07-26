@@ -5,7 +5,7 @@ class RandomGenerator {
       RandomGenerator();
       ~RandomGenerator();
 
-      //generate random number [0,...,1]
+      //generate random number (0,...,1)
       double uniform_0_1();
 
       //generate random number between [0,...,n-1]
