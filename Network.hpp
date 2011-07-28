@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "Router.hpp"
 #include "Core.hpp"
 
@@ -10,10 +12,18 @@ using std::vector;
 #define LEFT   2
 #define RIGHT  3
 
+#define NO_NODE -1
+
 struct Link {
    int toNodeId; //link to what nodeId
    int connection; //number of connection in using this link
    int bandwidth; //bandwidth going through this link
+
+   Link() { //constructor
+      toNodeId = NO_NODE;
+      connection = 0;
+      bandwidth = 0;
+   }
 };
 
 class Network{

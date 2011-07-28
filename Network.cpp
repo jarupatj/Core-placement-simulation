@@ -18,6 +18,11 @@ Network::~Network() {
       delete [] routers[i];
    }
    delete [] routers;
+
+   for(int i = 0; i < (row*col); i++) {
+      delete [] utilization[i];
+   }
+   delete [] utilization;
 }
 
 Network::Network(const Network& sourceNetwork) {
@@ -33,6 +38,11 @@ Network& Network::operator=(const Network& sourceNetwork) {
       delete [] routers[i];
    }
    delete routers;
+
+   for(int i = 0; i < (row*col); i++) {
+      delete [] utilization[i];
+   }
+   delete [] utilization;
 
    deepCopy(sourceNetwork);
 
@@ -56,6 +66,21 @@ void Network::deepCopy(const Network& sourceNetwork) {
       }
    } else {
       routers = NULL;
+   }
+
+   if(sourceNetwork.utilization) {
+      utilization = new Link* [row*col];
+      for(int i = 0; i < (row*col); i++) {
+         utilization[i] = new Link[MAX_DIRECTION];
+      }
+
+      for(int i = 0; i < (row*col); i++) {
+         for(int j = 0; j < MAX_DIRECTION; j++) {
+            utilization[i][j] = sourceNetwork.utilization[i][j];
+         }
+      }
+   } else {
+      utilization = NULL;
    }
 }
 
@@ -210,30 +235,66 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
 
 void Network::updateUtilization(int** bandwidth, int numCore, vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
-   Coordinate prev, cur;
-   int temp;
+   Coordinate prev, cur, sNode, dNode;
+   int dir;
    for(int start = 0; start < numCore; start++) {
       for(int dest = 0; dest < numCore; dest++) {
          //has a connection
          if( bandwidth[start][dest] != 0 ) {
-            prev = start;
+            prev = core[start].getPosition();
             cur = core[start].getPosition();
-            while(cur.x != dest.x) {
-               if( path.x < to.x ) { //go right
-                  routers[path.y][path.x].removeTurn(LEFT_RIGHT);
-                  path.x++;
+            sNode = core[start].getPosition();
+            dNode = core[start].getPosition();
+            //move in x
+            while(cur.x != dNode.x) {
+               if( cur.x < dNode.x ) { //go right
+                  cur.x++;
+                  dir = RIGHT;
                } else { //go left
-                  routers[path.y][path.x].removeTurn(RIGHT_LEFT);
-                  path.x--;
+                  cur.x--;
+                  dir = LEFT;
                }
                //if current router position is a psudonode
                //add connection to utilization matrix
                if( routers[cur.y][cur.x].isPsudonode() ) {
                   nodeIdPrev = prev.y * col + prev.x;
                   nodeIdCur = cur.y * col + cur.x;
-                  utilization[nodeIdPrev]
+                  utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
+                  utilization[nodeIdPrev][dir].connection++;
+                  utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                  prev = cur;
                }
             }
+            //move in y 
+            while( cur.y != dNode.y ) {
+               if( cur.y < dNode.y ) { //go up 
+                  cur.y++;
+                  dir = TOP;
+               } else { //go down 
+                  cur.y--;
+                  dir = BOTTOM;
+               }
+               //if current router position is a psudonode
+               //add connection to utilization matrix
+               if( routers[cur.y][cur.x].isPsudonode() ) {
+                  nodeIdPrev = prev.y * col + prev.x;
+                  nodeIdCur = cur.y * col + cur.x;
+                  utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
+                  utilization[nodeIdPrev][dir].connection++;
+                  utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                  prev = cur;
+               }
+            }
+
+            assert(cur.y == dNode.y);
+            assert(cur.x == dNode.x);
+            //add prev to dest node connection
+            nodeIdPrev = prev.y * col + prev.x;
+            nodeIdCur = cur.y * col + cur.x;
+            utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
+            utilization[nodeIdPrev][dir].connection++;
+            utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+            
          }
       }
    }
