@@ -12,7 +12,7 @@ SimulatedAnnealing::~SimulatedAnnealing() {
 int SimulatedAnnealing::init(char* filename) {
    //init const
    TEMP_STEP = 100;
-   MAX_STATE_CHANGE_PER_TEMP = 400;
+   MAX_STATE_CHANGE_PER_TEMP = 200;
    SUCCESS_PER_TEMP = 50;
    TEMP_CHANGE_FACTOR = 0.9;
 
@@ -36,9 +36,13 @@ void SimulatedAnnealing::run() {
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState(random);
-         //check legality
+         /*
+         std::cout << "--- newState ---" << std::endl;
+         newState.printState();
+         */
          changeCost = newState.cost - currentState.cost;
 
+         //check legality
          if( newState.isLegal() && changeCost < 0) {
             currentState = newState; //deep copy
             numSuccess++;
@@ -50,6 +54,7 @@ void SimulatedAnnealing::run() {
          }
          
          if( numSuccess > SUCCESS_PER_TEMP ) {
+            std::cout << "*** success change temp ***" << std::endl;
             break;
          }
       }

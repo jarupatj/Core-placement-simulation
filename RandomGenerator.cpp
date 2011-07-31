@@ -6,7 +6,8 @@
 #include "RandomGenerator.hpp"
 
 RandomGenerator::RandomGenerator() {
-   srand(time(NULL));
+   //srand(time(NULL));
+   srand(100);
 }
 
 RandomGenerator::~RandomGenerator() {

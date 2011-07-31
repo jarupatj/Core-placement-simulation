@@ -17,10 +17,12 @@ Network::~Network() {
    }
    delete [] routers;
 
-   for(int i = 0; i < (row*col); i++) {
-      delete [] utilization[i];
+   if( utilization != NULL ) {
+      for(int i = 0; i < (row*col); i++) {
+         delete [] utilization[i];
+      }
+      delete [] utilization;
    }
-   delete [] utilization;
 }
 
 Network::Network(const Network& sourceNetwork) {
@@ -37,10 +39,12 @@ Network& Network::operator=(const Network& sourceNetwork) {
    }
    delete routers;
 
-   for(int i = 0; i < (row*col); i++) {
-      delete [] utilization[i];
+   if( utilization != NULL ) {
+      for(int i = 0; i < (row*col); i++) {
+         delete [] utilization[i];
+      }
+      delete [] utilization;
    }
-   delete [] utilization;
 
    deepCopy(sourceNetwork);
 
@@ -91,10 +95,12 @@ void Network::init(int r, int c) {
       routers[i] = new Router [col];
    }
 
+   /*
    utilization = new Link* [row*col];
    for(int i = 0; i < (row*col); i++) {
       utilization[i] = new Link[MAX_DIRECTION];
    }
+   */
 }
 
 int Network::getRow() {
@@ -233,8 +239,21 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
 
 void Network::updateUtilization(int** bandwidth, int numCore, vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
-   Coordinate prev, cur, dNode;
    int dir;
+   Coordinate prev, cur, dNode;
+
+   if( utilization != NULL ) {
+      for(int i = 0; i < (row*col); i++) {
+         delete [] utilization[i];
+      }
+      delete [] utilization;
+   }
+
+   utilization = new Link* [row*col];
+   for(int i = 0; i < (row*col); i++) {
+      utilization[i] = new Link[MAX_DIRECTION];
+   }
+
    for(int start = 0; start < numCore; start++) {
       for(int dest = 0; dest < numCore; dest++) {
          //has a connection
@@ -358,6 +377,10 @@ void Network::printNetwork() {
       }
    }
 
+   printUtil();
+}
+
+void Network::printUtil() {
    printf("util\n");
    printf("    %9s%9s%9s%9s\n", "top", "bottom", "left", "right");
    for(int i = 0; i < (row*col); i++) {

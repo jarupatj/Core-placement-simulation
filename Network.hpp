@@ -52,6 +52,7 @@ class Network{
       int calculateUtilization();
 
       void printNetwork();
+      void printUtil();
       
    private:
       int row;

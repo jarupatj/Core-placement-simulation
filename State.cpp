@@ -4,6 +4,8 @@
 
 #include "State.hpp"
 
+#define DILATE 1
+
 using namespace std;
 
 State::State() {
@@ -164,6 +166,16 @@ int State::init(char* filename, RandomGenerator random){
       network.addCore(pos, i);
    }
 
+   //add connections
+   for(int i = 0; i < numCore; i++) {
+      for(int j = 0; j < numCore; j++) {
+         //has a connection from i to j
+         if(bandwidth[i][j] != 0) {
+            network.addConnection(core[i].getPosition(), core[j].getPosition());
+         }
+      }
+   }
+
    //calculate initial cost
    calculateCost();
 
@@ -172,7 +184,11 @@ int State::init(char* filename, RandomGenerator random){
 
 void State::calculateCost() {
    compaction = compactionCost();
+#if DILATE
    dilation = dilationCost();
+#else
+   dilation = 0;
+#endif
    cost = alpha * compaction + (1-alpha) * dilation;
 }
 
@@ -231,17 +247,27 @@ int State::proximityCost() {
 }
 
 int State::utilizationCost() {
-   network.updateUtilization();
+   network.updateUtilization(bandwidth, numCore, core);
+   //network.printUtil();
    return network.calculateUtilization();
 }
 
 bool State::isLegal() {
    int hops;
+#if DILATE
+   //check bandwidth legality
+   if(!network.isLegal(LINK_BANDWIDTH)) {
+      std::cout << "illegal b/w" << std::endl;
+      return false;
+   }
+#endif
+   //check latency legality
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
          if(latency[i][j] != 0) {
             hops = getHops(core[i].getPosition(), core[j].getPosition());
             if(latency[i][j] < hops * LINK_LATENCY) {
+               std::cout << "illegal laten" << std::endl;
                return false;
             }
          }
@@ -258,28 +284,112 @@ void State::generateNewState(RandomGenerator random) {
    newPos.x = random.uniform_n(meshCol);
    newPos.y = random.uniform_n(meshRow);
    
-   //cout << "c core: " << changedCore << " newPos: " << newPos.x << "," << newPos.y << endl;
-
    //check if that pos is empty or not
    if( network.hasCore(newPos) ) {
       //remove old cost
       //swap
       Coordinate oldPos = core[changedCore].getPosition();
-      int swapIndex = network.getCoreIndex(newPos);
+      int swapCore = network.getCoreIndex(newPos);
+      
+#if DILATE 
+      for(int i = 0; i < numCore; i++) {
+         if( i != swapCore ) {
+            if(bandwidth[changedCore][i] != 0) {
+               network.removeConnection(core[changedCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][changedCore] != 0) {
+               network.removeConnection(core[i].getPosition(), core[changedCore].getPosition());
+            }
+         }
+      }
+      //remove all connections from the old position of the swap core
+      for(int i = 0; i < numCore; i++) {
+         if( i != changedCore) {
+            if(bandwidth[swapCore][i] != 0) {
+               network.removeConnection(core[swapCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][swapCore] != 0) {
+               network.removeConnection(core[i].getPosition(), core[swapCore].getPosition());
+            }
+         }
+      }
+      //remove connection between two cores
+      if(bandwidth[changedCore][swapCore] != 0) {
+         network.removeConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+      }
+      if(bandwidth[swapCore][changedCore] != 0) {
+         network.removeConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+      }
+#endif
       //place core on new pos
-      core[swapIndex].setPosition(oldPos);
-      network.addCore(oldPos, swapIndex);
+      core[swapCore].setPosition(oldPos);
+      network.addCore(oldPos, swapCore);
 
       core[changedCore].setPosition(newPos);
       network.addCore(newPos, changedCore);
+
+#if DILATE
+      //add all connections of changedCore
+      for(int i = 0; i < numCore; i++) {
+         if(i != swapCore) {
+            if(bandwidth[changedCore][i] != 0) {
+               network.addConnection(core[changedCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][changedCore] != 0) {
+               network.addConnection(core[i].getPosition(), core[changedCore].getPosition());
+            }
+         }
+      }
+
+      //add all connections of swap core
+      for(int i = 0; i < numCore; i++) {
+         if(i != changedCore) {
+            if(bandwidth[swapCore][i] != 0) {
+               network.addConnection(core[swapCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][swapCore] != 0) {
+               network.addConnection(core[i].getPosition(), core[swapCore].getPosition());
+            }
+         }
+      }
+      //add connection between two cores
+      if(bandwidth[changedCore][swapCore] != 0) {
+         network.addConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+      }
+      if(bandwidth[swapCore][changedCore] != 0) {
+         network.addConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+      }
+#endif
    } else {
       //remove old cost
 
+#if DILATE
+      //remove all connections from the old position
+      for(int i = 0; i < numCore; i++) {
+         if(bandwidth[changedCore][i] != 0) {
+            network.removeConnection(core[changedCore].getPosition(), core[i].getPosition());
+         }
+         if(bandwidth[i][changedCore] != 0) {
+            network.removeConnection(core[i].getPosition(), core[changedCore].getPosition());
+         }
+      }
+#endif
       //move core from old pos
       network.removeCore(core[changedCore].getPosition());
       //place core on new pos
       core[changedCore].setPosition(newPos);
       network.addCore(core[changedCore].getPosition(), changedCore);
+#if DILATE
+      //add all connections 
+      for(int i = 0; i < numCore; i++) {
+         if(bandwidth[changedCore][i] != 0) {
+            network.addConnection(core[changedCore].getPosition(), core[i].getPosition());
+         }
+         if(bandwidth[i][changedCore] != 0) {
+            network.addConnection(core[i].getPosition(), core[changedCore].getPosition());
+         }
+      }
+#endif
    }
    //calculate new cost
    calculateCost();
@@ -290,12 +400,16 @@ void State::printState() {
    for(unsigned int i = 0; i < core.size(); i++) {
       core[i].printCore();
    }
+   cout << "legal: " << isLegal() << endl;
    cout << "cost: " << cost << endl;
    cout << "compaction: " << compaction << endl;
+#if DILATE
    cout << "dilation: " << dilation << endl;
    cout << "slack: " << slack<< endl;
    cout << "proximity: " << proximity << endl;
    cout << "utilization: " << utilization << endl;
+#endif
+   //network.printUtil();
 }
 
 void State::printAddr() {
