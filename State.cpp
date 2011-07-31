@@ -164,67 +164,6 @@ int State::init(char* filename, RandomGenerator random){
       network.addCore(pos, i);
    }
 
-   /*
-   meshRow= 4;
-   meshCol= 4;
-   numCore = 5;
-   network.init(meshRow, meshCol);
-   
-   bandwidth = new int* [numCore];
-   latency = new int* [numCore];
-   for(int i = 0; i < numCore; i++) {
-      bandwidth[i] = new int [numCore];
-      latency[i] =  new int [numCore];
-   }
-
-   for(int i = 0; i < numCore; i++) {
-      for(int j = 0; j < numCore; j++) {
-         bandwidth[i][j] = 0;
-         latency[i][j] = 0;
-      }
-   }
-
-   bandwidth[0][1] = 20;
-   latency[0][1] = 10;
-
-   bandwidth[1][2] = 30;
-   latency[1][2] = 20;
-
-   bandwidth[2][3] = 40;
-   latency[2][3] = 20;
-
-   bandwidth[3][0] = 10;
-   latency[3][0] = 10;
-
-   bandwidth[3][4] = 10;
-   latency[3][4] = 10;
-
-   bandwidth[4][1] = 20;
-   latency[4][1] = 10;
-
-   core.push_back(Core(0, 0));
-   core.push_back(Core(3, 3));
-   core.push_back(Core(2, 1));
-   core.push_back(Core(0, 3));
-   core.push_back(Core(1, 3));
-
-   //set router in the network
-   Coordinate pos = {0,0};
-   network.addCore(pos, 0);
-   pos.x = 3;
-   pos.y = 3;
-   network.addCore(pos, 1);
-   pos.x = 2;
-   pos.y = 1;
-   network.addCore(pos, 2);
-   pos.x = 0;
-   pos.y = 3;
-   network.addCore(pos, 3);
-   pos.x = 1;
-   pos.y = 3;
-   network.addCore(pos, 4);
-   */
-
    //calculate initial cost
    calculateCost();
 
@@ -292,7 +231,8 @@ int State::proximityCost() {
 }
 
 int State::utilizationCost() {
-   return 0;
+   network.updateUtilization();
+   return network.calculateUtilization();
 }
 
 bool State::isLegal() {

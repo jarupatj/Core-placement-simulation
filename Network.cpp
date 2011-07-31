@@ -4,8 +4,6 @@
 
 #include "Network.hpp"
 
-#define MAX_DIRECTION 4
-
 Network::Network() {
    row = 0;
    col = 0;
@@ -235,7 +233,7 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
 
 void Network::updateUtilization(int** bandwidth, int numCore, vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
-   Coordinate prev, cur, sNode, dNode;
+   Coordinate prev, cur, dNode;
    int dir;
    for(int start = 0; start < numCore; start++) {
       for(int dest = 0; dest < numCore; dest++) {
@@ -243,61 +241,96 @@ void Network::updateUtilization(int** bandwidth, int numCore, vector<Core> core)
          if( bandwidth[start][dest] != 0 ) {
             prev = core[start].getPosition();
             cur = core[start].getPosition();
-            sNode = core[start].getPosition();
-            dNode = core[start].getPosition();
+            dNode = core[dest].getPosition();
             //move in x
             while(cur.x != dNode.x) {
                if( cur.x < dNode.x ) { //go right
                   cur.x++;
-                  dir = RIGHT;
                } else { //go left
                   cur.x--;
-                  dir = LEFT;
                }
                //if current router position is a psudonode
                //add connection to utilization matrix
                if( routers[cur.y][cur.x].isPsudonode() ) {
                   nodeIdPrev = prev.y * col + prev.x;
                   nodeIdCur = cur.y * col + cur.x;
-                  utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
-                  utilization[nodeIdPrev][dir].connection++;
-                  utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
-                  prev = cur;
+                  dir = getDirection(prev, cur);
+                  if( dir != NO_DIR ) {
+                     utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
+                     utilization[nodeIdPrev][dir].connection++;
+                     utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                     prev = cur;
+                  }
                }
             }
             //move in y 
             while( cur.y != dNode.y ) {
                if( cur.y < dNode.y ) { //go up 
                   cur.y++;
-                  dir = TOP;
                } else { //go down 
                   cur.y--;
-                  dir = BOTTOM;
                }
                //if current router position is a psudonode
                //add connection to utilization matrix
                if( routers[cur.y][cur.x].isPsudonode() ) {
                   nodeIdPrev = prev.y * col + prev.x;
                   nodeIdCur = cur.y * col + cur.x;
-                  utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
-                  utilization[nodeIdPrev][dir].connection++;
-                  utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
-                  prev = cur;
+                  dir = getDirection(prev, cur);
+                  if( dir != NO_DIR ) {
+                     utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
+                     utilization[nodeIdPrev][dir].connection++;
+                     utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                     prev = cur;
+                  }
                }
             }
-
             assert(cur.y == dNode.y);
             assert(cur.x == dNode.x);
-            //add prev to dest node connection
-            nodeIdPrev = prev.y * col + prev.x;
-            nodeIdCur = cur.y * col + cur.x;
-            utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
-            utilization[nodeIdPrev][dir].connection++;
-            utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
-            
          }
       }
    }
+}
+
+int Network::calculateUtilization() {
+   int util = 0;
+   for(int i = 0; i < (row*col); i++) {
+      for(int j = 0; j < MAX_DIRECTION; j++) {
+         if( utilization[i][j].toNodeId != NO_NODE ) {
+            util += utilization[i][j].connection * utilization[i][j].bandwidth;
+         }
+      }
+   }
+   return util;
+}
+
+int Network::getDirection(Coordinate from, Coordinate to) {
+   if( from.x < to.x ) {
+      return RIGHT;
+   } else if( from.x > to.x ) {
+      return LEFT;
+   } else {
+      if( from.y < to.y ) {
+         return TOP;
+      } else if( from.y > to.y ) {
+         return BOTTOM;
+      } else {
+         return NO_DIR;
+      }
+   }
+}
+
+bool Network::isLegal(int LINK_BANDWIDTH) {
+   int legal = true;
+   for(int i = 0; i < (row*col); i++) {
+      for(int j = 0; j < MAX_DIRECTION; j++) {
+         if( utilization[i][j].toNodeId != NO_NODE ) {
+            if( utilization[i][j].bandwidth > LINK_BANDWIDTH ) {
+               legal = false;
+            }
+         }
+      }
+   }
+   return legal;
 }
 
 void Network::printNetwork() {
@@ -324,4 +357,20 @@ void Network::printNetwork() {
          }
       }
    }
+
+   printf("util\n");
+   printf("    %9s%9s%9s%9s\n", "top", "bottom", "left", "right");
+   for(int i = 0; i < (row*col); i++) {
+      printf("%4d ", i);
+      for(int j = 0; j < MAX_DIRECTION; j++) {
+         if(utilization[i][j].toNodeId != NO_NODE) {
+            printf("<%2d,%2d,%2d> ", utilization[i][j].toNodeId, utilization[i][j].connection, utilization[i][j].bandwidth);
+         } else {
+            printf("           ");
+         }
+      }
+      printf("\n");
+   }
+
+   printf("util = %d\n", calculateUtilization());
 }

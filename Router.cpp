@@ -26,14 +26,14 @@ void Router::setTurn(int index, int num) {
 void Router::addTurn(int index) {
    assert(index >= 0 && index < 8);
    turns[index]++;
-   isPsudonode();
+   checkPsudonode();
 }
 
 void Router::removeTurn(int index) {
    assert(index >= 0 && index < 8);
    if( turns[index] > 0 ) {
       turns[index]--;
-      isPsudonode();
+      checkPsudonode();
    }
 }
 

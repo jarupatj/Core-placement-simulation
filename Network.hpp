@@ -7,10 +7,13 @@
 
 using std::vector;
 
+#define NO_DIR -1
 #define TOP    0
 #define BOTTOM 1
 #define LEFT   2
 #define RIGHT  3
+
+#define MAX_DIRECTION 4
 
 #define NO_NODE -1
 
@@ -43,15 +46,20 @@ class Network{
       void addConnection(Coordinate from, Coordinate to);
       void removeConnection(Coordinate from, Coordinate to);
 
+      bool isLegal(int LINK_BANDWIDTH);
+
       void updateUtilization(int** bandwidth, int numCore, vector<Core> core);
+      int calculateUtilization();
 
       void printNetwork();
       
    private:
       int row;
       int col;
+      bool legal;
       Router **routers;
       Link **utilization;
 
       void deepCopy(const Network& sourceNetwork);
+      int getDirection(Coordinate from, Coordinate to);
 };
