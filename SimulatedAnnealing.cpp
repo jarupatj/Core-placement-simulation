@@ -11,7 +11,7 @@ SimulatedAnnealing::~SimulatedAnnealing() {
 
 int SimulatedAnnealing::init(char* filename) {
    //init const
-   TEMP_STEP = 100;
+   TEMP_STEP = 30;
    MAX_STATE_CHANGE_PER_TEMP = 200;
    SUCCESS_PER_TEMP = 50;
    TEMP_CHANGE_FACTOR = 0.9;
@@ -26,7 +26,7 @@ int SimulatedAnnealing::init(char* filename) {
 }
 
 void SimulatedAnnealing::run() {
-   int changeCost;
+   int changeCost, changeIllegal;
    int numSuccess = 0;
 
    std::cout << "start sa" << std::endl;
@@ -36,20 +36,25 @@ void SimulatedAnnealing::run() {
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState(random);
-         /*
-         std::cout << "--- newState ---" << std::endl;
+         std::cout << "--- new state ---\n";
          newState.printState();
-         */
          changeCost = newState.cost - currentState.cost;
+         changeIllegal = newState.illegalCount - currentState.illegalCount;
 
          //check legality
-         if( newState.isLegal() && changeCost < 0) {
+         if( currentState.illegalCount != 0 && newState.illegalCount == 0 ) {
             currentState = newState; //deep copy
             numSuccess++;
+            std::cout << "accept\n";
+         } else if( (newState.illegalCount == 0) && (changeCost < 0) ) {
+            currentState = newState; //deep copy
+            numSuccess++;
+            std::cout << "accept\n";
          } else {
-            if( acceptChange(changeCost) ) {
+            if( acceptChange(changeCost, changeIllegal ) ) {
                currentState = newState; //deep copy
                numSuccess++;
+               std::cout << "accept\n";
             }
          }
          
@@ -58,7 +63,7 @@ void SimulatedAnnealing::run() {
             break;
          }
       }
-      std::cout << tStep << std::endl;
+      std::cout << "tstep = " << tStep << std::endl;
       currentState.printState();
       temp = temp * TEMP_CHANGE_FACTOR;
    }
@@ -66,10 +71,21 @@ void SimulatedAnnealing::run() {
    std::cout << "finished sa" << std::endl;
 }
 
-int SimulatedAnnealing::acceptChange(int cost) {
-   double r = random.uniform_0_1();
-   double prob = exp( -(double)cost / temp );
+bool SimulatedAnnealing::acceptChange(int cost, int illegal) {
+   if( cost < 0 ) {
+      return isAccept((double)illegal);
+   } else if( illegal != 0 ) {
+      return isAccept((double)cost);
+   } else {
+      return (isAccept((double)cost) && isAccept((double)illegal));
+   }
+   //return isAccept((double)cost);
+   //return isAccept((double)illegal);
+}
 
+bool SimulatedAnnealing::isAccept(double value) {
+   double r = random.uniform_0_1();
+   double prob = exp( -value/ temp );
    return r < prob;
 }
 

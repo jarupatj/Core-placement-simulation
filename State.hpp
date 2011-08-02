@@ -15,7 +15,7 @@ using std::vector;
 class State {
    public:
       //variable
-      int cost;
+      int cost, illegalCount;
       float alpha, beta, gamma, theta;
 
       //function
@@ -26,7 +26,7 @@ class State {
 
       int init(char* filename, RandomGenerator random);
       void generateNewState(RandomGenerator random);
-      bool isLegal();
+      void checkLegal();
       void printState();
       
       void printAddr();//for dubug only

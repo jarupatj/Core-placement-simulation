@@ -10,6 +10,7 @@ using namespace std;
 
 State::State() {
    cost = 0;
+   illegalCount = 0;
    alpha = 1;
    beta = 0.5;
    gamma = 0.5;
@@ -65,6 +66,7 @@ void State::deepCopy(const State& sourceState) {
    LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
    LINK_LATENCY = sourceState.LINK_LATENCY;
    cost = sourceState.cost;
+   illegalCount = sourceState.illegalCount;
    alpha = sourceState.alpha;
    beta = sourceState.beta;
    gamma = sourceState.gamma;
@@ -178,6 +180,7 @@ int State::init(char* filename, RandomGenerator random){
 
    //calculate initial cost
    calculateCost();
+   checkLegal();
 
    return 0;
 }
@@ -252,28 +255,28 @@ int State::utilizationCost() {
    return network.calculateUtilization();
 }
 
-bool State::isLegal() {
+void State::checkLegal() {
    int hops;
-#if DILATE
-   //check bandwidth legality
-   if(!network.isLegal(LINK_BANDWIDTH)) {
-      std::cout << "illegal b/w" << std::endl;
-      return false;
-   }
-#endif
+   illegalCount = 0;
    //check latency legality
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
          if(latency[i][j] != 0) {
             hops = getHops(core[i].getPosition(), core[j].getPosition());
             if(latency[i][j] < hops * LINK_LATENCY) {
-               std::cout << "illegal laten" << std::endl;
-               return false;
+               //std::cout << "illegal laten" << std::endl;
+               illegalCount = 1;
             }
          }
       }
    }
-   return true;
+#if DILATE
+   //check bandwidth legality
+   if(!network.isLegal(LINK_BANDWIDTH)) {
+      //std::cout << "illegal b/w" << std::endl;
+      illegalCount = 2;
+   }
+#endif
 }
 
 void State::generateNewState(RandomGenerator random) {
@@ -393,6 +396,7 @@ void State::generateNewState(RandomGenerator random) {
    }
    //calculate new cost
    calculateCost();
+   checkLegal();
 }
 
 void State::printState() {
@@ -400,7 +404,8 @@ void State::printState() {
    for(unsigned int i = 0; i < core.size(); i++) {
       core[i].printCore();
    }
-   cout << "legal: " << isLegal() << endl;
+   cout << "\n";
+   cout << "legal: " << illegalCount << endl;
    cout << "cost: " << cost << endl;
    cout << "compaction: " << compaction << endl;
 #if DILATE

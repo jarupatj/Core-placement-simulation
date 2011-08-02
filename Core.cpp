@@ -20,5 +20,5 @@ void Core::setPosition(Coordinate newPos) {
 }
 
 void Core::printCore() {
-   std::cout << "core position: " << position.x << "," << position.y << std::endl;
+   std::cout << "(" << position.x << "," << position.y << ") ";
 }
