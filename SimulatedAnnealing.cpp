@@ -12,59 +12,64 @@ SimulatedAnnealing::~SimulatedAnnealing() {
 int SimulatedAnnealing::init(char* filename) {
    //init const
    TEMP_STEP = 30;
-   MAX_STATE_CHANGE_PER_TEMP = 200;
+   MAX_STATE_CHANGE_PER_TEMP = 100;
    SUCCESS_PER_TEMP = 50;
    TEMP_CHANGE_FACTOR = 0.9;
+   END_TEMP = 0.1;
 
-   temp = 0.5;
+   temp = 100.0;
    //init currentState
    int err = currentState.init(filename, random);
    if( err != 0 ) {
       return err;
    }
+   bestState = currentState;
    return 0;
 }
 
 void SimulatedAnnealing::run() {
    int changeCost, changeIllegal;
+   bool setCurrent = false;
    int numSuccess = 0;
 
    std::cout << "start sa" << std::endl;
 
-   for(int tStep = 0; tStep < TEMP_STEP; tStep++) {
+   temp = 100.0;
+   while( temp > END_TEMP ) {
       numSuccess = 0;
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState(random);
+         /*
          std::cout << "--- new state ---\n";
          newState.printState();
+         */
          changeCost = newState.cost - currentState.cost;
          changeIllegal = newState.illegalCount - currentState.illegalCount;
 
          //check legality
          if( currentState.illegalCount != 0 && newState.illegalCount == 0 ) {
-            currentState = newState; //deep copy
-            numSuccess++;
-            std::cout << "accept\n";
+            setCurrent = true;
          } else if( (newState.illegalCount == 0) && (changeCost < 0) ) {
-            currentState = newState; //deep copy
-            numSuccess++;
-            std::cout << "accept\n";
+            setCurrent = true;
          } else {
             if( acceptChange(changeCost, changeIllegal ) ) {
-               currentState = newState; //deep copy
-               numSuccess++;
-               std::cout << "accept\n";
+               setCurrent = true;
             }
          }
-         
-         if( numSuccess > SUCCESS_PER_TEMP ) {
-            std::cout << "*** success change temp ***" << std::endl;
-            break;
-         }
+
+         if( setCurrent ) {
+            setCurrent = false;
+            currentState = newState; //deep copy
+            numSuccess++;
+            //std::cout << "accept\n";
+            if( currentState.illegalCount <= bestState.illegalCount && currentState.cost <= bestState.cost ) {
+               bestState = currentState;
+            }
+         } 
       }
-      std::cout << "tstep = " << tStep << std::endl;
-      currentState.printState();
+      std::cout << "temp = " << temp << std::endl;
+      bestState.printState();
       temp = temp * TEMP_CHANGE_FACTOR;
    }
 
@@ -90,5 +95,5 @@ bool SimulatedAnnealing::isAccept(double value) {
 }
 
 void SimulatedAnnealing::printResult() {
-   currentState.printState();
+   bestState.printState();
 }

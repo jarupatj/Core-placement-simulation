@@ -17,10 +17,12 @@ class SimulatedAnnealing {
       int TEMP_STEP;
       int MAX_STATE_CHANGE_PER_TEMP;
       int SUCCESS_PER_TEMP;
-      int TEMP_CHANGE_FACTOR;
+      double TEMP_CHANGE_FACTOR;
+      double END_TEMP;
 
       //variable
       State currentState;
+      State bestState;
       RandomGenerator random;
       double temp;
 
