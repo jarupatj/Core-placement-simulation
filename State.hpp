@@ -5,6 +5,7 @@
 #include "Core.hpp"
 #include "RandomGenerator.hpp"
 #include "Network.hpp"
+#include "Cost.hpp"
 
 //all links assume to have same latency and bandwidth
 //#define LINK_LATENCY 10
@@ -15,7 +16,7 @@ using std::vector;
 class State {
    public:
       //variable
-      double cost;
+      //double cost;
       double alpha, beta, gamma, theta;
 
       //function
@@ -27,6 +28,7 @@ class State {
       int init(char* filename, RandomGenerator random);
       void generateNewState(RandomGenerator random);
       bool isLegal();
+      double getCost();
       void printState();
       
       void printAddr();//for dubug only
@@ -45,6 +47,7 @@ class State {
       vector<Core> core; 
 
       Network network;
+      Cost cost;
 
       //function
       void deepCopy(const State& sourceState);

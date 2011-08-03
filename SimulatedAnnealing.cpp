@@ -39,7 +39,7 @@ void SimulatedAnnealing::run() {
          std::cout << "--- new state ---\n";
          newState.printState();
          */
-         changeCost = newState.cost - currentState.cost;
+         changeCost = newState.getCost()- currentState.getCost();
 
          //check legality
          if( newState.isLegal() ) {
@@ -53,7 +53,7 @@ void SimulatedAnnealing::run() {
          if( setCurrent ) {
             setCurrent = false;
             currentState = newState; //deep copy
-            if( newState.isLegal() && currentState.cost <= bestState.cost ) {
+            if( newState.isLegal() && currentState.getCost() <= bestState.getCost()) {
                bestState = currentState;
             }
          } 

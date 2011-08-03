@@ -7,7 +7,7 @@
 using namespace std;
 
 State::State() {
-   cost = 0;
+   //cost = 0;
    alpha = 1;
    beta = 1;
    gamma = 0.2;
@@ -173,11 +173,22 @@ int State::init(char* filename, RandomGenerator random){
    }
    
    //calculate initial cost
-   calculateCost();
+   //calculateCost();
+   cost.init(alpha, beta, gamma, theta);
+   cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 
    return 0;
 }
 
+double State::getCost() {
+   return cost.getCost();
+}
+
+int State::getHops(Coordinate a, Coordinate b) {
+   return fabs(a.x - b.x) + fabs(a.y - b.y);
+}
+
+#if 0
 void State::calculateCost() {
    compaction = compactionCost();
    dilation = dilationCost();
@@ -194,10 +205,6 @@ double State::compactionCost() {
       }
    }
    return sum;
-}
-
-int State::getHops(Coordinate a, Coordinate b) {
-   return fabs(a.x - b.x) + fabs(a.y - b.y);
 }
 
 double State::dilationCost() {
@@ -243,6 +250,7 @@ double State::utilizationCost() {
    //network.printUtil();
    return network.calculateUtilization();
 }
+#endif
 
 bool State::isLegal() {
    int hops;
@@ -368,7 +376,8 @@ void State::generateNewState(RandomGenerator random) {
       }
    }
    //calculate new cost
-   calculateCost();
+   //calculateCost();
+   cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 }
 
 void State::printState() {
@@ -377,12 +386,7 @@ void State::printState() {
       core[i].printCore();
    }
    cout << "\n";
-   cout << "cost: " << cost << endl;
-   cout << "compaction: " << compaction << endl;
-   cout << "dilation: " << dilation << endl;
-   cout << "slack: " << slack<< endl;
-   cout << "proximity: " << proximity << endl;
-   cout << "utilization: " << utilization << endl;
+   cost.printCost();
    //network.printUtil();
 }
 
