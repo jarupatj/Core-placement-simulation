@@ -11,10 +11,10 @@ using namespace std;
 State::State() {
    cost = 0;
    illegalCount = 0;
-   alpha = 1;
-   beta = 0.5;
-   gamma = 0.5;
-   theta = 0.5;
+   alpha = 0;
+   beta = 1;
+   gamma = 0.2;
+   theta = 0.04;
    bandwidth = NULL;
    latency = NULL;
    meshRow= 0;
@@ -195,8 +195,8 @@ void State::calculateCost() {
    cost = alpha * compaction + (1-alpha) * dilation;
 }
 
-int State::compactionCost() {
-   int sum = 0;
+double State::compactionCost() {
+   double sum = 0;
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
          if(bandwidth[i][j] != 0) {
@@ -211,15 +211,15 @@ int State::getHops(Coordinate a, Coordinate b) {
    return fabs(a.x - b.x) + fabs(a.y - b.y);
 }
 
-int State::dilationCost() {
+double State::dilationCost() {
    slack = slackCost();
    proximity = proximityCost();
    utilization = utilizationCost();
    return beta * slack + gamma * proximity + theta * utilization;
 }
 
-int State::slackCost() {
-   int sum = 0;
+double State::slackCost() {
+   double sum = 0;
    int hops;
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
@@ -232,8 +232,8 @@ int State::slackCost() {
    return sum;
 }
 
-int State::proximityCost() {
-   int sum = 0;
+double State::proximityCost() {
+   double sum = 0;
    int dist;
    for(int i = 0; i < numCore; i++) {
       for(int j = i+1; j < numCore; j++) {
@@ -249,7 +249,7 @@ int State::proximityCost() {
    return sum;
 }
 
-int State::utilizationCost() {
+double State::utilizationCost() {
    network.updateUtilization(bandwidth, numCore, core);
    //network.printUtil();
    return network.calculateUtilization();

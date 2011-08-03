@@ -15,8 +15,9 @@ using std::vector;
 class State {
    public:
       //variable
-      int cost, illegalCount;
-      float alpha, beta, gamma, theta;
+      double cost;
+      int illegalCount;
+      double alpha, beta, gamma, theta;
 
       //function
       State();
@@ -39,7 +40,7 @@ class State {
       int **latency;
       int meshRow;
       int meshCol;
-      int compaction, dilation, slack, proximity, utilization;
+      double compaction, dilation, slack, proximity, utilization;
 
       int numCore;//total number of core
       vector<Core> core; 
@@ -49,10 +50,10 @@ class State {
       //function
       void deepCopy(const State& sourceState);
       void calculateCost();
-      int compactionCost();
-      int dilationCost();
-      int slackCost();
-      int proximityCost();
-      int utilizationCost();
+      double compactionCost();
+      double dilationCost();
+      double slackCost();
+      double proximityCost();
+      double utilizationCost();
       int getHops(Coordinate a, Coordinate b);
 };

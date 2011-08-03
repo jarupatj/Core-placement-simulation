@@ -310,8 +310,8 @@ void Network::updateUtilization(int** bandwidth, int numCore, vector<Core> core)
    }
 }
 
-int Network::calculateUtilization() {
-   int util = 0;
+double Network::calculateUtilization() {
+   double util = 0;
    for(int i = 0; i < (row*col); i++) {
       for(int j = 0; j < MAX_DIRECTION; j++) {
          if( utilization[i][j].toNodeId != NO_NODE ) {
@@ -395,5 +395,5 @@ void Network::printUtil() {
       printf("\n");
    }
 
-   printf("util = %d\n", calculateUtilization());
+   printf("util = %f\n", calculateUtilization());
 }
