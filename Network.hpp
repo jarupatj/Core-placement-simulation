@@ -48,7 +48,7 @@ class Network{
 
       bool isLegal(int LINK_BANDWIDTH);
 
-      void updateUtilization(int** bandwidth, int numCore, vector<Core> core);
+      void updateNetwork(int** bandwidth, vector<Core> core);
       double calculateUtilization();
 
       void printNetwork();

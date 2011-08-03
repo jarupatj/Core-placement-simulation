@@ -239,7 +239,7 @@ double State::proximityCost() {
 }
 
 double State::utilizationCost() {
-   network.updateUtilization(bandwidth, numCore, core);
+   network.updateNetwork(bandwidth, core);
    //network.printUtil();
    return network.calculateUtilization();
 }

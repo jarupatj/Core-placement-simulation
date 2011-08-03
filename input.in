@@ -1,0 +1,5 @@
+link bw/laten
+mesh row/col
+num core
+list of core init position <x y>
+list of connection <start end bw laten>

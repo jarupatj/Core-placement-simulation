@@ -237,7 +237,7 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
    }
 }
 
-void Network::updateUtilization(int** bandwidth, int numCore, vector<Core> core) {
+void Network::updateNetwork(int** bandwidth, vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
    int dir;
    Coordinate prev, cur, dNode;
@@ -254,8 +254,8 @@ void Network::updateUtilization(int** bandwidth, int numCore, vector<Core> core)
       utilization[i] = new Link[MAX_DIRECTION];
    }
 
-   for(int start = 0; start < numCore; start++) {
-      for(int dest = 0; dest < numCore; dest++) {
+   for(unsigned int start = 0; start < core.size(); start++) {
+      for(unsigned int dest = 0; dest < core.size(); dest++) {
          //has a connection
          if( bandwidth[start][dest] != 0 ) {
             prev = core[start].getPosition();
