@@ -28,6 +28,6 @@ class SimulatedAnnealing {
 
       //function
       int getCost();
-      bool acceptChange(int cost, int illegal);
+      bool acceptChange(int cost);
       bool isAccept(double value);
 };

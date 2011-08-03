@@ -28,7 +28,7 @@ int SimulatedAnnealing::init(char* filename) {
 }
 
 void SimulatedAnnealing::run() {
-   int changeCost, changeIllegal;
+   int changeCost;
    bool setCurrent = false;
    int numSuccess = 0;
 
@@ -40,30 +40,32 @@ void SimulatedAnnealing::run() {
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState(random);
-         /*
          std::cout << "--- new state ---\n";
          newState.printState();
-         */
          changeCost = newState.cost - currentState.cost;
-         changeIllegal = newState.illegalCount - currentState.illegalCount;
 
          //check legality
-         if( currentState.illegalCount != 0 && newState.illegalCount == 0 ) {
-            setCurrent = true;
-         } else if( (newState.illegalCount == 0) && (changeCost < 0) ) {
-            setCurrent = true;
-         } else {
-            if( acceptChange(changeCost, changeIllegal ) ) {
+         if( currentState.isLegal() ) {
+            if( changeCost < 0 ) {
+               setCurrent = true;
+            } else if( acceptChange(changeCost) ) {
+               setCurrent = true;
+            }
+         } 
+         /*
+         else {
+            if( acceptChange(changeCost) ) {
                setCurrent = true;
             }
          }
+         */
 
          if( setCurrent ) {
             setCurrent = false;
             currentState = newState; //deep copy
             numSuccess++;
             //std::cout << "accept\n";
-            if( currentState.illegalCount <= bestState.illegalCount && currentState.cost <= bestState.cost ) {
+            if( currentState.cost <= bestState.cost ) {
                bestState = currentState;
             }
          } 
@@ -76,16 +78,8 @@ void SimulatedAnnealing::run() {
    std::cout << "finished sa" << std::endl;
 }
 
-bool SimulatedAnnealing::acceptChange(int cost, int illegal) {
-   if( cost < 0 ) {
-      return isAccept((double)illegal);
-   } else if( illegal != 0 ) {
-      return isAccept((double)cost);
-   } else {
-      return (isAccept((double)cost) && isAccept((double)illegal));
-   }
-   //return isAccept((double)cost);
-   //return isAccept((double)illegal);
+bool SimulatedAnnealing::acceptChange(int cost) {
+   return isAccept(cost);
 }
 
 bool SimulatedAnnealing::isAccept(double value) {

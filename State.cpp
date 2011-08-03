@@ -10,8 +10,7 @@ using namespace std;
 
 State::State() {
    cost = 0;
-   illegalCount = 0;
-   alpha = 0;
+   alpha = 1;
    beta = 1;
    gamma = 0.2;
    theta = 0.04;
@@ -66,7 +65,6 @@ void State::deepCopy(const State& sourceState) {
    LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
    LINK_LATENCY = sourceState.LINK_LATENCY;
    cost = sourceState.cost;
-   illegalCount = sourceState.illegalCount;
    alpha = sourceState.alpha;
    beta = sourceState.beta;
    gamma = sourceState.gamma;
@@ -144,6 +142,14 @@ int State::init(char* filename, RandomGenerator random){
          latency[i][j] = 0;
       }
    }
+
+   int x,y;
+   network.init(meshRow, meshCol);
+   for(int i = 0; i < numCore; i++) {
+      fscanf(fp, "%d%d", &x, &y);
+      core.push_back(Core(x,y));
+      network.addCore(core[i].getPosition(), i);
+   }
    
    int from, to, bw, laten;
    while( !feof(fp) ) {
@@ -152,21 +158,6 @@ int State::init(char* filename, RandomGenerator random){
       latency[from-1][to-1] = laten;
    }
    fclose(fp);
-
-   Coordinate pos;
-   network.init(meshRow, meshCol);
-   cout << "initial position" << endl;
-   for(int i = 0; i < numCore; i++) {
-      pos.x = random.uniform_n(meshCol);
-      pos.y = random.uniform_n(meshRow);
-      while( network.hasCore(pos) ) {
-         pos.x = random.uniform_n(meshCol);
-         pos.y = random.uniform_n(meshRow);
-      }
-      cout << "x,y: " << pos.x << " " << pos.y << endl;
-      core.push_back(Core(pos.x, pos.y));
-      network.addCore(pos, i);
-   }
 
    //add connections
    for(int i = 0; i < numCore; i++) {
@@ -178,9 +169,13 @@ int State::init(char* filename, RandomGenerator random){
       }
    }
 
+   if( !isLegal() ) {
+      std::cout << "illegal initial position\n";
+      return 1;
+   }
+   
    //calculate initial cost
    calculateCost();
-   checkLegal();
 
    return 0;
 }
@@ -255,28 +250,20 @@ double State::utilizationCost() {
    return network.calculateUtilization();
 }
 
-void State::checkLegal() {
+bool State::isLegal() {
    int hops;
-   illegalCount = 0;
    //check latency legality
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
          if(latency[i][j] != 0) {
             hops = getHops(core[i].getPosition(), core[j].getPosition());
             if(latency[i][j] < hops * LINK_LATENCY) {
-               //std::cout << "illegal laten" << std::endl;
-               illegalCount = 1;
+               return false;
             }
          }
       }
    }
-#if DILATE
-   //check bandwidth legality
-   if(!network.isLegal(LINK_BANDWIDTH)) {
-      //std::cout << "illegal b/w" << std::endl;
-      illegalCount = 2;
-   }
-#endif
+   return true;
 }
 
 void State::generateNewState(RandomGenerator random) {
@@ -396,7 +383,6 @@ void State::generateNewState(RandomGenerator random) {
    }
    //calculate new cost
    calculateCost();
-   checkLegal();
 }
 
 void State::printState() {
@@ -405,7 +391,6 @@ void State::printState() {
       core[i].printCore();
    }
    cout << "\n";
-   cout << "legal: " << illegalCount << endl;
    cout << "cost: " << cost << endl;
    cout << "compaction: " << compaction << endl;
 #if DILATE

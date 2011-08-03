@@ -16,7 +16,6 @@ class State {
    public:
       //variable
       double cost;
-      int illegalCount;
       double alpha, beta, gamma, theta;
 
       //function
@@ -27,7 +26,7 @@ class State {
 
       int init(char* filename, RandomGenerator random);
       void generateNewState(RandomGenerator random);
-      void checkLegal();
+      bool isLegal();
       void printState();
       
       void printAddr();//for dubug only
