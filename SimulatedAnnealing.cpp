@@ -11,13 +11,10 @@ SimulatedAnnealing::~SimulatedAnnealing() {
 
 int SimulatedAnnealing::init(char* filename) {
    //init const
-   TEMP_STEP = 30;
-   MAX_STATE_CHANGE_PER_TEMP = 100;
-   SUCCESS_PER_TEMP = 50;
+   MAX_STATE_CHANGE_PER_TEMP = 200;
    TEMP_CHANGE_FACTOR = 0.9;
    END_TEMP = 0.1;
 
-   temp = 100.0;
    //init currentState
    int err = currentState.init(filename, random);
    if( err != 0 ) {
@@ -30,47 +27,38 @@ int SimulatedAnnealing::init(char* filename) {
 void SimulatedAnnealing::run() {
    int changeCost;
    bool setCurrent = false;
-   int numSuccess = 0;
 
    std::cout << "start sa" << std::endl;
 
-   temp = 100.0;
+   temp = 1000.0;
    while( temp > END_TEMP ) {
-      numSuccess = 0;
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState(random);
+         /*
          std::cout << "--- new state ---\n";
          newState.printState();
+         */
          changeCost = newState.cost - currentState.cost;
 
          //check legality
-         if( currentState.isLegal() ) {
+         if( newState.isLegal() ) {
             if( changeCost < 0 ) {
                setCurrent = true;
             } else if( acceptChange(changeCost) ) {
                setCurrent = true;
             }
          } 
-         /*
-         else {
-            if( acceptChange(changeCost) ) {
-               setCurrent = true;
-            }
-         }
-         */
 
          if( setCurrent ) {
             setCurrent = false;
             currentState = newState; //deep copy
-            numSuccess++;
-            //std::cout << "accept\n";
-            if( currentState.cost <= bestState.cost ) {
+            if( newState.isLegal() && currentState.cost <= bestState.cost ) {
                bestState = currentState;
             }
          } 
       }
-      std::cout << "temp = " << temp << std::endl;
+      std::cout << ">> temp = " << temp << std::endl;
       bestState.printState();
       temp = temp * TEMP_CHANGE_FACTOR;
    }
@@ -90,4 +78,5 @@ bool SimulatedAnnealing::isAccept(double value) {
 
 void SimulatedAnnealing::printResult() {
    bestState.printState();
+   std::cout << "legal = " << bestState.isLegal() << std::endl;
 }

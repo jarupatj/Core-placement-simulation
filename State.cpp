@@ -4,8 +4,6 @@
 
 #include "State.hpp"
 
-#define DILATE 1
-
 using namespace std;
 
 State::State() {
@@ -182,11 +180,7 @@ int State::init(char* filename, RandomGenerator random){
 
 void State::calculateCost() {
    compaction = compactionCost();
-#if DILATE
    dilation = dilationCost();
-#else
-   dilation = 0;
-#endif
    cost = alpha * compaction + (1-alpha) * dilation;
 }
 
@@ -281,7 +275,6 @@ void State::generateNewState(RandomGenerator random) {
       Coordinate oldPos = core[changedCore].getPosition();
       int swapCore = network.getCoreIndex(newPos);
       
-#if DILATE 
       for(int i = 0; i < numCore; i++) {
          if( i != swapCore ) {
             if(bandwidth[changedCore][i] != 0) {
@@ -310,7 +303,6 @@ void State::generateNewState(RandomGenerator random) {
       if(bandwidth[swapCore][changedCore] != 0) {
          network.removeConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
       }
-#endif
       //place core on new pos
       core[swapCore].setPosition(oldPos);
       network.addCore(oldPos, swapCore);
@@ -318,7 +310,6 @@ void State::generateNewState(RandomGenerator random) {
       core[changedCore].setPosition(newPos);
       network.addCore(newPos, changedCore);
 
-#if DILATE
       //add all connections of changedCore
       for(int i = 0; i < numCore; i++) {
          if(i != swapCore) {
@@ -349,11 +340,9 @@ void State::generateNewState(RandomGenerator random) {
       if(bandwidth[swapCore][changedCore] != 0) {
          network.addConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
       }
-#endif
    } else {
       //remove old cost
 
-#if DILATE
       //remove all connections from the old position
       for(int i = 0; i < numCore; i++) {
          if(bandwidth[changedCore][i] != 0) {
@@ -363,13 +352,11 @@ void State::generateNewState(RandomGenerator random) {
             network.removeConnection(core[i].getPosition(), core[changedCore].getPosition());
          }
       }
-#endif
       //move core from old pos
       network.removeCore(core[changedCore].getPosition());
       //place core on new pos
       core[changedCore].setPosition(newPos);
       network.addCore(core[changedCore].getPosition(), changedCore);
-#if DILATE
       //add all connections 
       for(int i = 0; i < numCore; i++) {
          if(bandwidth[changedCore][i] != 0) {
@@ -379,7 +366,6 @@ void State::generateNewState(RandomGenerator random) {
             network.addConnection(core[i].getPosition(), core[changedCore].getPosition());
          }
       }
-#endif
    }
    //calculate new cost
    calculateCost();
@@ -393,12 +379,10 @@ void State::printState() {
    cout << "\n";
    cout << "cost: " << cost << endl;
    cout << "compaction: " << compaction << endl;
-#if DILATE
    cout << "dilation: " << dilation << endl;
    cout << "slack: " << slack<< endl;
    cout << "proximity: " << proximity << endl;
    cout << "utilization: " << utilization << endl;
-#endif
    //network.printUtil();
 }
 

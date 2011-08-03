@@ -7,7 +7,7 @@
 
 RandomGenerator::RandomGenerator() {
    //srand(time(NULL));
-   srand(100);
+   srand(10);
 }
 
 RandomGenerator::~RandomGenerator() {
