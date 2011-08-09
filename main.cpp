@@ -19,9 +19,12 @@ int main(int argc, char* argv[]) {
       return 0;
    }
 
+   cout << "Initial State" << endl;
+   sa.printState();
+
    sa.run();
 
-   sa.printResult();
+   sa.printState();
 
    return 0;
 }

@@ -10,7 +10,7 @@ class SimulatedAnnealing {
 
       int init(char* filename);
       void run();
-      void printResult();
+      void printState();
 
    private:
       //constant

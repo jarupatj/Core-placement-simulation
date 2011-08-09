@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cmath>
 
 #include "Network.hpp"
 #include "Core.hpp"
@@ -40,3 +41,7 @@ class Cost {
       double slackCost(int** latency, vector<Core> core, const int LINK_LATENCY, int index); 
       double proximityCost(int** bandwidth, vector<Core> core, int index); 
 };
+
+inline int Cost::getHops(Coordinate a, Coordinate b) {
+   return fabs(a.x - b.x) + fabs(a.y - b.y);
+}

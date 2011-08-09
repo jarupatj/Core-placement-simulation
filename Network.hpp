@@ -7,11 +7,13 @@
 
 using std::vector;
 
-#define NO_DIR -1
-#define TOP    0
-#define BOTTOM 1
-#define LEFT   2
-#define RIGHT  3
+enum Direction {
+	NO_DIR = -1,
+	TOP,
+	BOTTOM,
+	LEFT,
+	RIGHT
+};
 
 #define MAX_DIRECTION 4
 
@@ -55,6 +57,7 @@ class Network{
 
       void printNetwork();
       void printUtil();
+      void showDiagram();
       
    private:
       int row;
@@ -64,5 +67,13 @@ class Network{
       Link **utilization;
 
       void deepCopy(const Network& sourceNetwork);
-      int getDirection(Coordinate from, Coordinate to);
+      Direction getDirection(Coordinate from, Coordinate to);
 };
+
+inline int Network::getRow() {
+   return row;
+}
+
+inline int Network::getCol() {
+   return col;
+}

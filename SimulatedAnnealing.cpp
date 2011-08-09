@@ -1,13 +1,14 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 
 #include "SimulatedAnnealing.hpp"
 
-SimulatedAnnealing::SimulatedAnnealing() {
-}
+using namespace std;
 
-SimulatedAnnealing::~SimulatedAnnealing() {
-}
+SimulatedAnnealing::SimulatedAnnealing() {}
+
+SimulatedAnnealing::~SimulatedAnnealing() {}
 
 int SimulatedAnnealing::init(char* filename) {
    //init const
@@ -15,6 +16,7 @@ int SimulatedAnnealing::init(char* filename) {
    TEMP_CHANGE_FACTOR = 0.9;
    END_TEMP = 0.1;
 
+   temp = 1000.0;
    //init currentState
    int err = currentState.init(filename, random);
    if( err != 0 ) {
@@ -28,17 +30,20 @@ void SimulatedAnnealing::run() {
    int changeCost;
    bool setCurrent = false;
 
-   std::cout << "start sa" << std::endl;
+   cout << "start sa" << endl;
 
-   temp = 1000.0;
+   cout << setw(10) << "temp"
+   << setw(12) << "cost"
+   << setw(12) << "compaction"
+   << setw(12) << "dilation"
+   << setw(12) << "slack"
+   << setw(12) << "proximity"
+   << setw(12) << "util" << endl;
+
    while( temp > END_TEMP ) {
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState(random);
-         /*
-         std::cout << "--- new state ---\n";
-         newState.printState();
-         */
          changeCost = newState.getCost()- currentState.getCost();
 
          //check legality
@@ -58,12 +63,11 @@ void SimulatedAnnealing::run() {
             }
          } 
       }
-      std::cout << ">> temp = " << temp << std::endl;
-      bestState.printState();
+      printState();
       temp = temp * TEMP_CHANGE_FACTOR;
    }
 
-   std::cout << "finished sa" << std::endl;
+   cout << "finished sa" << endl;
 }
 
 bool SimulatedAnnealing::acceptChange(int cost) {
@@ -76,7 +80,7 @@ bool SimulatedAnnealing::isAccept(double value) {
    return r < prob;
 }
 
-void SimulatedAnnealing::printResult() {
+void SimulatedAnnealing::printState() {
+   cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
    bestState.printState();
-   std::cout << "legal = " << bestState.isLegal() << std::endl;
 }

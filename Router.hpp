@@ -3,24 +3,26 @@
 #define MAX_TURNS 8
 #define NO_CORE -1
 
-#define TOP_BOTTOM   0
-#define BOTTOM_TOP   1
-#define LEFT_RIGHT   2
-#define RIGHT_LEFT   3
-#define LEFT_BOTTOM  4
-#define LEFT_TOP     5
-#define RIGHT_BOTTOM 6
-#define RIGHT_TOP    7
+enum Turn {
+	TOP_BOTTOM,
+	BOTTOM_TOP,
+	LEFT_RIGHT,
+	RIGHT_LEFT,
+	LEFT_BOTTOM,
+	LEFT_TOP,
+	RIGHT_BOTTOM,
+	RIGHT_TOP
+};
 
 class Router {
    public:
       Router();
       ~Router();
 
-      int getTurn(int index); //get turns[index]
-      void setTurn(int index, int num); //set turns[index] = num 
-      void addTurn(int index);
-      void removeTurn(int index);
+      int getTurn(int t); //get turns[t]
+      void setTurn(int t, int num); //set turns[t] = num
+      void addTurn(int t);
+      void removeTurn(int t);
       bool isPsudonode();
       int getCoreIndex();
       void setCore(int index);
@@ -34,3 +36,15 @@ class Router {
       //function
       void checkPsudonode();
 };
+
+inline bool Router::isPsudonode() {
+   return psudonode;
+}
+
+inline int Router::getCoreIndex() {
+   return coreIndex;
+}
+
+inline void Router::setCore(int index) {
+   coreIndex = index;
+}

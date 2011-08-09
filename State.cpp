@@ -15,16 +15,10 @@ State::State() {
    latency = NULL;
    meshRow= 0;
    meshCol= 0;
-   numCore = 0;
-   compaction = 0;
-   dilation = 0;
-   slack = 0;
-   proximity = 0;
-   utilization = 0;
 }
 
 State::~State(){
-   for(int i = 0; i < numCore; i++) {
+   for(unsigned int i = 0; i < core.size(); i++) {
       delete [] bandwidth[i];
       delete [] latency[i];
    }
@@ -43,7 +37,7 @@ State& State::operator=(const State& sourceState) {
       return *this;
    }
 
-   for(int i = 0; i < numCore; i++) {
+   for(unsigned int i = 0; i < core.size(); i++) {
       delete [] bandwidth[i];
       delete [] latency[i];
    }
@@ -61,7 +55,7 @@ State& State::operator=(const State& sourceState) {
 void State::deepCopy(const State& sourceState) {
    LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
    LINK_LATENCY = sourceState.LINK_LATENCY;
-   cost = sourceState.cost;
+
    alpha = sourceState.alpha;
    beta = sourceState.beta;
    gamma = sourceState.gamma;
@@ -69,25 +63,20 @@ void State::deepCopy(const State& sourceState) {
 
    meshRow= sourceState.meshRow;
    meshCol= sourceState.meshCol;
-   numCore = sourceState.numCore;
-   compaction = sourceState.compaction;
-   dilation = sourceState.dilation;
-   slack = sourceState.slack;
-   proximity = sourceState.proximity;
-   utilization = sourceState.utilization;
 
    core = sourceState.core;
    network = sourceState.network;
+   cost = sourceState.cost;
 
    if(sourceState.bandwidth) {
       //allocate memory
-      bandwidth = new int* [numCore];
-      for(int i = 0; i < numCore; i++) {
-         bandwidth[i] = new int [numCore];
+      bandwidth = new int* [core.size()];
+      for(unsigned int i = 0; i < core.size(); i++) {
+         bandwidth[i] = new int [core.size()];
       }
       //copy 
-      for(int i = 0; i < numCore; i++) {
-         for(int j = 0; j < numCore; j++) {
+      for(unsigned int i = 0; i < core.size(); i++) {
+         for(unsigned int j = 0; j < core.size(); j++) {
             bandwidth[i][j] = sourceState.bandwidth[i][j];
          }
       }
@@ -97,13 +86,13 @@ void State::deepCopy(const State& sourceState) {
    
    if(sourceState.latency) {
       //allocate memory
-      latency = new int* [numCore];
-      for(int i = 0; i < numCore; i++) {
-         latency[i] = new int [numCore];
+      latency = new int* [core.size()];
+      for(unsigned int i = 0; i < core.size(); i++) {
+         latency[i] = new int [core.size()];
       }
       //copy 
-      for(int i = 0; i < numCore; i++) {
-         for(int j = 0; j < numCore; j++) {
+      for(unsigned int i = 0; i < core.size(); i++) {
+         for(unsigned int j = 0; j < core.size(); j++) {
             latency[i][j] = sourceState.latency[i][j];
          }
       }
@@ -113,6 +102,7 @@ void State::deepCopy(const State& sourceState) {
 }
 
 int State::init(char* filename, RandomGenerator random){
+   int numCore;
    FILE *fp = fopen(filename, "r");
    if(fp == NULL) {
       cout << "error can't open inputfile" << endl;
@@ -182,15 +172,11 @@ double State::getCost() {
    return cost.getCost();
 }
 
-int State::getHops(Coordinate a, Coordinate b) {
-   return fabs(a.x - b.x) + fabs(a.y - b.y);
-}
-
 bool State::isLegal() {
    int hops;
    //check latency legality
-   for(int i = 0; i < numCore; i++) {
-      for(int j = 0; j < numCore; j++) {
+   for(unsigned int i = 0; i < core.size(); i++) {
+      for(unsigned int j = 0; j < core.size(); j++) {
          if(latency[i][j] != 0) {
             hops = getHops(core[i].getPosition(), core[j].getPosition());
             if(latency[i][j] < hops * LINK_LATENCY) {
@@ -204,7 +190,7 @@ bool State::isLegal() {
 
 void State::generateNewState(RandomGenerator random) {
    //randomly select one core
-   int changedCore = random.uniform_n(numCore);
+   int changedCore = random.uniform_n(core.size());
    //randomly select new position
    Coordinate newPos;
    newPos.x = random.uniform_n(meshCol);
@@ -245,7 +231,7 @@ void State::generateNewState(RandomGenerator random) {
       if(bandwidth[swapCore][changedCore] != 0) {
          network.removeConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
       }
-
+      //calculate new cost
       cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 
    } else { //new position is empty
@@ -264,28 +250,16 @@ void State::generateNewState(RandomGenerator random) {
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, 1);
       cost.calculateCost(bandwidth, core, network);
    }
-   //calculate new cost
-   //cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 }
 
 void State::printState() {
+   /*
    cout << "current state: " << endl;
    for(unsigned int i = 0; i < core.size(); i++) {
       core[i].printCore();
    }
    cout << "\n";
+   */
    cost.printCost();
    //network.printUtil();
-   //network.printNetwork();
-}
-
-void State::printAddr() {
-   cout << "b/w : " << bandwidth << endl;
-   cout << "laten : " << latency << endl;
-   cout << "meshRow: " << meshRow<< endl;
-   cout << "meshCol: " << meshCol<< endl;
-   for(unsigned int i = 0; i < core.size(); i++) {
-      core[i].printCore();
-      cout << &core[i] << endl;
-   }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cmath>
 
 #include "Core.hpp"
 #include "RandomGenerator.hpp"
@@ -31,7 +32,6 @@ class State {
       double getCost();
       void printState();
       
-      void printAddr();//for dubug only
    private:
       int LINK_BANDWIDTH;
       int LINK_LATENCY;
@@ -41,21 +41,17 @@ class State {
       int **latency;
       int meshRow;
       int meshCol;
-      double compaction, dilation, slack, proximity, utilization;
 
-      int numCore;//total number of core
       vector<Core> core; 
-
       Network network;
       Cost cost;
 
       //function
       void deepCopy(const State& sourceState);
-      void calculateCost();
-      double compactionCost();
-      double dilationCost();
-      double slackCost();
-      double proximityCost();
-      double utilizationCost();
       int getHops(Coordinate a, Coordinate b);
 };
+
+
+inline int State::getHops(Coordinate a, Coordinate b) {
+   return fabs(a.x - b.x) + fabs(a.y - b.y);
+}

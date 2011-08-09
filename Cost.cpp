@@ -1,16 +1,14 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 
 #include "Cost.hpp"
 
-using std::cout;
-using std::endl;
+using namespace std;
 
-Cost::Cost() {
-}
+Cost::Cost() {}
 
-Cost::~Cost() {
-}
+Cost::~Cost() {}
 
 void Cost::init(double alpha, double beta, double gamma, double theta) {
    this->alpha = alpha;
@@ -40,10 +38,6 @@ double Cost::compactionCost(int** bandwidth, vector<Core> core) {
       }
    }
    return sum;
-}
-
-int Cost::getHops(Coordinate a, Coordinate b) {
-   return fabs(a.x - b.x) + fabs(a.y - b.y);
 }
 
 double Cost::dilationCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network) {
@@ -157,10 +151,11 @@ double Cost::proximityCost(int** bandwidth, vector<Core> core, int index) {
 
 
 void Cost::printCost() {
-   cout << "cost: " << cost << endl;
-   cout << "compaction: " << compaction << endl;
-   cout << "dilation: " << dilation << endl;
-   cout << "slack: " << slack<< endl;
-   cout << "proximity: " << proximity << endl;
-   cout << "utilization: " << utilization << endl;
+   cout << right << setiosflags(ios::fixed) << setprecision(3)
+   << setw(12) << cost
+   << setw(12) << compaction
+   << setw(12) << dilation
+   << setw(12) << slack
+   << setw(12) << proximity
+   << setw(12) << utilization << endl;
 }

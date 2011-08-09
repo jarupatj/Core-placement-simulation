@@ -207,5 +207,7 @@ int main(int argc, char* argv[]) {
 
    network.printNetwork();
 
+   network.showDiagram();
+
    return 0;
 }

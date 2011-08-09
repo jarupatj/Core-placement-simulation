@@ -2,6 +2,8 @@
 
 #include "Router.hpp"
 
+using namespace std;
+
 Router::Router() {
    for(int i = 0; i < MAX_TURNS; i++) {
       turns[i] = 0;
@@ -13,25 +15,25 @@ Router::Router() {
 Router::~Router() {
 }
 
-int Router::getTurn(int index) {
-   assert(index >= 0 && index < 8);
-   return turns[index];
+int Router::getTurn(int t) {
+   assert(t >= 0 && t < 8);
+   return turns[t];
 }
 
-void Router::setTurn(int index, int num) {
-   assert(index >= 0 && index < 8);
-   turns[index] = num;
+void Router::setTurn(int t, int num) {
+   assert(t >= 0 && t < 8);
+   turns[t] = num;
 }
 
-void Router::addTurn(int index) {
-   assert(index >= 0 && index < 8);
-   turns[index]++;
+void Router::addTurn(int t) {
+   assert(t >= 0 && t < 8);
+   turns[t]++;
    checkPsudonode();
 }
 
-void Router::removeTurn(int index) {
-   assert(index >= 0 && index < 8);
-   turns[index]--;
+void Router::removeTurn(int t) {
+   assert(t >= 0 && t < 8);
+   turns[t]--;
    checkPsudonode();
 }
 
@@ -61,16 +63,4 @@ void Router::checkPsudonode() {
    } else {
       psudonode = false;
    }
-}
-
-bool Router::isPsudonode() {
-   return psudonode;
-}
-
-int Router::getCoreIndex() {
-   return coreIndex;
-}
-
-void Router::setCore(int index) {
-   coreIndex = index;
 }

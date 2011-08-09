@@ -4,6 +4,9 @@
 
 #include "Network.hpp"
 
+using std::cout;
+using std::endl;
+
 Network::Network() {
    row = 0;
    col = 0;
@@ -94,14 +97,6 @@ void Network::init(int r, int c) {
    for(int i = 0; i < row; i++) {
       routers[i] = new Router [col];
    }
-}
-
-int Network::getRow() {
-   return row;
-}
-
-int Network::getCol() {
-   return col;
 }
 
 void Network::addCore(Coordinate pos, int coreIndex) {
@@ -254,7 +249,7 @@ void Network::addAllConnections(int** bandwidth, vector<Core> core, int index) {
 
 void Network::updateNetwork(int** bandwidth, vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
-   int dir;
+   Direction dir;
    Coordinate prev, cur, dNode;
 
    if( utilization != NULL ) {
@@ -335,7 +330,7 @@ double Network::calculateUtilization() {
    return util;
 }
 
-int Network::getDirection(Coordinate from, Coordinate to) {
+Direction Network::getDirection(Coordinate from, Coordinate to) {
    if( from.x < to.x ) {
       return RIGHT;
    } else if( from.x > to.x ) {
@@ -392,6 +387,32 @@ void Network::printNetwork() {
 
    printUtil();
 }
+
+void Network::showDiagram() {
+   int index;
+   for(int r = 0; r < row; r++) {
+      for(int c = 0; c < col; c++){
+         //a node
+         if(routers[r][c].isPsudonode()) {
+            index = routers[r][c].getCoreIndex();
+            if(index != NO_CORE) {
+               cout << index;
+            } else {
+               cout << "*";
+            }
+         } else { //not a node
+            if(routers[r][c].getTurn(TOP_BOTTOM) > 0 || routers[r][c].getTurn(BOTTOM_TOP) > 0) {
+               cout << "|";
+            } else {
+               cout << "-";
+            }
+         }
+
+      }
+      cout << endl;
+   }
+}
+
 
 void Network::printUtil() {
    printf("util\n");
