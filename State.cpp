@@ -7,7 +7,6 @@
 using namespace std;
 
 State::State() {
-   //cost = 0;
    alpha = 1;
    beta = 1;
    gamma = 0.2;
@@ -173,7 +172,6 @@ int State::init(char* filename, RandomGenerator random){
    }
    
    //calculate initial cost
-   //calculateCost();
    cost.init(alpha, beta, gamma, theta);
    cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 
@@ -187,70 +185,6 @@ double State::getCost() {
 int State::getHops(Coordinate a, Coordinate b) {
    return fabs(a.x - b.x) + fabs(a.y - b.y);
 }
-
-#if 0
-void State::calculateCost() {
-   compaction = compactionCost();
-   dilation = dilationCost();
-   cost = alpha * compaction + (1-alpha) * dilation;
-}
-
-double State::compactionCost() {
-   double sum = 0;
-   for(int i = 0; i < numCore; i++) {
-      for(int j = 0; j < numCore; j++) {
-         if(bandwidth[i][j] != 0) {
-            sum += bandwidth[i][j] * getHops(core[i].getPosition(),core[j].getPosition());
-         }
-      }
-   }
-   return sum;
-}
-
-double State::dilationCost() {
-   slack = slackCost();
-   proximity = proximityCost();
-   utilization = utilizationCost();
-   return beta * slack + gamma * proximity + theta * utilization;
-}
-
-double State::slackCost() {
-   double sum = 0;
-   int hops;
-   for(int i = 0; i < numCore; i++) {
-      for(int j = 0; j < numCore; j++) {
-         if(bandwidth[i][j] != 0) {
-            hops = getHops(core[i].getPosition(),core[j].getPosition());
-            sum += latency[i][j] - hops * LINK_LATENCY;
-         }
-      }
-   }
-   return sum;
-}
-
-double State::proximityCost() {
-   double sum = 0;
-   int dist;
-   for(int i = 0; i < numCore; i++) {
-      for(int j = i+1; j < numCore; j++) {
-         //check that there are no connections between core i and core j
-         if((bandwidth[i][j] == 0) && (bandwidth[j][i] == 0)) {
-            Coordinate posi = core[i].getPosition();
-            Coordinate posj = core[j].getPosition();
-            dist = fabs(posi.x - posj.x) + fabs(posi.y - posj.y); 
-            sum -= dist;
-         }
-      }
-   }
-   return sum;
-}
-
-double State::utilizationCost() {
-   network.updateNetwork(bandwidth, core);
-   //network.printUtil();
-   return network.calculateUtilization();
-}
-#endif
 
 bool State::isLegal() {
    int hops;
@@ -276,13 +210,12 @@ void State::generateNewState(RandomGenerator random) {
    newPos.x = random.uniform_n(meshCol);
    newPos.y = random.uniform_n(meshRow);
    
-   //check if that pos is empty or not
+   //if the new position is not empty 
    if( network.hasCore(newPos) ) {
-      //remove old cost
       //swap
       Coordinate oldPos = core[changedCore].getPosition();
       int swapCore = network.getCoreIndex(newPos);
-      
+      //remove all connections from the changed core 
       for(int i = 0; i < numCore; i++) {
          if( i != swapCore ) {
             if(bandwidth[changedCore][i] != 0) {
@@ -348,8 +281,11 @@ void State::generateNewState(RandomGenerator random) {
       if(bandwidth[swapCore][changedCore] != 0) {
          network.addConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
       }
-   } else {
+      cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
+
+   } else { //new position is empty
       //remove old cost
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, 0);
 
       //remove all connections from the old position
       for(int i = 0; i < numCore; i++) {
@@ -374,10 +310,12 @@ void State::generateNewState(RandomGenerator random) {
             network.addConnection(core[i].getPosition(), core[changedCore].getPosition());
          }
       }
+      //calculate new cost
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, 1);
+      cost.calculateCost(bandwidth, core, network);
    }
    //calculate new cost
-   //calculateCost();
-   cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
+   //cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 }
 
 void State::printState() {

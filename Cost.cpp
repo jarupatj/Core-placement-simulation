@@ -74,9 +74,7 @@ double Cost::proximityCost(int** bandwidth, vector<Core> core) {
       for(unsigned int j = i+1; j < core.size(); j++) {
          //check that there are no connections between core i and core j
          if((bandwidth[i][j] == 0) && (bandwidth[j][i] == 0)) {
-            Coordinate posi = core[i].getPosition();
-            Coordinate posj = core[j].getPosition();
-            dist = fabs(posi.x - posj.x) + fabs(posi.y - posj.y); 
+            dist = getHops(core[i].getPosition(), core[j].getPosition());
             sum -= dist;
          }
       }
@@ -89,6 +87,74 @@ double Cost::utilizationCost(int** bandwidth, vector<Core> core, Network& networ
    //network.printUtil();
    return network.calculateUtilization();
 }
+
+void Cost::calculateCost(int** bandwidth, vector<Core> core, Network& network) {
+   utilization = utilizationCost(bandwidth, core, network);
+   dilation = beta * slack + gamma * proximity + theta * utilization;
+   cost = alpha * compaction + (1-alpha) * dilation;
+}
+
+void Cost::updateCost(int** bandwidth, int** latency, int LINK_LATENCY, vector<Core> core, int index, int op) {
+   if( op == 0 ) {
+      compaction -= compactionCost(bandwidth, core, index);
+      slack -= slackCost(latency, core, LINK_LATENCY, index);
+      proximity -= proximityCost(bandwidth, core, index);
+   } else {
+      compaction += compactionCost(bandwidth, core, index);
+      slack += slackCost(latency, core, LINK_LATENCY, index);
+      proximity += proximityCost(bandwidth, core, index);
+   }
+}
+
+double Cost::compactionCost(int** bandwidth, vector<Core> core, int index) {
+   double change = 0;
+   for(unsigned int i = 0; i < core.size(); i++) {
+      //connection from index to node i
+      if(bandwidth[index][i] != 0) {
+         change += bandwidth[index][i] * getHops(core[index].getPosition(),core[i].getPosition());
+      }
+      //connection from node i to index
+      if(bandwidth[i][index] != 0) {
+         change += bandwidth[i][index] * getHops(core[i].getPosition(),core[index].getPosition());
+      }
+   }
+
+   return change;
+}
+
+double Cost::slackCost(int** latency, vector<Core> core, const int LINK_LATENCY, int index) {
+   double change = 0;
+   int hops;
+   for(unsigned int i = 0; i < core.size(); i++) {
+      //connection from index to node i
+      if(latency[index][i] != 0) {
+         hops = getHops(core[index].getPosition(),core[i].getPosition());
+         change += latency[index][i] - hops * LINK_LATENCY;
+      }
+      //connection from node i to index
+      if(latency[i][index] != 0) {
+         hops = getHops(core[i].getPosition(),core[index].getPosition());
+         change += latency[i][index] - hops * LINK_LATENCY;
+      }
+   }
+
+   return change;
+}
+
+double Cost::proximityCost(int** bandwidth, vector<Core> core, int index) {
+   double change = 0;
+   int dist;
+   for(unsigned int i = 0; i < core.size(); i++) {
+      if( i != (unsigned int)index) {
+         if(bandwidth[index][i] == 0 && bandwidth[i][index] == 0) {
+            dist = getHops(core[i].getPosition(), core[index].getPosition());
+            change -= dist;
+         }
+      }
+   }
+   return change;
+}
+
 
 void Cost::printCost() {
    cout << "cost: " << cost << endl;

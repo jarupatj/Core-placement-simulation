@@ -18,6 +18,9 @@ class Cost {
       double getCost();
       void printCost();
 
+      void calculateCost(int** bandwidth, vector<Core> core, Network& network); 
+      void updateCost(int** bandwidth, int** latency, int LINK_LATENCY, vector<Core> core, int index, int op); 
+
    private:
       //variable
       double alpha, beta, gamma, theta;
@@ -32,4 +35,8 @@ class Cost {
       double utilizationCost(int** bandwidth, vector<Core> core, Network& network); 
       int getHops(Coordinate a, Coordinate b);
 
+      //calculate connection from/to one core (index) only
+      double compactionCost(int** bandwidth, vector<Core> core, int index);
+      double slackCost(int** latency, vector<Core> core, const int LINK_LATENCY, int index); 
+      double proximityCost(int** bandwidth, vector<Core> core, int index); 
 };
