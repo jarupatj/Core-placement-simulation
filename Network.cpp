@@ -1,11 +1,11 @@
 #include <iostream>
+#include <iomanip>
 #include <cassert>
 #include <cstdio>
 
 #include "Network.hpp"
 
-using std::cout;
-using std::endl;
+using namespace std;
 
 Network::Network() {
    row = 0;
@@ -390,27 +390,58 @@ void Network::printNetwork() {
 
 void Network::showDiagram() {
    int index;
-   for(int r = 0; r < row; r++) {
+   for(int r = row-1; r >= 0; r--) {
+      cout << "    ";
       for(int c = 0; c < col; c++){
+         if(routers[r][c].getTurn(TOP_BOTTOM) > 0 || routers[r][c].getTurn(BOTTOM_TOP) > 0
+            || routers[r][c].getTurn(LEFT_TOP) > 0 || routers[r][c].getTurn(RIGHT_TOP) > 0) {
+            cout << "  |  ";
+         } else if( (r < row-1 )&&
+                    (routers[r+1][c].getTurn(TOP_BOTTOM) > 0 ||
+                     routers[r+1][c].getTurn(BOTTOM_TOP) > 0 ||
+                     routers[r+1][c].getTurn(LEFT_BOTTOM) > 0||
+                     routers[r+1][c].getTurn(RIGHT_BOTTOM) > 0)) {
+            cout << "  |  ";
+         } else {
+            cout << "     ";
+         }
+      }
+      cout << endl;
+      //print row number
+      cout << setw(4) << r;
+      for(int c = 0; c < col; c++){
+         if(routers[r][c].getTurn(LEFT_RIGHT) > 0 || routers[r][c].getTurn(RIGHT_LEFT) > 0
+            || routers[r][c].getTurn(LEFT_TOP) > 0 || routers[r][c].getTurn(LEFT_BOTTOM) > 0) {
+            cout << "--";
+         } else {
+            cout << "  ";
+         }
          //a node
          if(routers[r][c].isPsudonode()) {
             index = routers[r][c].getCoreIndex();
             if(index != NO_CORE) {
-               cout << index;
+               cout << index+1;
             } else {
-               cout << "*";
+               cout << "@";
             }
          } else { //not a node
-            if(routers[r][c].getTurn(TOP_BOTTOM) > 0 || routers[r][c].getTurn(BOTTOM_TOP) > 0) {
-               cout << "|";
-            } else {
-               cout << "-";
-            }
+            cout << ".";
          }
-
+         if(routers[r][c].getTurn(LEFT_RIGHT) > 0 || routers[r][c].getTurn(RIGHT_LEFT) > 0
+            || routers[r][c].getTurn(RIGHT_TOP) > 0 || routers[r][c].getTurn(RIGHT_BOTTOM) > 0) {
+            cout << "--";
+         } else {
+            cout << "  ";
+         }
       }
       cout << endl;
    }
+   //print column number
+   cout << "      ";
+   for(int i = 0; i < col; i++) {
+      cout << i << "    ";
+   }
+   cout << endl << endl;
 }
 
 

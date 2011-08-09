@@ -84,3 +84,7 @@ void SimulatedAnnealing::printState() {
    cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
    bestState.printState();
 }
+
+void SimulatedAnnealing::printDiagram() {
+   bestState.printDiagram();
+}

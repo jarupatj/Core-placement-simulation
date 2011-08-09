@@ -11,12 +11,11 @@ class SimulatedAnnealing {
       int init(char* filename);
       void run();
       void printState();
+      void printDiagram();
 
    private:
       //constant
-      int TEMP_STEP;
       int MAX_STATE_CHANGE_PER_TEMP;
-      int SUCCESS_PER_TEMP;
       double TEMP_CHANGE_FACTOR;
       double END_TEMP;
 

@@ -21,10 +21,12 @@ int main(int argc, char* argv[]) {
 
    cout << "Initial State" << endl;
    sa.printState();
+   sa.printDiagram();
 
    sa.run();
 
    sa.printState();
+   sa.printDiagram();
 
    return 0;
 }

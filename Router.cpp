@@ -20,11 +20,6 @@ int Router::getTurn(int t) {
    return turns[t];
 }
 
-void Router::setTurn(int t, int num) {
-   assert(t >= 0 && t < 8);
-   turns[t] = num;
-}
-
 void Router::addTurn(int t) {
    assert(t >= 0 && t < 8);
    turns[t]++;
@@ -63,4 +58,9 @@ void Router::checkPsudonode() {
    } else {
       psudonode = false;
    }
+}
+
+void Router::setCore(int index) {
+   coreIndex = index;
+   checkPsudonode();
 }

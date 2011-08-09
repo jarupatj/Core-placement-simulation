@@ -263,3 +263,9 @@ void State::printState() {
    cost.printCost();
    //network.printUtil();
 }
+
+void State::printDiagram() {
+   network.showDiagram();
+   //network.printNetwork();
+   //network.printUtil();
+}

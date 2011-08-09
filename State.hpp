@@ -31,6 +31,7 @@ class State {
       bool isLegal();
       double getCost();
       void printState();
+      void printDiagram();
       
    private:
       int LINK_BANDWIDTH;

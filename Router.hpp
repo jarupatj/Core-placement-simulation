@@ -20,7 +20,6 @@ class Router {
       ~Router();
 
       int getTurn(int t); //get turns[t]
-      void setTurn(int t, int num); //set turns[t] = num
       void addTurn(int t);
       void removeTurn(int t);
       bool isPsudonode();
@@ -43,8 +42,4 @@ inline bool Router::isPsudonode() {
 
 inline int Router::getCoreIndex() {
    return coreIndex;
-}
-
-inline void Router::setCore(int index) {
-   coreIndex = index;
 }
