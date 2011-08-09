@@ -31,10 +31,8 @@ void Router::addTurn(int index) {
 
 void Router::removeTurn(int index) {
    assert(index >= 0 && index < 8);
-   if( turns[index] > 0 ) {
-      turns[index]--;
-      checkPsudonode();
-   }
+   turns[index]--;
+   checkPsudonode();
 }
 
 void Router::checkPsudonode() {
@@ -45,7 +43,7 @@ void Router::checkPsudonode() {
 
    int t[MAX_TURNS] = {0};
    for(int i = 0; i < MAX_TURNS; i++) {
-      if(turns[i] != 0) {
+      if(turns[i] > 0) {
          t[i] = 1;
       }
    }

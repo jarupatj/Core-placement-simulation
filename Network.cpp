@@ -94,13 +94,6 @@ void Network::init(int r, int c) {
    for(int i = 0; i < row; i++) {
       routers[i] = new Router [col];
    }
-
-   /*
-   utilization = new Link* [row*col];
-   for(int i = 0; i < (row*col); i++) {
-      utilization[i] = new Link[MAX_DIRECTION];
-   }
-   */
 }
 
 int Network::getRow() {
@@ -237,6 +230,28 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
    }
 }
 
+void Network::removeAllConnections(int** bandwidth, vector<Core> core, int index) {
+   for(unsigned int i = 0; i < core.size(); i++) {
+      if(bandwidth[index][i] != 0) {
+         removeConnection(core[index].getPosition(), core[i].getPosition());
+      }
+      if(bandwidth[i][index] != 0) {
+         removeConnection(core[i].getPosition(), core[index].getPosition());
+      }
+   }
+}
+
+void Network::addAllConnections(int** bandwidth, vector<Core> core, int index) {
+   for(unsigned int i = 0; i < core.size(); i++) {
+      if(bandwidth[index][i] != 0) {
+         addConnection(core[index].getPosition(), core[i].getPosition());
+      }
+      if(bandwidth[i][index] != 0) {
+         addConnection(core[i].getPosition(), core[index].getPosition());
+      }
+   }
+}
+
 void Network::updateNetwork(int** bandwidth, vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
    int dir;
@@ -303,8 +318,6 @@ void Network::updateNetwork(int** bandwidth, vector<Core> core) {
                   }
                }
             }
-            assert(cur.y == dNode.y);
-            assert(cur.x == dNode.x);
          }
       }
    }

@@ -1,11 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
+#include <cassert>
 
 #include "Network.hpp"
 #include "Core.hpp"
 
 using std::vector;
+using std::cout;
+using std::endl;
 
 int main(int argc, char* argv[]) {
    vector<Core> core;
@@ -80,10 +83,129 @@ int main(int argc, char* argv[]) {
    to.y = 4;
    network.addConnection(from, to); //5-2
 
-   network.updateUtilization(bandwidth, 5, core);
+   network.updateNetwork(bandwidth, core);
+
+   int changedCore = 3;
+   Coordinate newPos = {4,6};
+   int swapCore = network.getCoreIndex(newPos);
+   assert(swapCore == 2);
+   Coordinate oldPos = core[changedCore].getPosition();
+   /*
+
+      for(unsigned int i = 0; i < core.size(); i++) {
+         if( i != (unsigned int)swapCore ) {
+            if(bandwidth[changedCore][i] != 0) {
+               network.removeConnection(core[changedCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][changedCore] != 0) {
+               network.removeConnection(core[i].getPosition(), core[changedCore].getPosition());
+            }
+         }
+      }
+      //remove all connections from the old position of the swap core
+      for(unsigned int i = 0; i < core.size(); i++) {
+         if( i != (unsigned int)changedCore) {
+            if(bandwidth[swapCore][i] != 0) {
+               network.removeConnection(core[swapCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][swapCore] != 0) {
+               network.removeConnection(core[i].getPosition(), core[swapCore].getPosition());
+            }
+         }
+      }
+      //remove connection between two cores
+      if(bandwidth[changedCore][swapCore] != 0) {
+         network.removeConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+      }
+      if(bandwidth[swapCore][changedCore] != 0) {
+         network.removeConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+      }
+      //place core on new pos
+      core[swapCore].setPosition(oldPos);
+      network.addCore(oldPos, swapCore);
+
+      core[changedCore].setPosition(newPos);
+      network.addCore(newPos, changedCore);
+
+      //add all connections of changedCore
+      for(unsigned int i = 0; i < core.size(); i++) {
+         if(i != (unsigned int)swapCore) {
+            if(bandwidth[changedCore][i] != 0) {
+               network.addConnection(core[changedCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][changedCore] != 0) {
+               network.addConnection(core[i].getPosition(), core[changedCore].getPosition());
+            }
+         }
+      }
+      //add all connections of swap core
+      for(unsigned int i = 0; i < core.size(); i++) {
+         if(i != (unsigned int)changedCore) {
+            if(bandwidth[swapCore][i] != 0) {
+               network.addConnection(core[swapCore].getPosition(), core[i].getPosition());
+            }
+            if(bandwidth[i][swapCore] != 0) {
+               network.addConnection(core[i].getPosition(), core[swapCore].getPosition());
+            }
+         }
+      }
+      //add connection between two cores
+      if(bandwidth[changedCore][swapCore] != 0) {
+         network.addConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+      }
+      if(bandwidth[swapCore][changedCore] != 0) {
+         network.addConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+      }
+
+      */
+   /*
+   //remove all connections from the changed core 
+   network.removeAllConnections(bandwidth, core, changedCore);
+      //remove all connections from the old position of the swap core
+      network.removeAllConnections(bandwidth, core, swapCore);
+      //add the overlap
+      if(bandwidth[changedCore][swapCore] != 0) {
+         network.addConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+      }
+      if(bandwidth[swapCore][changedCore] != 0) {
+         network.addConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+      }
+
+      //place core on new pos
+      core[swapCore].setPosition(oldPos);
+      network.addCore(oldPos, swapCore);
+
+      core[changedCore].setPosition(newPos);
+      network.addCore(newPos, changedCore);
+
+      //add all connections of changedCore
+      network.addAllConnections(bandwidth, core, changedCore);
+
+      //add all connections of swap core
+      network.addAllConnections(bandwidth, core, swapCore);
+      //remove overlap
+      if(bandwidth[changedCore][swapCore] != 0) {
+         network.removeConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+      }
+      if(bandwidth[swapCore][changedCore] != 0) {
+         network.removeConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+      }
+
+      */
+   /*
+   network.removeAllConnections(bandwidth, core, changedCore);
+   //move core from old pos
+   network.removeCore(core[changedCore].getPosition());
+   //place core on new pos
+   core[changedCore].setPosition(newPos);
+   network.addCore(core[changedCore].getPosition(), changedCore);
+   //add all connections 
+   network.addAllConnections(bandwidth, core, changedCore);
+   */
+
+   network.updateNetwork(bandwidth, core);
 
    network.printNetwork();
-   std::cout << network.isLegal(50) << std::endl;
 
    return 0;
 }
