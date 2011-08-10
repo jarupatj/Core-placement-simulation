@@ -40,7 +40,7 @@ Network& Network::operator=(const Network& sourceNetwork) {
    for(int i = 0; i < row; i++) {
       delete [] routers[i];
    }
-   delete routers;
+   delete [] routers;
 
    if( utilization != NULL ) {
       for(int i = 0; i < (row*col); i++) {

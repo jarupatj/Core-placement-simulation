@@ -19,8 +19,8 @@ State::~State(){
       delete [] bandwidth[i];
       delete [] latency[i];
    }
-   delete bandwidth;
-   delete latency;
+   delete [] bandwidth;
+   delete [] latency;
 }
 
 State::State(const State& sourceState) {
@@ -37,8 +37,8 @@ State& State::operator=(const State& sourceState) {
       delete [] bandwidth[i];
       delete [] latency[i];
    }
-   delete bandwidth;
-   delete latency;
+   delete [] bandwidth;
+   delete [] latency;
 
    core.clear();
    deepCopy(sourceState);
