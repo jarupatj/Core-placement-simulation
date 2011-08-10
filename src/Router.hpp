@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ROUTER_H
+#define ROUTER_H
 
 #define MAX_TURNS 8
 #define NO_CORE -1
@@ -43,3 +44,5 @@ inline bool Router::isPsudonode() {
 inline int Router::getCoreIndex() {
    return coreIndex;
 }
+
+#endif

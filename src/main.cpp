@@ -1,5 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 
+#include "Defs.hpp"
 #include "SimulatedAnnealing.hpp"
 
 using namespace std;
@@ -13,24 +16,33 @@ int main(int argc, char* argv[]) {
    }
 
    SimulatedAnnealing sa;
-
    int err = sa.init(argv);
-   if(err) {
-      cout << "Error Exit" << endl;
+   if(err == FILE_OPEN_ERR) {
+      cout << "File open Error Exit" << endl;
+      return 0;
+   } else if(err == ILLEGAL_STATE_ERR) {
+      cout << "Illegal initial state" << endl;
       return 0;
    }
 
+   //output file name is inputfile.out
+   string outfile(argv[9]);
+   outfile += ".out";
+   streambuf* cout_buf = cout.rdbuf(); //save original buf
+   ofstream fout(outfile.c_str());
+   cout.rdbuf(fout.rdbuf()); //redirect cout to the file
+
    cout << "Initial State" << endl;
    sa.printSummary();
-
    cout << endl;
-
    sa.initTable();
 
    sa.run();
 
    cout << endl;
    sa.printSummary();
+
+   cout.rdbuf(cout_buf); //restore cout original buf
 
    return 0;
 }

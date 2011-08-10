@@ -1,9 +1,7 @@
-#pragma once
+#ifndef CORE_H
+#define CORE_H
 
-struct Coordinate {
-   int x;
-   int y;
-};
+#include "Defs.hpp"
 
 class Core {
    public:
@@ -18,3 +16,5 @@ class Core {
    private:
       Coordinate position;
 };
+
+#endif

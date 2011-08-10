@@ -49,7 +49,6 @@ State& State::operator=(const State& sourceState) {
 void State::deepCopy(const State& sourceState) {
    LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
    LINK_LATENCY = sourceState.LINK_LATENCY;
-
    meshRow= sourceState.meshRow;
    meshCol= sourceState.meshCol;
 
@@ -95,8 +94,7 @@ int State::init(double alpha, double beta, double gamma, double theta, \
    int numCore;
    FILE *fp = fopen(filename, "r");
    if(fp == NULL) {
-      cout << "error can't open inputfile" << endl;
-      return 1;
+      return FILE_OPEN_ERR;
    }
    fscanf(fp, "%d%d", &LINK_BANDWIDTH, &LINK_LATENCY);
    fscanf(fp, "%d%d", &meshRow, &meshCol);
@@ -143,15 +141,14 @@ int State::init(double alpha, double beta, double gamma, double theta, \
    }
 
    if( !isLegal() ) {
-      std::cout << "illegal initial position\n";
-      return 1;
+      return ILLEGAL_STATE_ERR;
    }
    
    //calculate initial cost
    cost.init(alpha, beta, gamma, theta);
    cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 
-   return 0;
+   return NO_ERR;
 }
 
 double State::getCost() {

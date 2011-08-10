@@ -1,7 +1,9 @@
-#pragma once
+#ifndef NETWORK_H
+#define NETWORK_H
 
 #include <vector>
 
+#include "Defs.hpp"
 #include "Router.hpp"
 #include "Core.hpp"
 
@@ -77,3 +79,5 @@ inline int Network::getRow() {
 inline int Network::getCol() {
    return col;
 }
+
+#endif

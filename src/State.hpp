@@ -1,16 +1,14 @@
-#pragma once
+#ifndef STATE_H
+#define STATE_H
 
 #include <vector>
 #include <cmath>
 
+#include "Defs.hpp"
 #include "Core.hpp"
 #include "RandomGenerator.hpp"
 #include "Network.hpp"
 #include "Cost.hpp"
-
-//all links assume to have same latency and bandwidth
-//#define LINK_LATENCY 10
-//#define LINK_BANDWIDTH 40
 
 using std::vector;
 
@@ -53,3 +51,5 @@ class State {
 inline int State::getHops(Coordinate a, Coordinate b) {
    return fabs(a.x - b.x) + fabs(a.y - b.y);
 }
+
+#endif

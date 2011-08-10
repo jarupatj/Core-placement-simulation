@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SA_H
+#define SA_H
 
 #include "RandomGenerator.hpp"
 #include "State.hpp"
@@ -32,3 +33,5 @@ class SimulatedAnnealing {
 
       void printState(const int& trial, const int& worstAcc);
 };
+
+#endif

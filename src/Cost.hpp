@@ -1,8 +1,10 @@
-#pragma once
+#ifndef COST_H
+#define COST_H
 
 #include <vector>
 #include <cmath>
 
+#include "Defs.hpp"
 #include "Network.hpp"
 #include "Core.hpp"
 
@@ -46,3 +48,5 @@ class Cost {
 inline int Cost::getHops(Coordinate a, Coordinate b) {
    return fabs(a.x - b.x) + fabs(a.y - b.y);
 }
+
+#endif

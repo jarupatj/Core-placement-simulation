@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RANDOM_H
+#define RANDOM_H
 
 class RandomGenerator {
    public:
@@ -14,3 +15,5 @@ class RandomGenerator {
    private:
 
 };
+
+#endif
