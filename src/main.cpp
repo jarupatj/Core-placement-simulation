@@ -10,8 +10,8 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-   //srand(time(NULL));
-   srand(10);
+   srand(time(NULL));
+   //srand(10);
 
    if (argc != 10) {
       cout << "usage ./sa <alpha> <beta> <gamma> <theta> <starting_temp> "
