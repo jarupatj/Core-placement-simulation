@@ -7,10 +7,6 @@
 using namespace std;
 
 State::State() {
-   alpha = 1;
-   beta = 1;
-   gamma = 0.2;
-   theta = 0.04;
    bandwidth = NULL;
    latency = NULL;
    meshRow= 0;
@@ -22,7 +18,6 @@ State::~State(){
       delete [] bandwidth[i];
       delete [] latency[i];
    }
-
    delete bandwidth;
    delete latency;
 }
@@ -41,7 +36,6 @@ State& State::operator=(const State& sourceState) {
       delete [] bandwidth[i];
       delete [] latency[i];
    }
-
    delete bandwidth;
    delete latency;
 
@@ -55,11 +49,6 @@ State& State::operator=(const State& sourceState) {
 void State::deepCopy(const State& sourceState) {
    LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
    LINK_LATENCY = sourceState.LINK_LATENCY;
-
-   alpha = sourceState.alpha;
-   beta = sourceState.beta;
-   gamma = sourceState.gamma;
-   theta = sourceState.theta;
 
    meshRow= sourceState.meshRow;
    meshCol= sourceState.meshCol;
@@ -101,7 +90,8 @@ void State::deepCopy(const State& sourceState) {
    }
 }
 
-int State::init(char* filename, RandomGenerator random){
+int State::init(double alpha, double beta, double gamma, double theta, \
+                char* filename, RandomGenerator random){
    int numCore;
    FILE *fp = fopen(filename, "r");
    if(fp == NULL) {
@@ -109,12 +99,8 @@ int State::init(char* filename, RandomGenerator random){
       return 1;
    }
    fscanf(fp, "%d%d", &LINK_BANDWIDTH, &LINK_LATENCY);
-   cout << "link bw/laten: " << LINK_BANDWIDTH << " " << LINK_LATENCY<< endl;
-
    fscanf(fp, "%d%d", &meshRow, &meshCol);
-   cout << "meshRow/Col: " << meshRow << " " << meshCol << endl;
    fscanf(fp, "%d", &numCore);
-   cout << "numCore: " << numCore << endl;
 
    bandwidth = new int* [numCore];
    latency = new int* [numCore];
@@ -253,19 +239,10 @@ void State::generateNewState(RandomGenerator random) {
 }
 
 void State::printState() {
-   /*
-   cout << "current state: " << endl;
-   for(unsigned int i = 0; i < core.size(); i++) {
-      core[i].printCore();
-   }
-   cout << "\n";
-   */
    cost.printCost();
-   //network.printUtil();
 }
 
-void State::printDiagram() {
+void State::printSummary() {
+   cost.printSummary();
    network.showDiagram();
-   //network.printNetwork();
-   //network.printUtil();
 }

@@ -8,10 +8,10 @@ class SimulatedAnnealing {
       SimulatedAnnealing();
       ~SimulatedAnnealing();
 
-      int init(char* filename);
+      int init(char* argv[]);
       void run();
-      void printState();
-      void printDiagram();
+      void printSummary();
+      void initTable();
 
    private:
       //constant
@@ -29,4 +29,6 @@ class SimulatedAnnealing {
       int getCost();
       bool acceptChange(int cost);
       bool isAccept(double value);
+
+      void printState(const int& trial, const int& worstAcc);
 };

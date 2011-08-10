@@ -112,7 +112,6 @@ double Cost::compactionCost(int** bandwidth, vector<Core> core, int index) {
          change += bandwidth[i][index] * getHops(core[i].getPosition(),core[index].getPosition());
       }
    }
-
    return change;
 }
 
@@ -131,7 +130,6 @@ double Cost::slackCost(int** latency, vector<Core> core, const int LINK_LATENCY,
          change += latency[i][index] - hops * LINK_LATENCY;
       }
    }
-
    return change;
 }
 
@@ -157,5 +155,14 @@ void Cost::printCost() {
    << setw(12) << dilation
    << setw(12) << slack
    << setw(12) << proximity
-   << setw(12) << utilization << endl;
+   << setw(12) << utilization;
+}
+
+void Cost::printSummary() {
+   cout << setiosflags(ios::fixed) << setprecision(3)<< "Cost: " << cost
+        << "\tCompaction: " << compaction
+        << "\tDilation: " << dilation << endl
+        << "Slack: " << slack
+        << "\tProximity: " << proximity
+        << "\tUtilization: " << utilization << endl;
 }

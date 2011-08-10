@@ -16,22 +16,19 @@ using std::vector;
 
 class State {
    public:
-      //variable
-      //double cost;
-      double alpha, beta, gamma, theta;
-
       //function
       State();
       State(const State& sourceState); //copy constructor
       State& operator=(const State& sourceState); 
       ~State();
 
-      int init(char* filename, RandomGenerator random);
+      int init(double alpha, double beta, double gamma, double theta, \
+               char* filename, RandomGenerator random);
       void generateNewState(RandomGenerator random);
       bool isLegal();
       double getCost();
       void printState();
-      void printDiagram();
+      void printSummary();
       
    private:
       int LINK_BANDWIDTH;

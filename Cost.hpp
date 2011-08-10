@@ -18,6 +18,7 @@ class Cost {
       void initCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network); 
       double getCost();
       void printCost();
+      void printSummary();
 
       void calculateCost(int** bandwidth, vector<Core> core, Network& network); 
       void updateCost(int** bandwidth, int** latency, int LINK_LATENCY, vector<Core> core, int index, int op); 

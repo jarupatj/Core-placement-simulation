@@ -6,27 +6,31 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-   if (argc != 2) {
-      cout << "usage ./program <input file>" << endl;
+   if (argc != 10) {
+      cout << "usage ./sa <alpha> <beta> <gamma> <theta> <starting_temp> <cooling rate>"
+            " <iteration/temp> <input file>" << endl;
       return 0;
    }
 
    SimulatedAnnealing sa;
 
-   int err = sa.init(argv[1]);
+   int err = sa.init(argv);
    if(err) {
       cout << "Error Exit" << endl;
       return 0;
    }
 
    cout << "Initial State" << endl;
-   sa.printState();
-   sa.printDiagram();
+   sa.printSummary();
+
+   cout << endl;
+
+   sa.initTable();
 
    sa.run();
 
-   sa.printState();
-   sa.printDiagram();
+   cout << endl;
+   sa.printSummary();
 
    return 0;
 }

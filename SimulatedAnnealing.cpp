@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <cstdlib>
 
 #include "SimulatedAnnealing.hpp"
 
@@ -10,15 +11,16 @@ SimulatedAnnealing::SimulatedAnnealing() {}
 
 SimulatedAnnealing::~SimulatedAnnealing() {}
 
-int SimulatedAnnealing::init(char* filename) {
-   //init const
-   MAX_STATE_CHANGE_PER_TEMP = 200;
-   TEMP_CHANGE_FACTOR = 0.9;
-   END_TEMP = 0.1;
+int SimulatedAnnealing::init(char* argv[]) {
+   temp = atof(argv[5]);
+   END_TEMP = atof(argv[6]);
+   TEMP_CHANGE_FACTOR = atof(argv[7]);
+   MAX_STATE_CHANGE_PER_TEMP = atoi(argv[8]);
 
-   temp = 1000.0;
    //init currentState
-   int err = currentState.init(filename, random);
+   int err = currentState.init(atof(argv[1]), atof(argv[2]), \
+                               atof(argv[3]), atof(argv[4]), \
+                               argv[9], random);
    if( err != 0 ) {
       return err;
    }
@@ -27,20 +29,12 @@ int SimulatedAnnealing::init(char* filename) {
 }
 
 void SimulatedAnnealing::run() {
-   int changeCost;
+   int changeCost, worstAcc, trial = 0;
    bool setCurrent = false;
 
-   cout << "start sa" << endl;
-
-   cout << setw(10) << "temp"
-   << setw(12) << "cost"
-   << setw(12) << "compaction"
-   << setw(12) << "dilation"
-   << setw(12) << "slack"
-   << setw(12) << "proximity"
-   << setw(12) << "util" << endl;
-
    while( temp > END_TEMP ) {
+      worstAcc = 0;
+      trial++;
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState(random);
@@ -52,6 +46,7 @@ void SimulatedAnnealing::run() {
                setCurrent = true;
             } else if( acceptChange(changeCost) ) {
                setCurrent = true;
+               worstAcc++;
             }
          } 
 
@@ -63,11 +58,10 @@ void SimulatedAnnealing::run() {
             }
          } 
       }
-      printState();
+
+      printState(trial, worstAcc);
       temp = temp * TEMP_CHANGE_FACTOR;
    }
-
-   cout << "finished sa" << endl;
 }
 
 bool SimulatedAnnealing::acceptChange(int cost) {
@@ -80,11 +74,26 @@ bool SimulatedAnnealing::isAccept(double value) {
    return r < prob;
 }
 
-void SimulatedAnnealing::printState() {
-   cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
-   bestState.printState();
+void SimulatedAnnealing::initTable() {
+   cout << setw(6) << "trial"
+   << setw(10) << "temp"
+   << setw(12) << "cost"
+   << setw(12) << "compaction"
+   << setw(12) << "dilation"
+   << setw(12) << "slack"
+   << setw(12) << "proximity"
+   << setw(12) << "util"
+   << setw(12) << "worst acc" << endl;
 }
 
-void SimulatedAnnealing::printDiagram() {
-   bestState.printDiagram();
+void SimulatedAnnealing::printState(const int& trial, const int& worstAcc) {
+   cout << setw(6) << trial;
+   cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
+   bestState.printState();
+   cout << setw(12) << worstAcc << endl;
+}
+
+void SimulatedAnnealing::printSummary() {
+   cout << "Temperature: " << temp << endl;
+   bestState.printSummary();
 }

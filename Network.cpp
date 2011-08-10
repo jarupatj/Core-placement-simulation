@@ -392,15 +392,17 @@ void Network::showDiagram() {
    int index;
    for(int r = row-1; r >= 0; r--) {
       cout << "    ";
+      //draw top link only
       for(int c = 0; c < col; c++){
-         if(routers[r][c].getTurn(TOP_BOTTOM) > 0 || routers[r][c].getTurn(BOTTOM_TOP) > 0
-            || routers[r][c].getTurn(LEFT_TOP) > 0 || routers[r][c].getTurn(RIGHT_TOP) > 0) {
+         //check that current router has outgoing link to the top router
+         if(routers[r][c].getTurn(BOTTOM_TOP) > 0 || routers[r][c].getTurn(LEFT_TOP) > 0
+               || routers[r][c].getTurn(RIGHT_TOP) > 0) {
             cout << "  |  ";
          } else if( (r < row-1 )&&
                     (routers[r+1][c].getTurn(TOP_BOTTOM) > 0 ||
-                     routers[r+1][c].getTurn(BOTTOM_TOP) > 0 ||
                      routers[r+1][c].getTurn(LEFT_BOTTOM) > 0||
                      routers[r+1][c].getTurn(RIGHT_BOTTOM) > 0)) {
+         //check that the top router has outgoing link to the bottom router (current router)
             cout << "  |  ";
          } else {
             cout << "     ";
@@ -408,15 +410,9 @@ void Network::showDiagram() {
       }
       cout << endl;
       //print row number
-      cout << setw(4) << r;
+      cout << setw(4) << r << "  ";
+      //draw right side link only
       for(int c = 0; c < col; c++){
-         if(routers[r][c].getTurn(LEFT_RIGHT) > 0 || routers[r][c].getTurn(RIGHT_LEFT) > 0
-            || routers[r][c].getTurn(LEFT_TOP) > 0 || routers[r][c].getTurn(LEFT_BOTTOM) > 0) {
-            cout << "--";
-         } else {
-            cout << "  ";
-         }
-         //a node
          if(routers[r][c].isPsudonode()) {
             index = routers[r][c].getCoreIndex();
             if(index != NO_CORE) {
@@ -427,21 +423,27 @@ void Network::showDiagram() {
          } else { //not a node
             cout << ".";
          }
-         if(routers[r][c].getTurn(LEFT_RIGHT) > 0 || routers[r][c].getTurn(RIGHT_LEFT) > 0
-            || routers[r][c].getTurn(RIGHT_TOP) > 0 || routers[r][c].getTurn(RIGHT_BOTTOM) > 0) {
-            cout << "--";
+         //check that the current router position has output to right side (L->R)
+         //or input from the right side (R->B), (R->T)
+         if(routers[r][c].getTurn(LEFT_RIGHT) > 0 || routers[r][c].getTurn(RIGHT_TOP) > 0
+               || routers[r][c].getTurn(RIGHT_BOTTOM) > 0) {
+            cout << "----";
+         } else if ( (c < col-1) && (routers[r][c+1].getTurn(RIGHT_LEFT) > 0) ) {
+         //check that the next right router has outgoint connection from to this router
+            cout << "----";
          } else {
-            cout << "  ";
+            cout << "    ";
          }
       }
       cout << endl;
    }
+   cout << endl;
    //print column number
    cout << "      ";
    for(int i = 0; i < col; i++) {
       cout << i << "    ";
    }
-   cout << endl << endl;
+   cout << endl;
 }
 
 
