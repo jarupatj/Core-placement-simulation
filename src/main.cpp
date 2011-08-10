@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 #include "Defs.hpp"
 #include "SimulatedAnnealing.hpp"
@@ -9,9 +10,12 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
+   //srand(time(NULL));
+   srand(10);
+
    if (argc != 10) {
-      cout << "usage ./sa <alpha> <beta> <gamma> <theta> <starting_temp> <cooling rate>"
-            " <iteration/temp> <input file>" << endl;
+      cout << "usage ./sa <alpha> <beta> <gamma> <theta> <starting_temp> "
+            "<ending_temp> <cooling rate> <iteration/temp> <input file>" << endl;
       return 0;
    }
 

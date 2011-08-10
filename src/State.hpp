@@ -1,12 +1,11 @@
-#ifndef STATE_H
-#define STATE_H
+#ifndef STATE_HPP
+#define STATE_HPP
 
 #include <vector>
 #include <cmath>
 
 #include "Defs.hpp"
 #include "Core.hpp"
-#include "RandomGenerator.hpp"
 #include "Network.hpp"
 #include "Cost.hpp"
 
@@ -21,8 +20,8 @@ class State {
       ~State();
 
       int init(double alpha, double beta, double gamma, double theta, \
-               char* filename, RandomGenerator random);
-      void generateNewState(RandomGenerator random);
+               char* filename);
+      void generateNewState();
       bool isLegal();
       double getCost();
       void printState();
@@ -44,12 +43,6 @@ class State {
 
       //function
       void deepCopy(const State& sourceState);
-      int getHops(Coordinate a, Coordinate b);
 };
-
-
-inline int State::getHops(Coordinate a, Coordinate b) {
-   return fabs(a.x - b.x) + fabs(a.y - b.y);
-}
 
 #endif

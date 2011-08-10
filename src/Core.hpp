@@ -1,5 +1,5 @@
-#ifndef CORE_H
-#define CORE_H
+#ifndef CORE_HPP
+#define CORE_HPP
 
 #include "Defs.hpp"
 

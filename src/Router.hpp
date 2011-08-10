@@ -1,5 +1,5 @@
-#ifndef ROUTER_H
-#define ROUTER_H
+#ifndef ROUTER_HPP
+#define ROUTER_HPP
 
 #define MAX_TURNS 8
 #define NO_CORE -1

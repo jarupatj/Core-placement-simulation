@@ -1,5 +1,5 @@
-#ifndef COST_H
-#define COST_H
+#ifndef COST_HPP
+#define COST_HPP
 
 #include <vector>
 #include <cmath>
@@ -36,17 +36,12 @@ class Cost {
       double dilationCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network); 
       double slackCost(int** latency, vector<Core> core, const int LINK_LATENCY); 
       double proximityCost(int** bandwidth, vector<Core> core); 
-      double utilizationCost(int** bandwidth, vector<Core> core, Network& network); 
-      int getHops(Coordinate a, Coordinate b);
+      double utilizationCost(int** bandwidth, vector<Core> core, Network& network);
 
       //calculate connection from/to one core (index) only
       double compactionCost(int** bandwidth, vector<Core> core, int index);
       double slackCost(int** latency, vector<Core> core, const int LINK_LATENCY, int index); 
       double proximityCost(int** bandwidth, vector<Core> core, int index); 
 };
-
-inline int Cost::getHops(Coordinate a, Coordinate b) {
-   return fabs(a.x - b.x) + fabs(a.y - b.y);
-}
 
 #endif

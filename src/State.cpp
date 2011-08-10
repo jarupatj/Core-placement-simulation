@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cmath>
-#include <cstdio>
+#include <fstream>
 
 #include "State.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 
@@ -40,9 +41,7 @@ State& State::operator=(const State& sourceState) {
    delete latency;
 
    core.clear();
-   
    deepCopy(sourceState);
-
    return *this;
 }
 
@@ -90,15 +89,15 @@ void State::deepCopy(const State& sourceState) {
 }
 
 int State::init(double alpha, double beta, double gamma, double theta, \
-                char* filename, RandomGenerator random){
+                char* filename){
    int numCore;
-   FILE *fp = fopen(filename, "r");
-   if(fp == NULL) {
+   ifstream file(filename);
+   if(!file.is_open()) {
       return FILE_OPEN_ERR;
    }
-   fscanf(fp, "%d%d", &LINK_BANDWIDTH, &LINK_LATENCY);
-   fscanf(fp, "%d%d", &meshRow, &meshCol);
-   fscanf(fp, "%d", &numCore);
+
+   file >> LINK_BANDWIDTH >> LINK_LATENCY
+   >> meshRow >> meshCol >> numCore;
 
    bandwidth = new int* [numCore];
    latency = new int* [numCore];
@@ -117,18 +116,20 @@ int State::init(double alpha, double beta, double gamma, double theta, \
    int x,y;
    network.init(meshRow, meshCol);
    for(int i = 0; i < numCore; i++) {
-      fscanf(fp, "%d%d", &x, &y);
+      if(file.good()) {
+         file >> x >> y;
+      }
       core.push_back(Core(x,y));
       network.addCore(core[i].getPosition(), i);
    }
    
    int from, to, bw, laten;
-   while( !feof(fp) ) {
-      fscanf(fp, "%d%d%d%d", &from, &to, &bw, &laten);
+   while( file.good() ) {
+      file >> from >> to >> bw >> laten;
       bandwidth[from-1][to-1] = bw;
       latency[from-1][to-1] = laten;
    }
-   fclose(fp);
+   file.close();
 
    //add connections
    for(int i = 0; i < numCore; i++) {
@@ -171,13 +172,13 @@ bool State::isLegal() {
    return true;
 }
 
-void State::generateNewState(RandomGenerator random) {
+void State::generateNewState() {
    //randomly select one core
-   int changedCore = random.uniform_n(core.size());
+   int changedCore = uniform_n(core.size());
    //randomly select new position
    Coordinate newPos;
-   newPos.x = random.uniform_n(meshCol);
-   newPos.y = random.uniform_n(meshRow);
+   newPos.x = uniform_n(meshCol);
+   newPos.y = uniform_n(meshRow);
    
    //if the new position is not empty 
    if( network.hasCore(newPos) ) {

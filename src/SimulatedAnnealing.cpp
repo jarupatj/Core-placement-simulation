@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include "SimulatedAnnealing.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ int SimulatedAnnealing::init(char* argv[]) {
    //init currentState
    int err = currentState.init(atof(argv[1]), atof(argv[2]), \
                                atof(argv[3]), atof(argv[4]), \
-                               argv[9], random);
+                               argv[9]);
    if( err != 0 ) {
       return err;
    }
@@ -37,7 +38,7 @@ void SimulatedAnnealing::run() {
       trial++;
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
-         newState.generateNewState(random);
+         newState.generateNewState();
          changeCost = newState.getCost()- currentState.getCost();
 
          //check legality
@@ -69,7 +70,7 @@ bool SimulatedAnnealing::acceptChange(int cost) {
 }
 
 bool SimulatedAnnealing::isAccept(double value) {
-   double r = random.uniform_0_1();
+   double r = uniform_0_1();
    double prob = exp( -value/ temp );
    return r < prob;
 }

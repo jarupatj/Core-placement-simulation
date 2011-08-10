@@ -1,7 +1,6 @@
-#ifndef SA_H
-#define SA_H
+#ifndef SA_HPP
+#define SA_HPP
 
-#include "RandomGenerator.hpp"
 #include "State.hpp"
 
 class SimulatedAnnealing {
@@ -23,7 +22,6 @@ class SimulatedAnnealing {
       //variable
       State currentState;
       State bestState;
-      RandomGenerator random;
       double temp;
 
       //function

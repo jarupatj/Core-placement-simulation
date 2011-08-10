@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "Cost.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 
