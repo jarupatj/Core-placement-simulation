@@ -113,6 +113,9 @@ int State::init(double alpha, double beta, double gamma, double theta, \
       }
    }
 
+   /*
+   * Initialize the network by placing cores on the network
+   */
    int x,y;
    network.init(meshRow, meshCol);
    for(int i = 0; i < numCore; i++) {
@@ -122,20 +125,24 @@ int State::init(double alpha, double beta, double gamma, double theta, \
       core.push_back(Core(x,y));
       network.addCore(core[i].getPosition(), i);
    }
-   
+
+   /*
+   * Read the connections from file
+   * Initialize the bandwidth matrix and latency matrix
+   */
    int from, to, bw, laten;
    while( file.good() ) {
       file >> from >> to >> bw >> laten;
       bandwidth[from-1][to-1] = bw;
       latency[from-1][to-1] = laten;
    }
-   file.close();
 
-   //add connections
+   /*
+   * Initialize the connection in the network
+   */
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
-         //has a connection from i to j
-         if(bandwidth[i][j] != 0) {
+         if(bandwidth[i][j] != 0) //has a connection from i to j{
             network.addConnection(core[i].getPosition(), core[j].getPosition());
          }
       }
@@ -145,9 +152,13 @@ int State::init(double alpha, double beta, double gamma, double theta, \
       return ILLEGAL_STATE_ERR;
    }
    
-   //calculate initial cost
+   /*
+   * Calculate initial cost
+   */
    cost.init(alpha, beta, gamma, theta);
    cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
+
+   file.close();
 
    return NO_ERR;
 }
@@ -158,7 +169,6 @@ double State::getCost() {
 
 bool State::isLegal() {
    int hops;
-   //check latency legality
    for(unsigned int i = 0; i < core.size(); i++) {
       for(unsigned int j = 0; j < core.size(); j++) {
          if(latency[i][j] != 0) {
@@ -220,7 +230,7 @@ void State::generateNewState() {
 
    } else { //new position is empty
       //remove old cost
-      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, 0);
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, REMOVE);
       //remove all connections from the old position
       network.removeAllConnections(bandwidth, core, changedCore);
       //move core from old pos
@@ -231,7 +241,7 @@ void State::generateNewState() {
       //add all connections 
       network.addAllConnections(bandwidth, core, changedCore);
       //calculate new cost
-      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, 1);
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, ADD);
       cost.calculateCost(bandwidth, core, network);
    }
 }

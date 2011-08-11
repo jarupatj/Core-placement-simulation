@@ -8,7 +8,9 @@ class SimulatedAnnealing {
       SimulatedAnnealing();
       ~SimulatedAnnealing();
 
-      int init(char* argv[]);
+      int init(double alpha, double beta, double gamma, double theta, \
+               double startTemp, double endTemp, double rate, int iter, \
+               char* inputfile );
       void run();
       void printSummary();
       void initTable();

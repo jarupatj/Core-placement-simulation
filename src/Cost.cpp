@@ -79,7 +79,6 @@ double Cost::proximityCost(int** bandwidth, vector<Core> core) {
 
 double Cost::utilizationCost(int** bandwidth, vector<Core> core, Network& network) {
    network.updateNetwork(bandwidth, core);
-   //network.printUtil();
    return network.calculateUtilization();
 }
 
@@ -90,7 +89,7 @@ void Cost::calculateCost(int** bandwidth, vector<Core> core, Network& network) {
 }
 
 void Cost::updateCost(int** bandwidth, int** latency, int LINK_LATENCY, vector<Core> core, int index, int op) {
-   if( op == 0 ) {
+   if( op == REMOVE ) {
       compaction -= compactionCost(bandwidth, core, index);
       slack -= slackCost(latency, core, LINK_LATENCY, index);
       proximity -= proximityCost(bandwidth, core, index);

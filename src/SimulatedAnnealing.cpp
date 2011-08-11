@@ -12,16 +12,15 @@ SimulatedAnnealing::SimulatedAnnealing() {}
 
 SimulatedAnnealing::~SimulatedAnnealing() {}
 
-int SimulatedAnnealing::init(char* argv[]) {
-   temp = atof(argv[5]);
-   END_TEMP = atof(argv[6]);
-   TEMP_CHANGE_FACTOR = atof(argv[7]);
-   MAX_STATE_CHANGE_PER_TEMP = atoi(argv[8]);
+int SimulatedAnnealing::init(double alpha, double beta, double gamma, double theta, \
+                             double startTemp, double endTemp, double rate, int iter, \
+                             char* inputfile ) {
+   temp = startTemp; 
+   END_TEMP = endTemp; 
+   TEMP_CHANGE_FACTOR = rate; 
+   MAX_STATE_CHANGE_PER_TEMP = iter; 
 
-   //init currentState
-   int err = currentState.init(atof(argv[1]), atof(argv[2]), \
-                               atof(argv[3]), atof(argv[4]), \
-                               argv[9]);
+   int err = currentState.init(alpha, beta, gamma, theta, inputfile);
    if( err != 0 ) {
       return err;
    }
