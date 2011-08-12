@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cmath>
 
+#include "Defs.hpp"
 #include "Cost.hpp"
 #include "Utils.hpp"
 

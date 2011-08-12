@@ -2,6 +2,7 @@
 #include <cmath>
 #include <fstream>
 
+#include "Defs.hpp"
 #include "State.hpp"
 #include "Utils.hpp"
 
@@ -142,7 +143,7 @@ int State::init(double alpha, double beta, double gamma, double theta, \
    */
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
-         if(bandwidth[i][j] != 0) //has a connection from i to j{
+         if(bandwidth[i][j] != 0) { //has a connection from i to j
             network.addConnection(core[i].getPosition(), core[j].getPosition());
          }
       }

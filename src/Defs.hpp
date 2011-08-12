@@ -16,8 +16,8 @@
 #define ITER   200
 
 //operation for update cost
-#define REMOVE
-#define ADD
+#define REMOVE	0
+#define ADD	1
 
 struct Coordinate {
    int x;

@@ -8,6 +8,20 @@
 
 using namespace std;
 
+void printUsage() {
+   cout << "\nusage: ./sa [options] input_file\n\n"
+   << "option lists are:\n"
+   << "\t-a <value> : setting alpha value\n"
+   << "\t-b <value> : setting beta value\n"
+   << "\t-g <value> : setting gamma value\n"
+   << "\t-t <value> : setting theta value\n"
+   << "\t-s <value> : setting initial temperature\n"
+   << "\t-e <value> : setting final threshold temperature\n"
+   << "\t-r <value> : setting temperature reduction rate\n"
+   << "\t-t <value> : setting iterations per temperature\n"
+   << "\t-h         : printint usage\n\n"; 
+}
+
 int main(int argc, char* argv[]) {
 
    srand(time(NULL));
@@ -23,6 +37,11 @@ int main(int argc, char* argv[]) {
    double rate = RATE; 
    int iter = ITER;
    char* inputfile;
+
+   if(argc == 1) {
+      printUsage();
+      return 0;
+   }
 
    while( (c = getopt(argc, argv, "a:b:g:t:s:e:r:i:h")) != -1) {
       switch(c) {
@@ -51,10 +70,11 @@ int main(int argc, char* argv[]) {
             iter = atoi(optarg);
             break;
          case 'h':
-            cout << "print usage\n";
+            printUsage();
             break;
          case '?':
             cout << "Unknow arguments\n";
+            printUsage();
             break;
       }
    }
