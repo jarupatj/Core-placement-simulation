@@ -132,7 +132,9 @@ void Network::addConnection(Coordinate from, Coordinate to) {
    Coordinate path;
    path.x = from.x;
    path.y = from.y;
-   //move in x direction
+   /*
+   * Move in x direction
+   */
    while( path.x != to.x ) {
       if( path.x < to.x ) { //go right
          routers[path.y][path.x].addTurn(LEFT_RIGHT);
@@ -143,7 +145,9 @@ void Network::addConnection(Coordinate from, Coordinate to) {
       }
    }
 
-   //turn
+   /*
+   * Turn
+   */
    if( from.x < to.x ) { //from left
       if (from.y < to.y ) { //go up 
          routers[path.y][path.x].addTurn(LEFT_TOP);
@@ -162,7 +166,9 @@ void Network::addConnection(Coordinate from, Coordinate to) {
       }
    }
 
-   //move in y direction
+   /*
+   * Move in y direction
+   */
    while( path.y != to.y ) {
       if( path.y < to.y ) { //go up 
          routers[path.y][path.x].addTurn(BOTTOM_TOP);
@@ -183,7 +189,9 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
    Coordinate path;
    path.x = from.x;
    path.y = from.y;
-   //move in x direction
+   /*
+   * Move in x direction
+   */
    while( path.x != to.x ) {
       if( path.x < to.x ) { //go right
          routers[path.y][path.x].removeTurn(LEFT_RIGHT);
@@ -194,7 +202,9 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
       }
    }
 
-   //turn
+   /*
+   * Turn
+   */
    if( from.x < to.x ) { //from left
       if (from.y < to.y ) { //go up 
          routers[path.y][path.x].removeTurn(LEFT_TOP);
@@ -213,7 +223,9 @@ void Network::removeConnection(Coordinate from, Coordinate to) {
       }
    }
 
-   //move in y direction
+   /*
+   * Move in y direction
+   */
    while( path.y != to.y ) {
       if( path.y < to.y ) { //go up 
          routers[path.y][path.x].removeTurn(BOTTOM_TOP);
