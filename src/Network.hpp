@@ -59,7 +59,7 @@ class Network{
 
       void printNetwork();
       void printUtil();
-      void showDiagram();
+      void showDiagram() const;
       
    private:
       int row;

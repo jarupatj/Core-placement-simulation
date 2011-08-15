@@ -400,7 +400,7 @@ void Network::printNetwork() {
    printUtil();
 }
 
-void Network::showDiagram() {
+void Network::showDiagram() const {
    int index;
    for(int r = row-1; r >= 0; r--) {
       cout << "    ";

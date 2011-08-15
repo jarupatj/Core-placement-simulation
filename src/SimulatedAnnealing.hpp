@@ -10,7 +10,7 @@ class SimulatedAnnealing {
 
       int init(double alpha, double beta, double gamma, double theta, \
                double startTemp, double endTemp, double rate, int iter, \
-               char* inputfile );
+               char* inputfile, bool verbose );
       void run();
       void printSummary();
       void initTable();
@@ -25,13 +25,14 @@ class SimulatedAnnealing {
       State currentState;
       State bestState;
       double temp;
+      double bestTemp; //temp that achieve best config
+      bool verbose;
 
       //function
       int getCost();
-      bool acceptChange(int cost);
-      bool isAccept(double value);
 
-      void printState(const int& trial, const int& worstAcc);
+      void printState(const State& state);
+      void printStateVerbose(const State& state, const char& newStateFlag, const double& randomNum);
 };
 
 #endif

@@ -14,11 +14,12 @@ SimulatedAnnealing::~SimulatedAnnealing() {}
 
 int SimulatedAnnealing::init(double alpha, double beta, double gamma, double theta, \
                              double startTemp, double endTemp, double rate, int iter, \
-                             char* inputfile ) {
+                             char* inputfile, bool verbose ) {
    temp = startTemp; 
    END_TEMP = endTemp; 
    TEMP_CHANGE_FACTOR = rate; 
    MAX_STATE_CHANGE_PER_TEMP = iter; 
+   this->verbose = verbose;
 
    int err = currentState.init(alpha, beta, gamma, theta, inputfile);
    if( err != 0 ) {
@@ -29,12 +30,11 @@ int SimulatedAnnealing::init(double alpha, double beta, double gamma, double the
 }
 
 void SimulatedAnnealing::run() {
-   int changeCost, worstAcc, trial = 0;
+   int changeCost;
    bool setCurrent = false;
+   double random, prob;
 
    while( temp > END_TEMP ) {
-      worstAcc = 0;
-      trial++;
       for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState();
@@ -44,56 +44,74 @@ void SimulatedAnnealing::run() {
          if( newState.isLegal() ) {
             if( changeCost < 0 ) {
                setCurrent = true;
-            } else if( acceptChange(changeCost) ) {
-               setCurrent = true;
-               worstAcc++;
+               if(verbose) {
+                  printStateVerbose(newState, 'Y', -1);
+               }
+            } else {
+               random = uniform_0_1();
+               prob = exp( -changeCost / temp );
+               if( random < prob) {
+                  setCurrent = true;
+                  if(verbose) {
+                     printStateVerbose(newState, 'Y', random);
+                  }
+               } else {
+                  if(verbose) {
+                     printStateVerbose(currentState, ' ', random);
+                  }
+               }
             }
-         } 
+         } else {
+            if(verbose) {
+               printStateVerbose(currentState, ' ', -1);
+            }
+         }
 
          if( setCurrent ) {
             setCurrent = false;
             currentState = newState; //deep copy
             if( newState.isLegal() && currentState.getCost() <= bestState.getCost()) {
                bestState = currentState;
+               bestTemp = temp;
             }
          } 
       }
 
-      printState(trial, worstAcc);
+      if(!verbose) {
+         printState(bestState);
+      }
       temp = temp * TEMP_CHANGE_FACTOR;
    }
 }
 
-bool SimulatedAnnealing::acceptChange(int cost) {
-   return isAccept(cost);
-}
-
-bool SimulatedAnnealing::isAccept(double value) {
-   double r = uniform_0_1();
-   double prob = exp( -value/ temp );
-   return r < prob;
-}
-
 void SimulatedAnnealing::initTable() {
-   cout << setw(6) << "trial"
-   << setw(10) << "temp"
-   << setw(12) << "cost"
-   << setw(12) << "compaction"
-   << setw(12) << "dilation"
-   << setw(12) << "slack"
-   << setw(12) << "proximity"
-   << setw(12) << "util"
-   << setw(12) << "worst acc" << endl;
+   cout << setw(10) << "Temp"
+   << setw(12) << "Cost"
+   << setw(12) << "Compaction"
+   << setw(12) << "Dilation"
+   << setw(12) << "Slack"
+   << setw(12) << "Proximity"
+   << setw(12) << "Util"
+   << setw(12) << "New state"
+   << setw(12) << "Random #"
+   << endl;
 }
 
-void SimulatedAnnealing::printState(const int& trial, const int& worstAcc) {
-   cout << setw(6) << trial;
+void SimulatedAnnealing::printState(const State& state) {
    cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
-   bestState.printState();
-   cout << setw(12) << worstAcc << endl;
+   state.printState();
+   cout << endl;
+}
+
+void SimulatedAnnealing::printStateVerbose(const State& state, const char& newStateFlag, const double& randomNum) {
+   cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
+   state.printState();
+   cout << setw(12) << newStateFlag
+   << setw(12) << randomNum
+   << endl;
 }
 
 void SimulatedAnnealing::printSummary() {
-   cout << "Temperature: " << temp << endl;
+   cout << "Temperature achieve: " << bestTemp << endl;
    bestState.printSummary();
 }

@@ -24,7 +24,8 @@ void printUsage() {
 
 int main(int argc, char* argv[]) {
 
-   srand(time(NULL));
+   unsigned int seed = time(NULL);
+   srand(seed);
    //srand(10);
 
    int c;
@@ -36,6 +37,7 @@ int main(int argc, char* argv[]) {
    double end = E_TEMP; 
    double rate = RATE; 
    int iter = ITER;
+   bool verbose = false;
    char* inputfile;
 
    if(argc == 1) {
@@ -43,7 +45,7 @@ int main(int argc, char* argv[]) {
       return 0;
    }
 
-   while( (c = getopt(argc, argv, "a:b:g:t:s:e:r:i:h")) != -1) {
+   while( (c = getopt(argc, argv, "a:b:g:t:s:e:r:i:hv")) != -1) {
       switch(c) {
          case 'a':
             alpha = atof(optarg);
@@ -69,6 +71,9 @@ int main(int argc, char* argv[]) {
          case 'i':
             iter = atoi(optarg);
             break;
+         case 'v':
+            verbose = true;
+            break;
          case 'h':
             printUsage();
             break;
@@ -82,7 +87,7 @@ int main(int argc, char* argv[]) {
    inputfile = argv[optind];
 
    SimulatedAnnealing sa;
-   int err = sa.init(alpha, beta, gamma, theta, start, end, rate, iter, inputfile);
+   int err = sa.init(alpha, beta, gamma, theta, start, end, rate, iter, inputfile, verbose);
    if(err == FILE_OPEN_ERR) {
       cout << "File open error exit" << endl;
       return 0;
@@ -98,6 +103,7 @@ int main(int argc, char* argv[]) {
    ofstream fout(outfile.c_str());
    cout.rdbuf(fout.rdbuf()); //redirect cout to the file
 
+   cout << "Random number seed " << seed << endl;
    cout << "Initial State" << endl;
    sa.printSummary();
    cout << endl;

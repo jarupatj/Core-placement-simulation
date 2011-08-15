@@ -247,11 +247,11 @@ void State::generateNewState() {
    }
 }
 
-void State::printState() {
+void State::printState() const {
    cost.printCost();
 }
 
-void State::printSummary() {
+void State::printSummary() const {
    cost.printSummary();
    network.showDiagram();
 }

@@ -149,7 +149,7 @@ double Cost::proximityCost(int** bandwidth, vector<Core> core, int index) {
 }
 
 
-void Cost::printCost() {
+void Cost::printCost() const {
    cout << right << setiosflags(ios::fixed) << setprecision(3)
    << setw(12) << cost
    << setw(12) << compaction
@@ -159,7 +159,7 @@ void Cost::printCost() {
    << setw(12) << utilization;
 }
 
-void Cost::printSummary() {
+void Cost::printSummary() const {
    cout << setiosflags(ios::fixed) << setprecision(3)<< "Cost: " << cost
         << "\tCompaction: " << compaction
         << "\tDilation: " << dilation << endl

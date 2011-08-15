@@ -24,8 +24,8 @@ class State {
       void generateNewState();
       bool isLegal();
       double getCost();
-      void printState();
-      void printSummary();
+      void printState() const;
+      void printSummary() const;
       
    private:
       int LINK_BANDWIDTH;
