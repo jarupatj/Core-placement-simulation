@@ -115,7 +115,7 @@ void SimulatedAnnealing::printState(const State& state, const char& newStateFlag
 
    if(verbose) {
       ostringstream strs;
-      strs << randomNum;
+      strs << setiosflags(ios::fixed) << setprecision(6) << randomNum;
       string str = (randomNum == -1) ? " " : strs.str();
       cout << setw(12) << newStateFlag
            << setw(12) << str;
