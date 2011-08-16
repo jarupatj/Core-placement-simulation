@@ -8,16 +8,17 @@ class SimulatedAnnealing {
       SimulatedAnnealing();
       ~SimulatedAnnealing();
 
-      int init(double alpha, double beta, double gamma, double theta, \
+      int init(double alpha, double beta, double gamma, double delta, \
                double startTemp, double endTemp, double rate, int iter, \
-               char* inputfile, bool verbose );
+               int reject, char* inputfile, bool verbose );
       void run();
-      void printSummary();
-      void initTable();
+      void printSummary() const;
+      void initTable() const;
 
    private:
       //constant
       int MAX_STATE_CHANGE_PER_TEMP;
+      int MAX_REJECT;
       double TEMP_CHANGE_FACTOR;
       double END_TEMP;
 
@@ -31,8 +32,9 @@ class SimulatedAnnealing {
       //function
       int getCost();
 
-      void printState(const State& state);
-      void printStateVerbose(const State& state, const char& newStateFlag, const double& randomNum);
+      void printState(const State& state) const;
+      void printStateVerbose(const State& state, const char& newStateFlag, \
+                             const double& randomNum) const;
 };
 
 #endif

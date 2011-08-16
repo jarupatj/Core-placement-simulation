@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cmath>
 #include <cstdlib>
+#include <sstream>
 
 #include "SimulatedAnnealing.hpp"
 #include "Utils.hpp"
@@ -12,16 +13,17 @@ SimulatedAnnealing::SimulatedAnnealing() {}
 
 SimulatedAnnealing::~SimulatedAnnealing() {}
 
-int SimulatedAnnealing::init(double alpha, double beta, double gamma, double theta, \
+int SimulatedAnnealing::init(double alpha, double beta, double gamma, double delta, \
                              double startTemp, double endTemp, double rate, int iter, \
-                             char* inputfile, bool verbose ) {
+                             int reject, char* inputfile, bool verbose ) {
    temp = startTemp; 
    END_TEMP = endTemp; 
    TEMP_CHANGE_FACTOR = rate; 
-   MAX_STATE_CHANGE_PER_TEMP = iter; 
+   MAX_STATE_CHANGE_PER_TEMP = iter;
+   MAX_REJECT = reject;
    this->verbose = verbose;
 
-   int err = currentState.init(alpha, beta, gamma, theta, inputfile);
+   int err = currentState.init(alpha, beta, gamma, delta, inputfile);
    if( err != 0 ) {
       return err;
    }
@@ -30,61 +32,69 @@ int SimulatedAnnealing::init(double alpha, double beta, double gamma, double the
 }
 
 void SimulatedAnnealing::run() {
-   int changeCost;
+   int changeCost, cReject;
    bool setCurrent = false;
    double random, prob;
 
    while( temp > END_TEMP ) {
-      for(int numChange = 0; numChange < MAX_STATE_CHANGE_PER_TEMP; numChange++) {
+      cReject = 0;
+      for(int numChange = 0; (numChange < MAX_STATE_CHANGE_PER_TEMP) && (cReject < MAX_REJECT); numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState();
          changeCost = newState.getCost()- currentState.getCost();
 
-         //check legality
+         /*
+          * Check current state legality
+          */
          if( newState.isLegal() ) {
+            /*
+             * Always accept lower cost state
+             */
             if( changeCost < 0 ) {
                setCurrent = true;
-               if(verbose) {
-                  printStateVerbose(newState, 'Y', -1);
-               }
+               if(verbose) printStateVerbose(newState, 'Y', -1);
             } else {
                random = uniform_0_1();
                prob = exp( -changeCost / temp );
+               /*
+                * Accept higher cost with probability
+                */
                if( random < prob) {
                   setCurrent = true;
-                  if(verbose) {
-                     printStateVerbose(newState, 'Y', random);
-                  }
+                  if(verbose) printStateVerbose(newState, 'Y', random);
                } else {
-                  if(verbose) {
-                     printStateVerbose(currentState, ' ', random);
-                  }
+                  cReject++;
+                  if(verbose) printStateVerbose(currentState, ' ', random);
                }
             }
          } else {
-            if(verbose) {
-               printStateVerbose(currentState, ' ', -1);
-            }
+            cReject++;
+            if(verbose) printStateVerbose(currentState, ' ', -1);
          }
 
+         /*
+          * Set new state to currentState
+          */
          if( setCurrent ) {
             setCurrent = false;
-            currentState = newState; //deep copy
-            if( newState.isLegal() && currentState.getCost() <= bestState.getCost()) {
+            cReject = 0;
+            currentState = newState;
+            /*
+             * Keep track of best state so far
+             */
+            if( newState.isLegal() && currentState.getCost() < bestState.getCost()) {
                bestState = currentState;
                bestTemp = temp;
             }
          } 
       }
 
-      if(!verbose) {
-         printState(bestState);
-      }
+      if(!verbose) printState(bestState);
       temp = temp * TEMP_CHANGE_FACTOR;
    }
 }
 
-void SimulatedAnnealing::initTable() {
+void SimulatedAnnealing::initTable() const {
    cout << setw(10) << "Temp"
    << setw(12) << "Cost"
    << setw(12) << "Compaction"
@@ -97,21 +107,26 @@ void SimulatedAnnealing::initTable() {
    << endl;
 }
 
-void SimulatedAnnealing::printState(const State& state) {
+void SimulatedAnnealing::printState(const State& state) const {
    cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
    state.printState();
    cout << endl;
 }
 
-void SimulatedAnnealing::printStateVerbose(const State& state, const char& newStateFlag, const double& randomNum) {
+void SimulatedAnnealing::printStateVerbose(const State& state, const char& newStateFlag, \
+                                           const double& randomNum) const {
+   ostringstream strs;
+   strs << randomNum;
+   string str = (randomNum == -1) ? " " : strs.str();
+
    cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
    state.printState();
    cout << setw(12) << newStateFlag
-   << setw(12) << randomNum
+   << setw(12) << str
    << endl;
 }
 
-void SimulatedAnnealing::printSummary() {
+void SimulatedAnnealing::printSummary() const {
    cout << "Temperature achieve: " << bestTemp << endl;
    bestState.printSummary();
 }

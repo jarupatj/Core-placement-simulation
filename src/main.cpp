@@ -14,11 +14,12 @@ void printUsage() {
    << "\t-a <value> : setting alpha value\n"
    << "\t-b <value> : setting beta value\n"
    << "\t-g <value> : setting gamma value\n"
-   << "\t-t <value> : setting theta value\n"
+   << "\t-d <value> : setting delta value\n"
    << "\t-s <value> : setting initial temperature\n"
    << "\t-e <value> : setting final threshold temperature\n"
    << "\t-r <value> : setting temperature reduction rate\n"
    << "\t-t <value> : setting iterations per temperature\n"
+   << "\t-c <value> : setting number of consecutive rejection per temperature\n"
    << "\t-h         : printint usage\n\n"; 
 }
 
@@ -32,11 +33,12 @@ int main(int argc, char* argv[]) {
    double alpha = ALPHA;  
    double beta = BETA; 
    double gamma = GAMMA;
-   double theta = THETA; 
+   double delta = DELTA;
    double start = S_TEMP; 
    double end = E_TEMP; 
    double rate = RATE; 
    int iter = ITER;
+   int reject = REJECT;
    bool verbose = false;
    char* inputfile;
 
@@ -45,7 +47,7 @@ int main(int argc, char* argv[]) {
       return 0;
    }
 
-   while( (c = getopt(argc, argv, "a:b:g:t:s:e:r:i:hv")) != -1) {
+   while( (c = getopt(argc, argv, "a:b:g:d:s:e:r:i:c:hv")) != -1) {
       switch(c) {
          case 'a':
             alpha = atof(optarg);
@@ -56,8 +58,8 @@ int main(int argc, char* argv[]) {
          case 'g':
             gamma = atof(optarg);
             break;
-         case 't':
-            theta = atof(optarg);
+         case 'd':
+            delta = atof(optarg);
             break;
          case 's':
             start = atof(optarg);
@@ -74,6 +76,9 @@ int main(int argc, char* argv[]) {
          case 'v':
             verbose = true;
             break;
+         case 'c':
+            reject = atoi(optarg);
+            break;
          case 'h':
             printUsage();
             break;
@@ -87,7 +92,7 @@ int main(int argc, char* argv[]) {
    inputfile = argv[optind];
 
    SimulatedAnnealing sa;
-   int err = sa.init(alpha, beta, gamma, theta, start, end, rate, iter, inputfile, verbose);
+   int err = sa.init(alpha, beta, gamma, delta, start, end, rate, iter, reject, inputfile, verbose);
    if(err == FILE_OPEN_ERR) {
       cout << "File open error exit" << endl;
       return 0;

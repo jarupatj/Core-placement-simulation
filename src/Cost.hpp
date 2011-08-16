@@ -27,7 +27,7 @@ class Cost {
 
    private:
       //variable
-      double alpha, beta, gamma, theta;
+      double alpha, beta, gamma, delta;
       double cost;
       double compaction, dilation, slack, proximity, utilization;
 

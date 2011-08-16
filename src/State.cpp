@@ -89,7 +89,7 @@ void State::deepCopy(const State& sourceState) {
    }
 }
 
-int State::init(double alpha, double beta, double gamma, double theta, \
+int State::init(double alpha, double beta, double gamma, double delta, \
                 char* filename){
    int numCore;
    ifstream file(filename);
@@ -156,7 +156,7 @@ int State::init(double alpha, double beta, double gamma, double theta, \
    /*
    * Calculate initial cost
    */
-   cost.init(alpha, beta, gamma, theta);
+   cost.init(alpha, beta, gamma, delta);
    cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 
    file.close();

@@ -12,11 +12,11 @@ Cost::Cost() {}
 
 Cost::~Cost() {}
 
-void Cost::init(double alpha, double beta, double gamma, double theta) {
+void Cost::init(double alpha, double beta, double gamma, double delta) {
    this->alpha = alpha;
    this->beta = beta;
    this->gamma = gamma;
-   this->theta = theta;
+   this->delta = delta;
 
 }
 
@@ -46,7 +46,7 @@ double Cost::dilationCost(int** bandwidth, int** latency, vector<Core> core, con
    slack = slackCost(latency, core, LINK_LATENCY);
    proximity = proximityCost(bandwidth, core);
    utilization = utilizationCost(bandwidth, core, network);
-   return beta * slack + gamma * proximity + theta * utilization;
+   return beta * slack + gamma * proximity + delta * utilization;
 }
 
 double Cost::slackCost(int** latency, vector<Core> core, const int LINK_LATENCY) {
@@ -85,7 +85,7 @@ double Cost::utilizationCost(int** bandwidth, vector<Core> core, Network& networ
 
 void Cost::calculateCost(int** bandwidth, vector<Core> core, Network& network) {
    utilization = utilizationCost(bandwidth, core, network);
-   dilation = beta * slack + gamma * proximity + theta * utilization;
+   dilation = beta * slack + gamma * proximity + delta * utilization;
    cost = alpha * compaction + (1-alpha) * dilation;
 }
 
@@ -160,7 +160,10 @@ void Cost::printCost() const {
 }
 
 void Cost::printSummary() const {
-   cout << setiosflags(ios::fixed) << setprecision(3)<< "Cost: " << cost
+   cout << setiosflags(ios::fixed) << setprecision(3)
+        << "Alpha: " << alpha << "\tBeta: " << beta
+        << "\tGamma: " << gamma << "\tDelta: " << delta
+        << "\nCost: " << cost
         << "\tCompaction: " << compaction
         << "\tDilation: " << dilation << endl
         << "Slack: " << slack
