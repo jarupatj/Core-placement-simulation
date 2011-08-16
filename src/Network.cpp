@@ -123,7 +123,7 @@ bool Network::hasCore(Coordinate pos) {
    return routers[pos.y][pos.x].getCoreIndex() != NO_CORE;
 }
 
-void Network::addConnection(Coordinate from, Coordinate to) {
+void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    assert(from.y < row);
    assert(from.x < col);
    assert(to.y < row);
@@ -137,10 +137,10 @@ void Network::addConnection(Coordinate from, Coordinate to) {
    */
    while( path.x != to.x ) {
       if( path.x < to.x ) { //go right
-         routers[path.y][path.x].addTurn(LEFT_RIGHT);
+         routers[path.y][path.x].changeTurn(LEFT_RIGHT, op);
          path.x++;
       } else { //go left
-         routers[path.y][path.x].addTurn(RIGHT_LEFT);
+         routers[path.y][path.x].changeTurn(RIGHT_LEFT, op);
          path.x--;
       }
    }
@@ -150,18 +150,18 @@ void Network::addConnection(Coordinate from, Coordinate to) {
    */
    if( from.x < to.x ) { //from left
       if (from.y < to.y ) { //go up 
-         routers[path.y][path.x].addTurn(LEFT_TOP);
+         routers[path.y][path.x].changeTurn(LEFT_TOP, op);
          path.y++;
       } else if( from.y > to.y)  { //go down
-         routers[path.y][path.x].addTurn(LEFT_BOTTOM);
+         routers[path.y][path.x].changeTurn(LEFT_BOTTOM, op);
          path.y--;
       }
    } else if( from.x > to.x ) { //from right
       if (from.y < to.y ) { //go up 
-         routers[path.y][path.x].addTurn(RIGHT_TOP);
+         routers[path.y][path.x].changeTurn(RIGHT_TOP, op);
          path.y++;
       } else if( from.y > to.y)  { //go down
-         routers[path.y][path.x].addTurn(RIGHT_BOTTOM);
+         routers[path.y][path.x].changeTurn(RIGHT_BOTTOM, op);
          path.y--;
       }
    }
@@ -171,90 +171,22 @@ void Network::addConnection(Coordinate from, Coordinate to) {
    */
    while( path.y != to.y ) {
       if( path.y < to.y ) { //go up 
-         routers[path.y][path.x].addTurn(BOTTOM_TOP);
+         routers[path.y][path.x].changeTurn(BOTTOM_TOP, op);
          path.y++;
       } else { //go down 
-         routers[path.y][path.x].addTurn(TOP_BOTTOM);
+         routers[path.y][path.x].changeTurn(TOP_BOTTOM, op);
          path.y--;
       }
    }
 }
 
-void Network::removeConnection(Coordinate from, Coordinate to) {
-   assert(from.y < row);
-   assert(from.x < col);
-   assert(to.y < row);
-   assert(to.x < col);
-
-   Coordinate path;
-   path.x = from.x;
-   path.y = from.y;
-   /*
-   * Move in x direction
-   */
-   while( path.x != to.x ) {
-      if( path.x < to.x ) { //go right
-         routers[path.y][path.x].removeTurn(LEFT_RIGHT);
-         path.x++;
-      } else { //go left
-         routers[path.y][path.x].removeTurn(RIGHT_LEFT);
-         path.x--;
-      }
-   }
-
-   /*
-   * Turn
-   */
-   if( from.x < to.x ) { //from left
-      if (from.y < to.y ) { //go up 
-         routers[path.y][path.x].removeTurn(LEFT_TOP);
-         path.y++;
-      } else if( from.y > to.y)  { //go down
-         routers[path.y][path.x].removeTurn(LEFT_BOTTOM);
-         path.y--;
-      }
-   } else if( from.x > to.x ) { //from right
-      if (from.y < to.y ) { //go up 
-         routers[path.y][path.x].removeTurn(RIGHT_TOP);
-         path.y++;
-      } else if( from.y > to.y)  { //go down
-         routers[path.y][path.x].removeTurn(RIGHT_BOTTOM);
-         path.y--;
-      }
-   }
-
-   /*
-   * Move in y direction
-   */
-   while( path.y != to.y ) {
-      if( path.y < to.y ) { //go up 
-         routers[path.y][path.x].removeTurn(BOTTOM_TOP);
-         path.y++;
-      } else { //go down 
-         routers[path.y][path.x].removeTurn(TOP_BOTTOM);
-         path.y--;
-      }
-   }
-}
-
-void Network::removeAllConnections(int** bandwidth, vector<Core> core, int index) {
+void Network::changeAllConnections(int** bandwidth, vector<Core> core, int index, int op) {
    for(unsigned int i = 0; i < core.size(); i++) {
       if(bandwidth[index][i] != 0) {
-         removeConnection(core[index].getPosition(), core[i].getPosition());
+         changeConnection(core[index].getPosition(), core[i].getPosition(), op);
       }
       if(bandwidth[i][index] != 0) {
-         removeConnection(core[i].getPosition(), core[index].getPosition());
-      }
-   }
-}
-
-void Network::addAllConnections(int** bandwidth, vector<Core> core, int index) {
-   for(unsigned int i = 0; i < core.size(); i++) {
-      if(bandwidth[index][i] != 0) {
-         addConnection(core[index].getPosition(), core[i].getPosition());
-      }
-      if(bandwidth[i][index] != 0) {
-         addConnection(core[i].getPosition(), core[index].getPosition());
+         changeConnection(core[i].getPosition(), core[index].getPosition(), op);
       }
    }
 }

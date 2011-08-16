@@ -47,10 +47,8 @@ class Network{
       void removeCore(Coordinate pos);
       int getCoreIndex(Coordinate pos); 
       bool hasCore(Coordinate pos);//check if position has a core or not
-      void addConnection(Coordinate from, Coordinate to);
-      void removeConnection(Coordinate from, Coordinate to);
-      void removeAllConnections(int** bandwidth, vector<Core> core, int index);
-      void addAllConnections(int** bandwidth, vector<Core> core, int index); 
+      void changeConnection(Coordinate from, Coordinate to, int op);
+      void changeAllConnections(int** bandwidth, vector<Core> core, int index, int op);
 
       bool isLegal(int LINK_BANDWIDTH);
 

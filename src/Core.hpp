@@ -8,7 +8,7 @@ class Core {
       Core(int x, int y);
       ~Core();
 
-      Coordinate getPosition();
+      Coordinate getPosition() const;
       void setPosition(Coordinate newPos);
 
       void printCore();

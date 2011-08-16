@@ -144,7 +144,7 @@ int State::init(double alpha, double beta, double gamma, double delta, \
    for(int i = 0; i < numCore; i++) {
       for(int j = 0; j < numCore; j++) {
          if(bandwidth[i][j] != 0) { //has a connection from i to j
-            network.addConnection(core[i].getPosition(), core[j].getPosition());
+            network.changeConnection(core[i].getPosition(), core[j].getPosition(), ADD);
          }
       }
    }
@@ -198,15 +198,15 @@ void State::generateNewState() {
       int swapCore = network.getCoreIndex(newPos);
 
       //remove all connections from the changed core 
-      network.removeAllConnections(bandwidth, core, changedCore);
+      network.changeAllConnections(bandwidth, core, changedCore, REMOVE);
       //remove all connections from the old position of the swap core
-      network.removeAllConnections(bandwidth, core, swapCore);
+      network.changeAllConnections(bandwidth, core, swapCore, REMOVE);
       //add the overlap
       if(bandwidth[changedCore][swapCore] != 0) {
-         network.addConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+         network.changeConnection(core[changedCore].getPosition(), core[swapCore].getPosition(), ADD);
       }
       if(bandwidth[swapCore][changedCore] != 0) {
-         network.addConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+         network.changeConnection(core[swapCore].getPosition(), core[changedCore].getPosition(), ADD);
       }
 
       //place core on new pos
@@ -216,15 +216,17 @@ void State::generateNewState() {
       network.addCore(newPos, changedCore);
 
       //add all connections of changedCore
-      network.addAllConnections(bandwidth, core, changedCore);
+      network.changeAllConnections(bandwidth, core, changedCore, ADD);
       //add all connections of swap core
-      network.addAllConnections(bandwidth, core, swapCore);
+      network.changeAllConnections(bandwidth, core, swapCore, ADD);
       //remove overlap
       if(bandwidth[changedCore][swapCore] != 0) {
-         network.removeConnection(core[changedCore].getPosition(), core[swapCore].getPosition());
+         network.changeConnection(core[changedCore].getPosition(),\
+                                  core[swapCore].getPosition(), REMOVE);
       }
       if(bandwidth[swapCore][changedCore] != 0) {
-         network.removeConnection(core[swapCore].getPosition(), core[changedCore].getPosition());
+         network.changeConnection(core[swapCore].getPosition(), \
+                                  core[changedCore].getPosition(), REMOVE);
       }
       //calculate new cost
       cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
@@ -233,14 +235,14 @@ void State::generateNewState() {
       //remove old cost
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, REMOVE);
       //remove all connections from the old position
-      network.removeAllConnections(bandwidth, core, changedCore);
+      network.changeAllConnections(bandwidth, core, changedCore, REMOVE);
       //move core from old pos
       network.removeCore(core[changedCore].getPosition());
       //place core on new pos
       core[changedCore].setPosition(newPos);
       network.addCore(core[changedCore].getPosition(), changedCore);
       //add all connections 
-      network.addAllConnections(bandwidth, core, changedCore);
+      network.changeAllConnections(bandwidth, core, changedCore, ADD);
       //calculate new cost
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, ADD);
       cost.calculateCost(bandwidth, core, network);

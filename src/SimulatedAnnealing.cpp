@@ -52,7 +52,7 @@ void SimulatedAnnealing::run() {
              */
             if( changeCost < 0 ) {
                setCurrent = true;
-               if(verbose) printStateVerbose(newState, 'Y', -1);
+               if(verbose) printState(newState, 'Y', -1);
             } else {
                random = uniform_0_1();
                prob = exp( -changeCost / temp );
@@ -61,15 +61,15 @@ void SimulatedAnnealing::run() {
                 */
                if( random < prob) {
                   setCurrent = true;
-                  if(verbose) printStateVerbose(newState, 'Y', random);
+                  if(verbose) printState(newState, 'Y', random);
                } else {
                   cReject++;
-                  if(verbose) printStateVerbose(currentState, ' ', random);
+                  if(verbose) printState(newState, ' ', random);
                }
             }
          } else {
             cReject++;
-            if(verbose) printStateVerbose(currentState, ' ', -1);
+            if(verbose) printState(currentState, ' ', -1);
          }
 
          /*
@@ -107,23 +107,21 @@ void SimulatedAnnealing::initTable() const {
    << endl;
 }
 
-void SimulatedAnnealing::printState(const State& state) const {
-   cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
-   state.printState();
-   cout << endl;
-}
-
-void SimulatedAnnealing::printStateVerbose(const State& state, const char& newStateFlag, \
+void SimulatedAnnealing::printState(const State& state, const char& newStateFlag, \
                                            const double& randomNum) const {
-   ostringstream strs;
-   strs << randomNum;
-   string str = (randomNum == -1) ? " " : strs.str();
 
    cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
    state.printState();
-   cout << setw(12) << newStateFlag
-   << setw(12) << str
-   << endl;
+
+   if(verbose) {
+      ostringstream strs;
+      strs << randomNum;
+      string str = (randomNum == -1) ? " " : strs.str();
+      cout << setw(12) << newStateFlag
+           << setw(12) << str;
+   }
+
+   cout << endl;
 }
 
 void SimulatedAnnealing::printSummary() const {

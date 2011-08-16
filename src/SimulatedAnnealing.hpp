@@ -32,9 +32,9 @@ class SimulatedAnnealing {
       //function
       int getCost();
 
-      void printState(const State& state) const;
-      void printStateVerbose(const State& state, const char& newStateFlag, \
-                             const double& randomNum) const;
+      //void printState(const State& state) const;
+      void printState(const State& state, const char& newStateFlag = ' ', \
+                             const double& randomNum = -1) const;
 };
 
 #endif

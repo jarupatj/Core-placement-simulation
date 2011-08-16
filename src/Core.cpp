@@ -10,7 +10,7 @@ Core::Core(int x, int y) {
 Core::~Core() {
 }
 
-Coordinate Core::getPosition() {
+Coordinate Core::getPosition() const{
    return position;
 }
 

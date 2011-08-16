@@ -21,8 +21,7 @@ class Router {
       ~Router();
 
       int getTurn(int t); //get turns[t]
-      void addTurn(int t);
-      void removeTurn(int t);
+      void changeTurn(int t, int op);
       bool isPsudonode();
       int getCoreIndex();
       void setCore(int index);

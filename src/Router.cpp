@@ -1,5 +1,6 @@
 #include <cassert>
 
+#include "Defs.hpp"
 #include "Router.hpp"
 
 using namespace std;
@@ -20,15 +21,9 @@ int Router::getTurn(int t) {
    return turns[t];
 }
 
-void Router::addTurn(int t) {
+void Router::changeTurn(int t, int op) {
    assert(t >= 0 && t < 8);
-   turns[t]++;
-   checkPsudonode();
-}
-
-void Router::removeTurn(int t) {
-   assert(t >= 0 && t < 8);
-   turns[t]--;
+   (op == ADD) ? (turns[t]++) : (turns[t]--);
    checkPsudonode();
 }
 
