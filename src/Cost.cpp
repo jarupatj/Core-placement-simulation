@@ -20,7 +20,7 @@ void Cost::init(double alpha, double beta, double gamma, double delta) {
 
 }
 
-double Cost::getCost() {
+double Cost::getCost() const {
    return cost;
 }
 

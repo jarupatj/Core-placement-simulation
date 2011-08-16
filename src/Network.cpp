@@ -210,20 +210,26 @@ void Network::updateNetwork(int** bandwidth, vector<Core> core) {
 
    for(unsigned int start = 0; start < core.size(); start++) {
       for(unsigned int dest = 0; dest < core.size(); dest++) {
-         //has a connection
+         /*
+          * has a connection
+          */
          if( bandwidth[start][dest] != 0 ) {
             prev = core[start].getPosition();
             cur = core[start].getPosition();
             dNode = core[dest].getPosition();
-            //move in x
+            /*
+             * Move in x direction
+             */
             while(cur.x != dNode.x) {
                if( cur.x < dNode.x ) { //go right
                   cur.x++;
                } else { //go left
                   cur.x--;
                }
-               //if current router position is a psudonode
-               //add connection to utilization matrix
+               /*
+                * If current router position is a psudonode
+                * add connection to utilization matrix
+                */
                if( routers[cur.y][cur.x].isPsudonode() ) {
                   nodeIdPrev = prev.y * col + prev.x;
                   nodeIdCur = cur.y * col + cur.x;
@@ -236,15 +242,19 @@ void Network::updateNetwork(int** bandwidth, vector<Core> core) {
                   }
                }
             }
-            //move in y 
+            /*
+             * Move in y direction
+             */
             while( cur.y != dNode.y ) {
                if( cur.y < dNode.y ) { //go up 
                   cur.y++;
                } else { //go down 
                   cur.y--;
                }
-               //if current router position is a psudonode
-               //add connection to utilization matrix
+               /*
+                * If current router position is a psudonode
+                * add connection to utilization matrix
+                */
                if( routers[cur.y][cur.x].isPsudonode() ) {
                   nodeIdPrev = prev.y * col + prev.x;
                   nodeIdCur = cur.y * col + cur.x;

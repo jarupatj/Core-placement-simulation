@@ -13,8 +13,7 @@ Router::Router() {
    psudonode = false;
 }
 
-Router::~Router() {
-}
+Router::~Router() {}
 
 int Router::getTurn(int t) {
    assert(t >= 0 && t < 8);

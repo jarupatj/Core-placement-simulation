@@ -18,7 +18,7 @@ class Cost {
       //function
       void init(double alpha, double beta, double gamma, double theta);
       void initCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network); 
-      double getCost();
+      double getCost() const;
       void printCost() const;
       void printSummary() const;
 

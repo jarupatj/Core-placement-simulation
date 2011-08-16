@@ -7,8 +7,7 @@ Core::Core(int x, int y) {
    position.y = y;
 }
 
-Core::~Core() {
-}
+Core::~Core() {}
 
 Coordinate Core::getPosition() const{
    return position;
