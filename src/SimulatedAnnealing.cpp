@@ -15,12 +15,13 @@ SimulatedAnnealing::~SimulatedAnnealing() {}
 
 int SimulatedAnnealing::init(double alpha, double beta, double gamma, double delta, \
                              double startTemp, double endTemp, double rate, int iter, \
-                             int reject, char* inputfile, bool verbose ) {
+                             int reject, int accept, char* inputfile, bool verbose ) {
    temp = startTemp; 
    END_TEMP = endTemp; 
    TEMP_CHANGE_FACTOR = rate; 
    MAX_STATE_CHANGE_PER_TEMP = iter;
    MAX_REJECT = reject;
+   MAX_ACCEPT = accept;
    this->verbose = verbose;
 
    int err = currentState.init(alpha, beta, gamma, delta, inputfile);
@@ -32,16 +33,27 @@ int SimulatedAnnealing::init(double alpha, double beta, double gamma, double del
 }
 
 void SimulatedAnnealing::run() {
-   int changeCost, cReject;
+   int changeCost, cReject, cAccept, iterations;
    bool setCurrent = false;
    double random, prob;
 
+   iterations = 0;
    while( temp > END_TEMP ) {
       cReject = 0;
-      for(int numChange = 0; (numChange < MAX_STATE_CHANGE_PER_TEMP) && (cReject < MAX_REJECT); numChange++) {
+      cAccept = 0;
+      /*
+       * Change temperature when one of the condition is met
+       * - attempt to change state more than MAX_STATE_CHANGE_PER_TEMP
+       * - has consecutive number of state rejection equals MAX_REJECT
+       * - has accepted new state for MAX_ACCEPT
+       */
+      for(int numChange = 0; (numChange < MAX_STATE_CHANGE_PER_TEMP) && \
+          (cReject < MAX_REJECT) && (cAccept < MAX_ACCEPT); numChange++) {
          State newState(currentState); //deep copy
          newState.generateNewState();
          changeCost = newState.getCost()- currentState.getCost();
+
+         iterations++;
 
          /*
           * Check current state legality
@@ -52,7 +64,7 @@ void SimulatedAnnealing::run() {
              */
             if( changeCost < 0 ) {
                setCurrent = true;
-               if(verbose) printState(newState, 'Y', -1);
+               if(verbose) printState(newState, iterations, 'Y', -1);
             } else {
                random = uniform_0_1();
                prob = exp( -changeCost / temp );
@@ -61,15 +73,15 @@ void SimulatedAnnealing::run() {
                 */
                if( random < prob) {
                   setCurrent = true;
-                  if(verbose) printState(newState, 'Y', random);
+                  if(verbose) printState(newState, iterations, 'Y', random);
                } else {
                   cReject++;
-                  if(verbose) printState(newState, ' ', random);
+                  if(verbose) printState(newState, iterations, ' ', random);
                }
             }
          } else {
             cReject++;
-            if(verbose) printState(currentState, ' ', -1);
+            if(verbose) printState(currentState, iterations, ' ', -1);
          }
 
          /*
@@ -78,6 +90,7 @@ void SimulatedAnnealing::run() {
          if( setCurrent ) {
             setCurrent = false;
             cReject = 0;
+            cAccept++;
             currentState = newState;
             /*
              * Keep track of best state so far
@@ -89,13 +102,14 @@ void SimulatedAnnealing::run() {
          } 
       }
 
-      if(!verbose) printState(bestState);
+      if(!verbose) printState(bestState, iterations);
       temp = temp * TEMP_CHANGE_FACTOR;
    }
 }
 
 void SimulatedAnnealing::initTable() const {
-   cout << setw(10) << "Temp"
+   cout << setw(12) << "Iterations"
+   << setw(12) << "Temp"
    << setw(12) << "Cost"
    << setw(12) << "Compaction"
    << setw(12) << "Dilation"
@@ -107,10 +121,11 @@ void SimulatedAnnealing::initTable() const {
    << endl;
 }
 
-void SimulatedAnnealing::printState(const State& state, const char& newStateFlag, \
+void SimulatedAnnealing::printState(const State& state, int& iterations, const char& newStateFlag, \
                                            const double& randomNum) const {
 
-   cout << setw(10) << setiosflags(ios::fixed) << setprecision(3) << temp;
+   cout << setw(12) << iterations;
+   cout << setw(12) << setiosflags(ios::fixed) << setprecision(3) << temp;
    state.printState();
 
    if(verbose) {

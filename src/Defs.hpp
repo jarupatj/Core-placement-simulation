@@ -13,8 +13,9 @@
 #define S_TEMP 1000
 #define E_TEMP 0.1
 #define RATE   0.9
-#define ITER   200
-#define REJECT 50
+#define ITER   400
+#define REJECT 200 
+#define ACCEPT 100 
 
 //operation for update cost
 #define REMOVE	0

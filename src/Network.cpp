@@ -300,6 +300,37 @@ Direction Network::getDirection(Coordinate from, Coordinate to) {
    }
 }
 
+int Network::getMaxBandwidthLink() const {
+   int max = 0;
+   int pos = -1,dir = -1;
+   int r=0;
+   for(int i = 0; i < (row*col); i++) {
+      for(int j = 0; j < MAX_DIRECTION; j++) {
+         if( utilization[i][j].toNodeId != NO_NODE ) {
+            if( utilization[i][j].bandwidth > max ) {
+               max = utilization[i][j].bandwidth;
+               pos = i;
+               dir = j;
+            }
+         }
+      }
+   }
+   cout << pos << "," << dir << endl;
+   
+   while(pos > col) {
+      pos -= col;
+      r++;
+   }
+
+   cout << "node position (" << r << "," << pos << ")\t";
+   if(dir == TOP) cout << "direction : top\n";
+   else if(dir == BOTTOM) cout << "direction : bottom\n";
+   else if(dir == LEFT) cout << "direction : left\n";
+   else if(dir == RIGHT) cout << "directtion : right\n";
+
+   return max;
+}
+
 bool Network::isLegal(int LINK_BANDWIDTH) {
    int legal = true;
    for(int i = 0; i < (row*col); i++) {

@@ -58,6 +58,7 @@ class Network{
       void printNetwork();
       void printUtil();
       void showDiagram() const;
+      int getMaxBandwidthLink() const;
       
    private:
       int row;

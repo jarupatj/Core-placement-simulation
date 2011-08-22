@@ -20,15 +20,15 @@ void printUsage() {
    << "\t-r <value> : setting temperature reduction rate\n"
    << "\t-t <value> : setting iterations per temperature\n"
    << "\t-c <value> : setting number of consecutive rejection per temperature\n"
-   << "\t-h         : printint usage\n\n"; 
+   << "\t-p <value> : setting threshold of state accept per temperature\n"
+   << "\t-n <value> : setting seed value for random number\n" 
+   << "\t-v         : verbose printing\n"
+   << "\t-h         : print usage\n\n"; 
 }
 
 int main(int argc, char* argv[]) {
 
    unsigned int seed = time(NULL);
-   srand(seed);
-   //srand(10);
-
    int c;
    double alpha = ALPHA;  
    double beta = BETA; 
@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
    double rate = RATE; 
    int iter = ITER;
    int reject = REJECT;
+   int accept = ACCEPT;
    bool verbose = false;
    char* inputfile;
 
@@ -47,7 +48,7 @@ int main(int argc, char* argv[]) {
       return 0;
    }
 
-   while( (c = getopt(argc, argv, "a:b:g:d:s:e:r:i:c:hv")) != -1) {
+   while( (c = getopt(argc, argv, "a:b:g:d:s:e:r:i:c:p:n:hv")) != -1) {
       switch(c) {
          case 'a':
             alpha = atof(optarg);
@@ -73,11 +74,17 @@ int main(int argc, char* argv[]) {
          case 'i':
             iter = atoi(optarg);
             break;
-         case 'v':
-            verbose = true;
-            break;
          case 'c':
             reject = atoi(optarg);
+            break;
+         case 'p':
+            accept = atoi(optarg);
+            break;
+         case 'n':
+            seed = atoi(optarg);
+            break;
+         case 'v':
+            verbose = true;
             break;
          case 'h':
             printUsage();
@@ -91,8 +98,12 @@ int main(int argc, char* argv[]) {
 
    inputfile = argv[optind];
 
+   srand(seed);
+   //srand(10);
+
    SimulatedAnnealing sa;
-   int err = sa.init(alpha, beta, gamma, delta, start, end, rate, iter, reject, inputfile, verbose);
+   int err = sa.init(alpha, beta, gamma, delta, start, end, rate, iter, \
+                     reject, accept, inputfile, verbose);
    if(err == FILE_OPEN_ERR) {
       cout << "File open error exit" << endl;
       return 0;

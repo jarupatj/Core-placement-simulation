@@ -10,7 +10,7 @@ class SimulatedAnnealing {
 
       int init(double alpha, double beta, double gamma, double delta, \
                double startTemp, double endTemp, double rate, int iter, \
-               int reject, char* inputfile, bool verbose );
+               int reject, int accept, char* inputfile, bool verbose );
       void run();
       void printSummary() const;
       void initTable() const;
@@ -19,6 +19,7 @@ class SimulatedAnnealing {
       //constant
       int MAX_STATE_CHANGE_PER_TEMP;
       int MAX_REJECT;
+      int MAX_ACCEPT;
       double TEMP_CHANGE_FACTOR;
       double END_TEMP;
 
@@ -33,8 +34,9 @@ class SimulatedAnnealing {
       int getCost();
 
       //void printState(const State& state) const;
-      void printState(const State& state, const char& newStateFlag = ' ', \
-                             const double& randomNum = -1) const;
+      void printState(const State& state, int& iterations, \
+                      const char& newStateFlag = ' ', \
+                      const double& randomNum = -1) const;
 };
 
 #endif
