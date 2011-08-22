@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
             accept = atoi(optarg);
             break;
          case 'n':
-            seed = atoi(optarg);
+            seed = (unsigned int) atoi(optarg);
             break;
          case 'v':
             verbose = true;

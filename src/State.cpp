@@ -255,6 +255,6 @@ void State::printState() const {
 
 void State::printSummary() const {
    cost.printSummary();
-   cout << "Maximum bandwidth in a link = " << network.getMaxBandwidthLink();
+   network.printMaxBandwidthLink();
    network.showDiagram();
 }

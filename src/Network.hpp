@@ -55,10 +55,10 @@ class Network{
       void updateNetwork(int** bandwidth, vector<Core> core);
       double calculateUtilization();
 
-      void printNetwork();
-      void printUtil();
+      void printNetwork() const;
+      void printUtil() const;
       void showDiagram() const;
-      int getMaxBandwidthLink() const;
+      void printMaxBandwidthLink() const;
       
    private:
       int row;

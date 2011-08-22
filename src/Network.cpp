@@ -300,7 +300,7 @@ Direction Network::getDirection(Coordinate from, Coordinate to) {
    }
 }
 
-int Network::getMaxBandwidthLink() const {
+void Network::printMaxBandwidthLink() const {
    int max = 0;
    int pos = -1,dir = -1;
    int r=0;
@@ -315,20 +315,19 @@ int Network::getMaxBandwidthLink() const {
          }
       }
    }
-   cout << pos << "," << dir << endl;
+   cout << "Maximum bandwidth in a link = " << max << endl;
    
    while(pos > col) {
       pos -= col;
       r++;
    }
 
-   cout << "node position (" << r << "," << pos << ")\t";
-   if(dir == TOP) cout << "direction : top\n";
-   else if(dir == BOTTOM) cout << "direction : bottom\n";
-   else if(dir == LEFT) cout << "direction : left\n";
-   else if(dir == RIGHT) cout << "directtion : right\n";
-
-   return max;
+   cout << "at node position (" << pos << "," << r << ")\t";
+   cout << "in direction : ";
+   if(dir == TOP) cout << "top\n";
+   else if(dir == BOTTOM) cout << "bottom\n";
+   else if(dir == LEFT) cout << "left\n";
+   else if(dir == RIGHT) cout << "right\n";
 }
 
 bool Network::isLegal(int LINK_BANDWIDTH) {
@@ -345,32 +344,30 @@ bool Network::isLegal(int LINK_BANDWIDTH) {
    return legal;
 }
 
-void Network::printNetwork() {
-   printf("        0 1 2 3 4 5 6 7\n");
+void Network::printNetwork() const {
+   cout << "        0 1 2 3 4 5 6 7\n";
    for(int i = 0; i < row; i++) {
       for(int j = 0; j < col; j++) {
-         printf("%2d,%2d = ", i, j); 
+         cout << setw(2) << i << "," << setw(2) << j << " = ";
          for(int k = 0; k < 8; k++) {
             if( routers[i][j].getTurn(k) != 0 ) {
-               printf("%d ", routers[i][j].getTurn(k));
+               cout << routers[i][j].getTurn(k) << " ";
             } else {
-               printf("  ");
+               cout << "  ";
             }
          }
-         printf("\n");
+         cout << endl;
       }
    }
 
-   printf("psudo nodes\n");
+   cout << "psudo nodes\n";
    for(int i = 0; i < row; i++) {
       for(int j = 0; j < col; j++) {
          if(routers[i][j].isPsudonode()) {
-            printf("%d-%d\n", j, i);
+            cout << j << "-" << i << endl;
          }
       }
    }
-
-   printUtil();
 }
 
 void Network::showDiagram() const {
@@ -432,20 +429,24 @@ void Network::showDiagram() const {
 }
 
 
-void Network::printUtil() {
-   printf("util\n");
-   printf("    %9s%9s%9s%9s\n", "top", "bottom", "left", "right");
+void Network::printUtil() const {
+   cout << "util\n";
+   cout << "    ";
+   cout << setw(9) << "top" << setw(9) << "bottom" 
+        << setw(9) << "left" << setw(9) << "right\n";
    for(int i = 0; i < (row*col); i++) {
-      printf("%4d ", i);
+      cout << setw(4) << i << " ";
       for(int j = 0; j < MAX_DIRECTION; j++) {
          if(utilization[i][j].toNodeId != NO_NODE) {
-            printf("<%2d,%2d,%2d> ", utilization[i][j].toNodeId, utilization[i][j].connection, utilization[i][j].bandwidth);
+            cout << "<" << setw(2) << utilization[i][j].toNodeId
+                 << "," << setw(2) << utilization[i][j].connection
+                 << "," << setw(2) << utilization[i][j].bandwidth << ">";
          } else {
-            printf("           ");
+            cout << "           ";
          }
       }
-      printf("\n");
+      cout << endl;
    }
 
-   printf("util = %f\n", calculateUtilization());
+   //printf("util = %f\n", calculateUtilization());
 }
