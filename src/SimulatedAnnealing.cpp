@@ -17,6 +17,7 @@ int SimulatedAnnealing::init(double alpha, double beta, double gamma, double del
                              double startTemp, double endTemp, double rate, int iter, \
                              int reject, int accept, char* inputfile, bool verbose ) {
    temp = startTemp; 
+   bestTemp = startTemp;
    END_TEMP = endTemp; 
    TEMP_CHANGE_FACTOR = rate; 
    MAX_STATE_CHANGE_PER_TEMP = iter;
@@ -108,7 +109,8 @@ void SimulatedAnnealing::run() {
 }
 
 void SimulatedAnnealing::initTable() const {
-   cout << setw(12) << "Iterations"
+   cout << "#"
+   << setw(11) << "Iterations"
    << setw(12) << "Temp"
    << setw(12) << "Cost"
    << setw(12) << "Compaction"
@@ -124,7 +126,8 @@ void SimulatedAnnealing::initTable() const {
 void SimulatedAnnealing::printState(const State& state, int& iterations, const char& newStateFlag, \
                                            const double& randomNum) const {
 
-   cout << setw(12) << iterations;
+   cout << (newStateFlag == 'Y' ? " " : "#");
+   cout << setw(11) << iterations;
    cout << setw(12) << setiosflags(ios::fixed) << setprecision(3) << temp;
    state.printState();
 
@@ -140,6 +143,6 @@ void SimulatedAnnealing::printState(const State& state, int& iterations, const c
 }
 
 void SimulatedAnnealing::printSummary() const {
-   cout << "Temperature achieve: " << bestTemp << endl;
+   cout << "# Temperature achieve: " << bestTemp << endl;
    bestState.printSummary();
 }

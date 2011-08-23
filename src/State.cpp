@@ -150,6 +150,11 @@ int State::init(double alpha, double beta, double gamma, double delta, \
    }
 
    if( !isLegal() ) {
+      vector< pair<unsigned int,unsigned int> >::iterator p;
+      cout << "# Contain illegal connection" << endl;
+      for(p = illegalConnection.begin(); p != illegalConnection.end(); p++) {
+         cout << "# (" << (*p).first+1 << "," << (*p).second+1 << ")" << endl;
+      }
       return ILLEGAL_STATE_ERR;
    }
    
@@ -170,17 +175,24 @@ double State::getCost() {
 
 bool State::isLegal() {
    int hops;
+   bool legal = true;
+
+   illegalConnection.clear();
+
    for(unsigned int i = 0; i < core.size(); i++) {
       for(unsigned int j = 0; j < core.size(); j++) {
          if(latency[i][j] != 0) {
             hops = getHops(core[i].getPosition(), core[j].getPosition());
             if(latency[i][j] < hops * LINK_LATENCY) {
-               return false;
+               illegalConnection.push_back( make_pair(i,j) );
+               legal = false;
+               //return false;
             }
          }
       }
    }
-   return true;
+   //return true;
+   return legal;
 }
 
 void State::generateNewState() {

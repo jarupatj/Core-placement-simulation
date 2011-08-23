@@ -315,14 +315,14 @@ void Network::printMaxBandwidthLink() const {
          }
       }
    }
-   cout << "Maximum bandwidth in a link = " << max << endl;
+   cout << "# Maximum bandwidth in a link = " << max << endl;
    
    while(pos > col) {
       pos -= col;
       r++;
    }
 
-   cout << "at node position (" << pos << "," << r << ")\t";
+   cout << "# at node position (" << pos << "," << r << ")\t";
    cout << "in direction : ";
    if(dir == TOP) cout << "top\n";
    else if(dir == BOTTOM) cout << "bottom\n";
@@ -373,7 +373,7 @@ void Network::printNetwork() const {
 void Network::showDiagram() const {
    int index;
    for(int r = row-1; r >= 0; r--) {
-      cout << "    ";
+      cout << "#   ";
       //draw top link only
       for(int c = 0; c < col; c++){
          //check that current router has outgoing link to the top router
@@ -392,7 +392,7 @@ void Network::showDiagram() const {
       }
       cout << endl;
       //print row number
-      cout << setw(4) << r << "  ";
+      cout << "#" << setw(3) << r << "  ";
       //draw right side link only
       for(int c = 0; c < col; c++){
          if(routers[r][c].isPsudonode()) {
@@ -419,9 +419,9 @@ void Network::showDiagram() const {
       }
       cout << endl;
    }
-   cout << endl;
+   cout << "#" << endl;
    //print column number
-   cout << "      ";
+   cout << "#     ";
    for(int i = 0; i < col; i++) {
       cout << i << "    ";
    }

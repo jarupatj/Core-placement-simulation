@@ -1,6 +1,7 @@
 #ifndef STATE_HPP
 #define STATE_HPP
 
+#include <utility>
 #include <vector>
 #include <cmath>
 
@@ -10,6 +11,7 @@
 #include "Cost.hpp"
 
 using std::vector;
+using std::pair;
 
 class State {
    public:
@@ -40,6 +42,8 @@ class State {
       vector<Core> core; 
       Network network;
       Cost cost;
+
+      vector< pair <unsigned int,unsigned int> > illegalConnection;
 
       //function
       void deepCopy(const State& sourceState);

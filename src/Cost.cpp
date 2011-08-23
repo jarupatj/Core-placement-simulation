@@ -160,13 +160,13 @@ void Cost::printCost() const {
 }
 
 void Cost::printSummary() const {
-   cout << setiosflags(ios::fixed) << setprecision(3)
+   cout << setiosflags(ios::fixed) << setprecision(3) << "# "
         << "Alpha: " << alpha << "\tBeta: " << beta
         << "\tGamma: " << gamma << "\tDelta: " << delta
-        << "\nCost: " << cost
+        << "\n# Cost: " << cost
         << "\tCompaction: " << compaction
-        << "\tDilation: " << dilation << endl
-        << "Slack: " << slack
+        << "\tDilation: " << dilation
+        << "\n# Slack: " << slack
         << "\tProximity: " << proximity
         << "\tUtilization: " << utilization << endl;
 }

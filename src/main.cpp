@@ -11,16 +11,16 @@ using namespace std;
 void printUsage() {
    cout << "\nusage: ./sa [options] input_file\n\n"
    << "option lists are:\n"
-   << "\t-a <value> : setting alpha value\n"
-   << "\t-b <value> : setting beta value\n"
-   << "\t-g <value> : setting gamma value\n"
-   << "\t-d <value> : setting delta value\n"
-   << "\t-s <value> : setting initial temperature\n"
-   << "\t-e <value> : setting final threshold temperature\n"
-   << "\t-r <value> : setting temperature reduction rate\n"
-   << "\t-t <value> : setting iterations per temperature\n"
-   << "\t-c <value> : setting number of consecutive rejection per temperature\n"
-   << "\t-p <value> : setting threshold of state accept per temperature\n"
+   << "\t-a <value> : setting alpha value (default = 1)\n"
+   << "\t-b <value> : setting beta value (default = 1)\n"
+   << "\t-g <value> : setting gamma value (default = 0.2)\n"
+   << "\t-d <value> : setting delta value (default = 0.04)\n"
+   << "\t-s <value> : setting initial temperature (default = 1000)\n"
+   << "\t-e <value> : setting final threshold temperature (default = 0.1)\n"
+   << "\t-r <value> : setting temperature reduction rate (default = 0.9)\n"
+   << "\t-t <value> : setting iterations per temperature (default = 400)\n"
+   << "\t-c <value> : setting number of consecutive rejection per temperature (default = 200)\n"
+   << "\t-p <value> : setting threshold of state accept per temperature (default = 100)\n"
    << "\t-n <value> : setting seed value for random number\n" 
    << "\t-v         : verbose printing\n"
    << "\t-h         : print usage\n\n"; 
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
             printUsage();
             break;
          case '?':
-            cout << "Unknow arguments\n";
+            cout << "Unknown arguments\n";
             printUsage();
             break;
       }
@@ -105,10 +105,10 @@ int main(int argc, char* argv[]) {
    int err = sa.init(alpha, beta, gamma, delta, start, end, rate, iter, \
                      reject, accept, inputfile, verbose);
    if(err == FILE_OPEN_ERR) {
-      cout << "File open error exit" << endl;
+      cout << "# File open error exit" << endl;
       return 0;
    } else if(err == ILLEGAL_STATE_ERR) {
-      cout << "Illegal initial state" << endl;
+      cout << "# Illegal initial state" << endl;
       return 0;
    }
 
@@ -119,10 +119,10 @@ int main(int argc, char* argv[]) {
    ofstream fout(outfile.c_str());
    cout.rdbuf(fout.rdbuf()); //redirect cout to the file
 
-   cout << "Random number seed " << seed << endl;
-   cout << "Initial State" << endl;
+   cout << "# Random number seed " << seed << endl;
+   cout << "# Initial State" << endl;
    sa.printSummary();
-   cout << endl;
+   cout << "#" << endl;
    sa.initTable();
 
    sa.run();
