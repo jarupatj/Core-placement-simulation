@@ -58,9 +58,9 @@ void State::deepCopy(const State& sourceState) {
 
    if(sourceState.bandwidth) {
       //allocate memory
-      bandwidth = new int* [core.size()];
+      bandwidth = new double* [core.size()];
       for(unsigned int i = 0; i < core.size(); i++) {
-         bandwidth[i] = new int [core.size()];
+         bandwidth[i] = new double [core.size()];
       }
       //copy 
       for(unsigned int i = 0; i < core.size(); i++) {
@@ -74,9 +74,9 @@ void State::deepCopy(const State& sourceState) {
    
    if(sourceState.latency) {
       //allocate memory
-      latency = new int* [core.size()];
+      latency = new double* [core.size()];
       for(unsigned int i = 0; i < core.size(); i++) {
-         latency[i] = new int [core.size()];
+         latency[i] = new double [core.size()];
       }
       //copy 
       for(unsigned int i = 0; i < core.size(); i++) {
@@ -100,11 +100,11 @@ int State::init(double alpha, double beta, double gamma, double delta, \
    file >> LINK_BANDWIDTH >> LINK_LATENCY
    >> meshRow >> meshCol >> numCore;
 
-   bandwidth = new int* [numCore];
-   latency = new int* [numCore];
+   bandwidth = new double* [numCore];
+   latency = new double* [numCore];
    for(int i = 0; i < numCore; i++) {
-      bandwidth[i] = new int [numCore];
-      latency[i] =  new int [numCore];
+      bandwidth[i] = new double [numCore];
+      latency[i] =  new double [numCore];
    }
 
    for(int i = 0; i < numCore; i++) {

@@ -30,12 +30,12 @@ class State {
       void printSummary() const;
       
    private:
-      int LINK_BANDWIDTH;
-      int LINK_LATENCY;
+      double LINK_BANDWIDTH;
+      double LINK_LATENCY;
       
       //variable
-      int **bandwidth;
-      int **latency;
+      double **bandwidth;
+      double **latency;
       int meshRow;
       int meshCol;
 

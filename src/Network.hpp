@@ -24,7 +24,7 @@ enum Direction {
 struct Link {
    int toNodeId; //link to what nodeId
    int connection; //number of connection in using this link
-   int bandwidth; //bandwidth going through this link
+   double bandwidth; //bandwidth going through this link
 
    Link() { //constructor
       toNodeId = NO_NODE;
@@ -48,11 +48,11 @@ class Network{
       int getCoreIndex(Coordinate pos); 
       bool hasCore(Coordinate pos);//check if position has a core or not
       void changeConnection(Coordinate from, Coordinate to, int op);
-      void changeAllConnections(int** bandwidth, vector<Core> core, int index, int op);
+      void changeAllConnections(double** bandwidth, vector<Core> core, int index, int op);
 
       bool isLegal(int LINK_BANDWIDTH);
 
-      void updateNetwork(int** bandwidth, vector<Core> core);
+      void updateNetwork(double** bandwidth, vector<Core> core);
       double calculateUtilization();
 
       void printNetwork() const;

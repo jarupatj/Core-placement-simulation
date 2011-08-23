@@ -35,7 +35,7 @@ class SimulatedAnnealing {
 
       //void printState(const State& state) const;
       void printState(const State& state, int& iterations, \
-                      const char& newStateFlag = ' ', \
+                      const char& newStateFlag = 'Y', \
                       const double& randomNum = -1) const;
 };
 

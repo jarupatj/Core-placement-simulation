@@ -24,13 +24,13 @@ double Cost::getCost() const {
    return cost;
 }
 
-void Cost::initCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network) {
+void Cost::initCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network) {
    compaction = compactionCost(bandwidth, core);
    dilation = dilationCost(bandwidth, latency, core, LINK_LATENCY, network);
    cost = alpha * compaction + (1-alpha) * dilation;
 }
 
-double Cost::compactionCost(int** bandwidth, vector<Core> core) {
+double Cost::compactionCost(double** bandwidth, vector<Core> core) {
    double sum = 0;
    for(unsigned int i = 0; i < core.size(); i++) {
       for(unsigned int j = 0; j < core.size(); j++) {
@@ -42,14 +42,14 @@ double Cost::compactionCost(int** bandwidth, vector<Core> core) {
    return sum;
 }
 
-double Cost::dilationCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network) {
+double Cost::dilationCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network) {
    slack = slackCost(latency, core, LINK_LATENCY);
    proximity = proximityCost(bandwidth, core);
    utilization = utilizationCost(bandwidth, core, network);
    return beta * slack + gamma * proximity + delta * utilization;
 }
 
-double Cost::slackCost(int** latency, vector<Core> core, const int LINK_LATENCY) {
+double Cost::slackCost(double** latency, vector<Core> core, const double LINK_LATENCY) {
    double sum = 0;
    int hops;
    for(unsigned int i = 0; i < core.size(); i++) {
@@ -63,7 +63,7 @@ double Cost::slackCost(int** latency, vector<Core> core, const int LINK_LATENCY)
    return sum;
 }
 
-double Cost::proximityCost(int** bandwidth, vector<Core> core) {
+double Cost::proximityCost(double** bandwidth, vector<Core> core) {
    double sum = 0;
    int dist;
    for(unsigned int i = 0; i < core.size(); i++) {
@@ -78,18 +78,18 @@ double Cost::proximityCost(int** bandwidth, vector<Core> core) {
    return sum;
 }
 
-double Cost::utilizationCost(int** bandwidth, vector<Core> core, Network& network) {
+double Cost::utilizationCost(double** bandwidth, vector<Core> core, Network& network) {
    network.updateNetwork(bandwidth, core);
    return network.calculateUtilization();
 }
 
-void Cost::calculateCost(int** bandwidth, vector<Core> core, Network& network) {
+void Cost::calculateCost(double** bandwidth, vector<Core> core, Network& network) {
    utilization = utilizationCost(bandwidth, core, network);
    dilation = beta * slack + gamma * proximity + delta * utilization;
    cost = alpha * compaction + (1-alpha) * dilation;
 }
 
-void Cost::updateCost(int** bandwidth, int** latency, int LINK_LATENCY, vector<Core> core, int index, int op) {
+void Cost::updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int index, int op) {
    if( op == REMOVE ) {
       compaction -= compactionCost(bandwidth, core, index);
       slack -= slackCost(latency, core, LINK_LATENCY, index);
@@ -101,7 +101,7 @@ void Cost::updateCost(int** bandwidth, int** latency, int LINK_LATENCY, vector<C
    }
 }
 
-double Cost::compactionCost(int** bandwidth, vector<Core> core, int index) {
+double Cost::compactionCost(double** bandwidth, vector<Core> core, int index) {
    double change = 0;
    for(unsigned int i = 0; i < core.size(); i++) {
       //connection from index to node i
@@ -116,7 +116,7 @@ double Cost::compactionCost(int** bandwidth, vector<Core> core, int index) {
    return change;
 }
 
-double Cost::slackCost(int** latency, vector<Core> core, const int LINK_LATENCY, int index) {
+double Cost::slackCost(double** latency, vector<Core> core, const double LINK_LATENCY, int index) {
    double change = 0;
    int hops;
    for(unsigned int i = 0; i < core.size(); i++) {
@@ -134,7 +134,7 @@ double Cost::slackCost(int** latency, vector<Core> core, const int LINK_LATENCY,
    return change;
 }
 
-double Cost::proximityCost(int** bandwidth, vector<Core> core, int index) {
+double Cost::proximityCost(double** bandwidth, vector<Core> core, int index) {
    double change = 0;
    int dist;
    for(unsigned int i = 0; i < core.size(); i++) {

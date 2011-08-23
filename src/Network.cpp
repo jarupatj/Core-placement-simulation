@@ -180,7 +180,7 @@ void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    }
 }
 
-void Network::changeAllConnections(int** bandwidth, vector<Core> core, int index, int op) {
+void Network::changeAllConnections(double** bandwidth, vector<Core> core, int index, int op) {
    for(unsigned int i = 0; i < core.size(); i++) {
       if(bandwidth[index][i] != 0) {
          changeConnection(core[index].getPosition(), core[i].getPosition(), op);
@@ -191,7 +191,7 @@ void Network::changeAllConnections(int** bandwidth, vector<Core> core, int index
    }
 }
 
-void Network::updateNetwork(int** bandwidth, vector<Core> core) {
+void Network::updateNetwork(double** bandwidth, vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
    Direction dir;
    Coordinate prev, cur, dNode;
@@ -301,7 +301,7 @@ Direction Network::getDirection(Coordinate from, Coordinate to) {
 }
 
 void Network::printMaxBandwidthLink() const {
-   int max = 0;
+   double max = 0;
    int pos = -1,dir = -1;
    int r=0;
    for(int i = 0; i < (row*col); i++) {

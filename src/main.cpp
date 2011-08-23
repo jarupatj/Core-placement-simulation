@@ -9,7 +9,7 @@
 using namespace std;
 
 void printUsage() {
-   cout << "\nusage: ./sa [options] input_file\n\n"
+   cout << "\nusage: ./sa [options] input_file [output_file]\n\n"
    << "option lists are:\n"
    << "\t-a <value> : setting alpha value (default = 1)\n"
    << "\t-b <value> : setting beta value (default = 1)\n"
@@ -23,7 +23,8 @@ void printUsage() {
    << "\t-p <value> : setting threshold of state accept per temperature (default = 100)\n"
    << "\t-n <value> : setting seed value for random number\n" 
    << "\t-v         : verbose printing\n"
-   << "\t-h         : print usage\n\n"; 
+   << "\t-h         : print usage\n\n"
+   << "If no output_file, then the default output_file is 'input_file.out'\n\n";
 }
 
 int main(int argc, char* argv[]) {
@@ -41,7 +42,8 @@ int main(int argc, char* argv[]) {
    int reject = REJECT;
    int accept = ACCEPT;
    bool verbose = false;
-   char* inputfile;
+   char* inputfile = NULL;
+   string outfile;
 
    if(argc == 1) {
       printUsage();
@@ -98,6 +100,14 @@ int main(int argc, char* argv[]) {
 
    inputfile = argv[optind];
 
+   if(optind+1 < argc) {
+      outfile = argv[optind+1];
+   } else {
+      outfile = inputfile;
+      outfile += ".out";
+
+   }
+
    srand(seed);
    //srand(10);
 
@@ -112,9 +122,7 @@ int main(int argc, char* argv[]) {
       return 0;
    }
 
-   //output file name is inputfile.out
-   string outfile(inputfile);
-   outfile += ".out";
+
    streambuf* cout_buf = cout.rdbuf(); //save original buf
    ofstream fout(outfile.c_str());
    cout.rdbuf(fout.rdbuf()); //redirect cout to the file

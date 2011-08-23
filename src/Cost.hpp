@@ -17,13 +17,13 @@ class Cost {
 
       //function
       void init(double alpha, double beta, double gamma, double theta);
-      void initCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network); 
+      void initCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network);
       double getCost() const;
       void printCost() const;
       void printSummary() const;
 
-      void calculateCost(int** bandwidth, vector<Core> core, Network& network); 
-      void updateCost(int** bandwidth, int** latency, int LINK_LATENCY, vector<Core> core, int index, int op); 
+      void calculateCost(double** bandwidth, vector<Core> core, Network& network);
+      void updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int index, int op);
 
    private:
       //variable
@@ -32,16 +32,16 @@ class Cost {
       double compaction, dilation, slack, proximity, utilization;
 
       //function
-      double compactionCost(int** bandwidth, vector<Core> core);
-      double dilationCost(int** bandwidth, int** latency, vector<Core> core, const int LINK_LATENCY, Network& network); 
-      double slackCost(int** latency, vector<Core> core, const int LINK_LATENCY); 
-      double proximityCost(int** bandwidth, vector<Core> core); 
-      double utilizationCost(int** bandwidth, vector<Core> core, Network& network);
+      double compactionCost(double** bandwidth, vector<Core> core);
+      double dilationCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network);
+      double slackCost(double** latency, vector<Core> core, const double LINK_LATENCY);
+      double proximityCost(double** bandwidth, vector<Core> core);
+      double utilizationCost(double** bandwidth, vector<Core> core, Network& network);
 
       //calculate connection from/to one core (index) only
-      double compactionCost(int** bandwidth, vector<Core> core, int index);
-      double slackCost(int** latency, vector<Core> core, const int LINK_LATENCY, int index); 
-      double proximityCost(int** bandwidth, vector<Core> core, int index); 
+      double compactionCost(double** bandwidth, vector<Core> core, int index);
+      double slackCost(double** latency, vector<Core> core, const double LINK_LATENCY, int index);
+      double proximityCost(double** bandwidth, vector<Core> core, int index);
 };
 
 #endif
