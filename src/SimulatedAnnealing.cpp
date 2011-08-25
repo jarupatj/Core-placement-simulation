@@ -128,7 +128,7 @@ void SimulatedAnnealing::printState(const State& state, int& iterations, const c
 
    cout << (newStateFlag == 'Y' ? " " : "#");
    cout << setw(11) << iterations;
-   cout << setw(12) << setiosflags(ios::fixed) << setprecision(3) << temp;
+   cout << setw(12) /*<< setiosflags(ios::fixed)*/ << setprecision(6) << temp;
    state.printState();
 
    if(verbose) {
@@ -143,6 +143,6 @@ void SimulatedAnnealing::printState(const State& state, int& iterations, const c
 }
 
 void SimulatedAnnealing::printSummary() const {
-   cout << "# Temperature achieve: " << bestTemp << endl;
+   cout << "# Temperature achieve: " << setprecision(6)<< bestTemp << endl;
    bestState.printSummary();
 }

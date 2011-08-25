@@ -131,7 +131,8 @@ int State::init(double alpha, double beta, double gamma, double delta, \
    * Read the connections from file
    * Initialize the bandwidth matrix and latency matrix
    */
-   int from, to, bw, laten;
+   int from, to;
+   double bw, laten;
    while( file.good() ) {
       file >> from >> to >> bw >> laten;
       bandwidth[from-1][to-1] = bw;
@@ -153,7 +154,10 @@ int State::init(double alpha, double beta, double gamma, double delta, \
       vector< pair<unsigned int,unsigned int> >::iterator p;
       cout << "# Contain illegal connection" << endl;
       for(p = illegalConnection.begin(); p != illegalConnection.end(); p++) {
-         cout << "# (" << (*p).first+1 << "," << (*p).second+1 << ")" << endl;
+         cout << "# (" << (*p).first+1 << "," << (*p).second+1 << ") ";
+         cout << bandwidth[(*p).first][(*p).second] << " "
+              << latency[(*p).first][(*p).second];
+         cout << endl;
       }
       return ILLEGAL_STATE_ERR;
    }
