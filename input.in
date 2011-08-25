@@ -1,5 +1,5 @@
 link bw/laten
 mesh row/col
 num core
-list of core init position <x y>
-list of connection <start end bw laten>
+list of core init position <x y> (must be [0, n) where n is the size(row or col))
+list of connection <start end bw laten> (core number for start/end must start from 1 [1,n))
