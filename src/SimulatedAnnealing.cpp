@@ -15,7 +15,7 @@ SimulatedAnnealing::~SimulatedAnnealing() {}
 
 int SimulatedAnnealing::init(double alpha, double beta, double gamma, double delta, \
                              double startTemp, double endTemp, double rate, int iter, \
-                             int reject, int accept, char* inputfile, bool verbose ) {
+                             int reject, int accept, char* inputfile, bool verbose, bool quiet ) {
    temp = startTemp; 
    bestTemp = startTemp;
    END_TEMP = endTemp; 
@@ -24,6 +24,7 @@ int SimulatedAnnealing::init(double alpha, double beta, double gamma, double del
    MAX_REJECT = reject;
    MAX_ACCEPT = accept;
    this->verbose = verbose;
+   this->quiet = quiet;
 
    int err = currentState.init(alpha, beta, gamma, delta, inputfile);
    if( err != 0 ) {
@@ -103,7 +104,7 @@ void SimulatedAnnealing::run() {
          } 
       }
 
-      if(!verbose) printState(bestState, iterations);
+      if(!verbose && !quiet) printState(bestState, iterations);
       temp = temp * TEMP_CHANGE_FACTOR;
    }
 }
@@ -145,4 +146,8 @@ void SimulatedAnnealing::printState(const State& state, int& iterations, const c
 void SimulatedAnnealing::printSummary() const {
    cout << "# Temperature achieve: " << setprecision(6)<< bestTemp << endl;
    bestState.printSummary();
+}
+
+void SimulatedAnnealing::printFinalCost() const {
+   cout << setiosflags(ios::fixed) << setprecision(3) << bestState.getCost() << endl;
 }

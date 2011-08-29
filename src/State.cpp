@@ -173,7 +173,7 @@ int State::init(double alpha, double beta, double gamma, double delta, \
    return NO_ERR;
 }
 
-double State::getCost() {
+double State::getCost() const{
    return cost.getCost();
 }
 

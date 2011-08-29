@@ -25,7 +25,7 @@ class State {
                char* filename);
       void generateNewState();
       bool isLegal();
-      double getCost();
+      double getCost() const;
       void printState() const;
       void printSummary() const;
       

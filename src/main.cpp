@@ -23,6 +23,7 @@ void printUsage() {
    << "\t-p <value> : setting threshold of state accept per temperature (default = 100)\n"
    << "\t-n <value> : setting seed value for random number\n" 
    << "\t-v         : verbose printing\n"
+   << "\t-q         : quiet printing\n"
    << "\t-h         : print usage\n\n"
    << "If no output_file, then the default output_file is 'input_file.out'\n\n";
 }
@@ -42,6 +43,7 @@ int main(int argc, char* argv[]) {
    int reject = REJECT;
    int accept = ACCEPT;
    bool verbose = false;
+   bool quiet = false;
    char* inputfile = NULL;
    string outfile;
 
@@ -50,7 +52,7 @@ int main(int argc, char* argv[]) {
       return 0;
    }
 
-   while( (c = getopt(argc, argv, "a:b:g:d:s:e:r:i:c:p:n:hv")) != -1) {
+   while( (c = getopt(argc, argv, "a:b:g:d:s:e:r:i:c:p:n:hvq")) != -1) {
       switch(c) {
          case 'a':
             alpha = atof(optarg);
@@ -88,6 +90,9 @@ int main(int argc, char* argv[]) {
          case 'v':
             verbose = true;
             break;
+         case 'q':
+            quiet = true;
+            break;
          case 'h':
             printUsage();
             break;
@@ -113,7 +118,7 @@ int main(int argc, char* argv[]) {
 
    SimulatedAnnealing sa;
    int err = sa.init(alpha, beta, gamma, delta, start, end, rate, iter, \
-                     reject, accept, inputfile, verbose);
+                     reject, accept, inputfile, verbose, quiet);
    if(err == FILE_OPEN_ERR) {
       cout << "# File open error exit" << endl;
       return 0;
@@ -127,16 +132,25 @@ int main(int argc, char* argv[]) {
    ofstream fout(outfile.c_str());
    cout.rdbuf(fout.rdbuf()); //redirect cout to the file
 
-   cout << "# Random number seed " << seed << endl;
-   cout << "# Initial State" << endl;
-   sa.printSummary();
-   cout << "#" << endl;
-   sa.initTable();
+   if(!quiet) {
+      cout << "# Random number seed " << seed << endl;
+      cout << "# Initial State" << endl;
+      sa.printSummary();
+      cout << "#" << endl;
+      sa.initTable();
+   }
 
    sa.run();
 
-   cout << endl;
-   sa.printSummary();
+   if(!quiet) {
+      cout << endl;
+      sa.printSummary();
+   } else {
+      cout << seed << " ";
+      cout << alpha << " " << beta << " " << gamma << " " << delta << " "
+           << start << " " << end << " " << rate << " ";
+      sa.printFinalCost();
+   }
 
    cout.rdbuf(cout_buf); //restore cout original buf
 
