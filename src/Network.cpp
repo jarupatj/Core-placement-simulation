@@ -11,7 +11,6 @@ Network::Network() {
    row = 0;
    col = 0;
    routers = NULL;
-   utilization = NULL;
 }
 
 Network::~Network() {
@@ -19,13 +18,6 @@ Network::~Network() {
       delete [] routers[i];
    }
    delete [] routers;
-
-   if( utilization != NULL ) {
-      for(int i = 0; i < (row*col); i++) {
-         delete [] utilization[i];
-      }
-      delete [] utilization;
-   }
 }
 
 Network::Network(const Network& sourceNetwork) {
@@ -42,13 +34,6 @@ Network& Network::operator=(const Network& sourceNetwork) {
    }
    delete [] routers;
 
-   if( utilization != NULL ) {
-      for(int i = 0; i < (row*col); i++) {
-         delete [] utilization[i];
-      }
-      delete [] utilization;
-   }
-
    deepCopy(sourceNetwork);
 
    return *this;
@@ -57,6 +42,7 @@ Network& Network::operator=(const Network& sourceNetwork) {
 void Network::deepCopy(const Network& sourceNetwork) {
    row = sourceNetwork.row;
    col = sourceNetwork.col;
+   utilization = sourceNetwork.utilization;
 
    if(sourceNetwork.routers) {
       routers = new Router* [row];
@@ -72,7 +58,7 @@ void Network::deepCopy(const Network& sourceNetwork) {
    } else {
       routers = NULL;
    }
-
+/*
    if(sourceNetwork.utilization) {
       utilization = new Link* [row*col];
       for(int i = 0; i < (row*col); i++) {
@@ -87,6 +73,7 @@ void Network::deepCopy(const Network& sourceNetwork) {
    } else {
       utilization = NULL;
    }
+   */
 }
 
 void Network::init(int r, int c) {
@@ -97,6 +84,8 @@ void Network::init(int r, int c) {
    for(int i = 0; i < row; i++) {
       routers[i] = new Router [col];
    }
+
+   utilization.init(r, c);
 }
 
 void Network::addCore(Coordinate pos, int coreIndex) {
@@ -196,17 +185,7 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
    Direction dir;
    Coordinate prev, cur, dNode;
 
-   if( utilization != NULL ) {
-      for(int i = 0; i < (row*col); i++) {
-         delete [] utilization[i];
-      }
-      delete [] utilization;
-   }
-
-   utilization = new Link* [row*col];
-   for(int i = 0; i < (row*col); i++) {
-      utilization[i] = new Link[MAX_DIRECTION];
-   }
+   utilization.reset();
 
    for(unsigned int start = 0; start < core.size(); start++) {
       for(unsigned int dest = 0; dest < core.size(); dest++) {
@@ -235,9 +214,7 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
                   nodeIdCur = cur.y * col + cur.x;
                   dir = getDirection(prev, cur);
                   if( dir != NO_DIR ) {
-                     utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
-                     utilization[nodeIdPrev][dir].connection++;
-                     utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                     utilization.addConnection(nodeIdPrev, dir, nodeIdCur, bandwidth[start][dest]);
                      prev = cur;
                   }
                }
@@ -260,9 +237,7 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
                   nodeIdCur = cur.y * col + cur.x;
                   dir = getDirection(prev, cur);
                   if( dir != NO_DIR ) {
-                     utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
-                     utilization[nodeIdPrev][dir].connection++;
-                     utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                     utilization.addConnection(nodeIdPrev, dir, nodeIdCur, bandwidth[start][dest]);
                      prev = cur;
                   }
                }
@@ -273,15 +248,7 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
 }
 
 double Network::calculateUtilization() {
-   double util = 0;
-   for(int i = 0; i < (row*col); i++) {
-      for(int j = 0; j < MAX_DIRECTION; j++) {
-         if( utilization[i][j].toNodeId != NO_NODE ) {
-            util += utilization[i][j].connection * utilization[i][j].bandwidth;
-         }
-      }
-   }
-   return util;
+   return utilization.calculateUtil();
 }
 
 Direction Network::getDirection(Coordinate from, Coordinate to) {
@@ -304,17 +271,9 @@ void Network::printMaxBandwidthLink() const {
    double max = 0;
    int pos = -1,dir = -1;
    int r=0;
-   for(int i = 0; i < (row*col); i++) {
-      for(int j = 0; j < MAX_DIRECTION; j++) {
-         if( utilization[i][j].toNodeId != NO_NODE ) {
-            if( utilization[i][j].bandwidth > max ) {
-               max = utilization[i][j].bandwidth;
-               pos = i;
-               dir = j;
-            }
-         }
-      }
-   }
+
+   max = utilization.getMaxBandwidth(pos, dir);
+
    cout << "# Maximum bandwidth in a link = " << max << endl;
    
    while(pos > col) {
@@ -330,6 +289,7 @@ void Network::printMaxBandwidthLink() const {
    else if(dir == RIGHT) cout << "right\n";
 }
 
+/*
 bool Network::isLegal(int LINK_BANDWIDTH) {
    int legal = true;
    for(int i = 0; i < (row*col); i++) {
@@ -342,7 +302,7 @@ bool Network::isLegal(int LINK_BANDWIDTH) {
       }
    }
    return legal;
-}
+}*/
 
 void Network::printNetwork() const {
    cout << "        0 1 2 3 4 5 6 7\n";
@@ -429,7 +389,7 @@ void Network::showDiagram() const {
    cout << endl;
 }
 
-
+/*
 void Network::printUtil() const {
    cout << "util\n";
    cout << "    ";
@@ -450,4 +410,4 @@ void Network::printUtil() const {
    }
 
    //printf("util = %f\n", calculateUtilization());
-}
+} */

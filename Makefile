@@ -1,8 +1,8 @@
 CXXFLAGS = -c -Wall -Werror -O2
 DEBUG = -g
 LDFLAGS =-L /usr/local/lib 
-SOURCES = main.cpp State.cpp Core.cpp Utils.cpp\
-		   Router.cpp Network.cpp SimulatedAnnealing.cpp Cost.cpp
+SOURCES = main.cpp State.cpp Core.cpp Utils.cpp Router.cpp\
+		   Network.cpp SimulatedAnnealing.cpp Cost.cpp Utilization.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE=sa
 #specify the directory that make should search

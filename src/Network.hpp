@@ -6,6 +6,7 @@
 #include "Defs.hpp"
 #include "Router.hpp"
 #include "Core.hpp"
+#include "Utilization.h"
 
 using std::vector;
 
@@ -15,22 +16,6 @@ enum Direction {
 	BOTTOM,
 	LEFT,
 	RIGHT
-};
-
-#define MAX_DIRECTION 4
-
-#define NO_NODE -1
-
-struct Link {
-   int toNodeId; //link to what nodeId
-   int connection; //number of connection in using this link
-   double bandwidth; //bandwidth going through this link
-
-   Link() { //constructor
-      toNodeId = NO_NODE;
-      connection = 0;
-      bandwidth = 0;
-   }
 };
 
 class Network{
@@ -50,13 +35,13 @@ class Network{
       void changeConnection(Coordinate from, Coordinate to, int op);
       void changeAllConnections(double** bandwidth, vector<Core> core, int index, int op);
 
-      bool isLegal(int LINK_BANDWIDTH);
+      //bool isLegal(int LINK_BANDWIDTH);
 
       void updateNetwork(double** bandwidth, vector<Core> core);
       double calculateUtilization();
 
       void printNetwork() const;
-      void printUtil() const;
+      //void printUtil() const;
       void showDiagram() const;
       void printMaxBandwidthLink() const;
       
@@ -65,7 +50,7 @@ class Network{
       int col;
       bool legal;
       Router **routers;
-      Link **utilization;
+      Utilization utilization;
 
       void deepCopy(const Network& sourceNetwork);
       Direction getDirection(Coordinate from, Coordinate to);
