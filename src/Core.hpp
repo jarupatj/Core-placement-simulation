@@ -8,9 +8,17 @@ class Core {
       Core(int x, int y);
       ~Core();
 
+      /*
+       * get core position
+       */
       Coordinate getPosition() const;
+      /*
+       * set core position
+       */
       void setPosition(Coordinate newPos);
-
+      /*
+       * print core position
+       */
       void printCore();
 
    private:

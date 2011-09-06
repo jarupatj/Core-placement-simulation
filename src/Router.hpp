@@ -20,10 +20,28 @@ class Router {
       Router();
       ~Router();
 
-      int getTurn(int t); //get turns[t]
+      /*
+       * get turn count of turn "t"
+       */
+      int getTurn(int t);
+      /*
+       * add or remove turn from a router
+       */
       void changeTurn(int t, int op);
+      /*
+       * check if a router is psudonode or not
+       */
       bool isPsudonode();
+      /*
+       * get indexing number of a core
+       * so we can access the core in core vector
+       */
       int getCoreIndex();
+      /*
+       * place a core to a router
+       * index corresponds to vector indexing
+       * of core vector
+       */
       void setCore(int index);
 
    private:
