@@ -183,19 +183,22 @@ bool State::isLegal() {
 
    illegalConnection.clear();
 
+   /*
+    * check every connections by going through
+    * every element in latency matrix
+    * if latency != 0 then we have a connection
+    */
    for(unsigned int i = 0; i < core.size(); i++) {
       for(unsigned int j = 0; j < core.size(); j++) {
-         if(latency[i][j] != 0) {
+         if(latency[i][j] != 0) { //has a connection
             hops = getHops(core[i].getPosition(), core[j].getPosition());
             if(latency[i][j] < hops * LINK_LATENCY) {
                illegalConnection.push_back( make_pair(i,j) );
                legal = false;
-               //return false;
             }
          }
       }
    }
-   //return true;
    return legal;
 }
 
@@ -207,9 +210,13 @@ void State::generateNewState() {
    newPos.x = uniform_n(meshCol);
    newPos.y = uniform_n(meshRow);
    
-   //if the new position is not empty 
+   /*
+    * if the new position is not empty
+    */
    if( network.hasCore(newPos) ) {
-      //swap
+      /*
+       * swap two cores
+       */
       Coordinate oldPos = core[changedCore].getPosition();
       int swapCore = network.getCoreIndex(newPos);
 
@@ -247,7 +254,11 @@ void State::generateNewState() {
       //calculate new cost
       cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
 
-   } else { //new position is empty
+   } else {
+      /*
+       * new position is empty then
+       * the core is moved
+       */
       //remove old cost
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, REMOVE);
       //remove all connections from the old position

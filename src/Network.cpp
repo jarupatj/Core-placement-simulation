@@ -15,16 +15,16 @@ Network::Network() {
 }
 
 Network::~Network() {
-   for(int i = 0; i < row; i++) {
-      delete [] routers[i];
+   for (int i = 0; i < row; i++) {
+      delete[] routers[i];
    }
-   delete [] routers;
+   delete[] routers;
 
-   if( utilization != NULL ) {
-      for(int i = 0; i < (row*col); i++) {
-         delete [] utilization[i];
+   if (utilization != NULL) {
+      for (int i = 0; i < (row * col); i++) {
+         delete[] utilization[i];
       }
-      delete [] utilization;
+      delete[] utilization;
    }
 }
 
@@ -37,16 +37,16 @@ Network& Network::operator=(const Network& sourceNetwork) {
       return *this;
    }
 
-   for(int i = 0; i < row; i++) {
-      delete [] routers[i];
+   for (int i = 0; i < row; i++) {
+      delete[] routers[i];
    }
-   delete [] routers;
+   delete[] routers;
 
-   if( utilization != NULL ) {
-      for(int i = 0; i < (row*col); i++) {
-         delete [] utilization[i];
+   if (utilization != NULL) {
+      for (int i = 0; i < (row * col); i++) {
+         delete[] utilization[i];
       }
-      delete [] utilization;
+      delete[] utilization;
    }
 
    deepCopy(sourceNetwork);
@@ -58,14 +58,14 @@ void Network::deepCopy(const Network& sourceNetwork) {
    row = sourceNetwork.row;
    col = sourceNetwork.col;
 
-   if(sourceNetwork.routers) {
-      routers = new Router* [row];
-      for(int i = 0; i < row; i++) {
-         routers[i] = new Router [col];
+   if (sourceNetwork.routers) {
+      routers = new Router*[row];
+      for (int i = 0; i < row; i++) {
+         routers[i] = new Router[col];
       }
 
-      for(int i = 0; i < row; i++) {
-         for(int j = 0; j < col; j++) {
+      for (int i = 0; i < row; i++) {
+         for (int j = 0; j < col; j++) {
             routers[i][j] = sourceNetwork.routers[i][j];
          }
       }
@@ -73,14 +73,14 @@ void Network::deepCopy(const Network& sourceNetwork) {
       routers = NULL;
    }
 
-   if(sourceNetwork.utilization) {
-      utilization = new Link* [row*col];
-      for(int i = 0; i < (row*col); i++) {
+   if (sourceNetwork.utilization) {
+      utilization = new Link*[row * col];
+      for (int i = 0; i < (row * col); i++) {
          utilization[i] = new Link[MAX_DIRECTION];
       }
 
-      for(int i = 0; i < (row*col); i++) {
-         for(int j = 0; j < MAX_DIRECTION; j++) {
+      for (int i = 0; i < (row * col); i++) {
+         for (int j = 0; j < MAX_DIRECTION; j++) {
             utilization[i][j] = sourceNetwork.utilization[i][j];
          }
       }
@@ -93,9 +93,9 @@ void Network::init(int r, int c) {
    row = r;
    col = c;
 
-   routers = new Router* [row];
-   for(int i = 0; i < row; i++) {
-      routers[i] = new Router [col];
+   routers = new Router*[row];
+   for (int i = 0; i < row; i++) {
+      routers[i] = new Router[col];
    }
 }
 
@@ -133,10 +133,10 @@ void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    path.x = from.x;
    path.y = from.y;
    /*
-   * Move in x direction
-   */
-   while( path.x != to.x ) {
-      if( path.x < to.x ) { //go right
+    * Move in x direction
+    */
+   while (path.x != to.x) {
+      if (path.x < to.x) { //go right
          routers[path.y][path.x].changeTurn(LEFT_RIGHT, op);
          path.x++;
       } else { //go left
@@ -146,31 +146,31 @@ void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    }
 
    /*
-   * Turn
-   */
-   if( from.x < to.x ) { //from left
-      if (from.y < to.y ) { //go up 
+    * Turn
+    */
+   if (from.x < to.x) { //from left
+      if (from.y < to.y) { //go up
          routers[path.y][path.x].changeTurn(LEFT_TOP, op);
          path.y++;
-      } else if( from.y > to.y)  { //go down
+      } else if (from.y > to.y) { //go down
          routers[path.y][path.x].changeTurn(LEFT_BOTTOM, op);
          path.y--;
       }
-   } else if( from.x > to.x ) { //from right
-      if (from.y < to.y ) { //go up 
+   } else if (from.x > to.x) { //from right
+      if (from.y < to.y) { //go up
          routers[path.y][path.x].changeTurn(RIGHT_TOP, op);
          path.y++;
-      } else if( from.y > to.y)  { //go down
+      } else if (from.y > to.y) { //go down
          routers[path.y][path.x].changeTurn(RIGHT_BOTTOM, op);
          path.y--;
       }
    }
 
    /*
-   * Move in y direction
-   */
-   while( path.y != to.y ) {
-      if( path.y < to.y ) { //go up 
+    * Move in y direction
+    */
+   while (path.y != to.y) {
+      if (path.y < to.y) { //go up
          routers[path.y][path.x].changeTurn(BOTTOM_TOP, op);
          path.y++;
       } else { //go down 
@@ -180,12 +180,19 @@ void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    }
 }
 
-void Network::changeAllConnections(double** bandwidth, vector<Core> core, int index, int op) {
-   for(unsigned int i = 0; i < core.size(); i++) {
-      if(bandwidth[index][i] != 0) {
+void Network::changeAllConnections(double** bandwidth, vector<Core> core,
+      int index, int op) {
+   for (unsigned int i = 0; i < core.size(); i++) {
+      /*
+       * connection from core[index] to core[i]
+       */
+      if (bandwidth[index][i] != 0) {
          changeConnection(core[index].getPosition(), core[i].getPosition(), op);
       }
-      if(bandwidth[i][index] != 0) {
+      /*
+       * connection from core[i] to core[index]
+       */
+      if (bandwidth[i][index] != 0) {
          changeConnection(core[i].getPosition(), core[index].getPosition(), op);
       }
    }
@@ -196,32 +203,32 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
    Direction dir;
    Coordinate prev, cur, dNode;
 
-   if( utilization != NULL ) {
-      for(int i = 0; i < (row*col); i++) {
-         delete [] utilization[i];
+   if (utilization != NULL) {
+      for (int i = 0; i < (row * col); i++) {
+         delete[] utilization[i];
       }
-      delete [] utilization;
+      delete[] utilization;
    }
 
-   utilization = new Link* [row*col];
-   for(int i = 0; i < (row*col); i++) {
+   utilization = new Link*[row * col];
+   for (int i = 0; i < (row * col); i++) {
       utilization[i] = new Link[MAX_DIRECTION];
    }
 
-   for(unsigned int start = 0; start < core.size(); start++) {
-      for(unsigned int dest = 0; dest < core.size(); dest++) {
+   for (unsigned int start = 0; start < core.size(); start++) {
+      for (unsigned int dest = 0; dest < core.size(); dest++) {
          /*
           * has a connection
           */
-         if( bandwidth[start][dest] != 0 ) {
+         if (bandwidth[start][dest] != 0) {
             prev = core[start].getPosition();
             cur = core[start].getPosition();
             dNode = core[dest].getPosition();
             /*
              * Move in x direction
              */
-            while(cur.x != dNode.x) {
-               if( cur.x < dNode.x ) { //go right
+            while (cur.x != dNode.x) {
+               if (cur.x < dNode.x) { //go right
                   cur.x++;
                } else { //go left
                   cur.x--;
@@ -230,14 +237,15 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
                 * If current router position is a psudonode
                 * add connection to utilization matrix
                 */
-               if( routers[cur.y][cur.x].isPsudonode() ) {
+               if (routers[cur.y][cur.x].isPsudonode()) {
                   nodeIdPrev = prev.y * col + prev.x;
                   nodeIdCur = cur.y * col + cur.x;
                   dir = getDirection(prev, cur);
-                  if( dir != NO_DIR ) {
+                  if (dir != NO_DIR) {
                      utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
                      utilization[nodeIdPrev][dir].connection++;
-                     utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                     utilization[nodeIdPrev][dir].bandwidth
+                           += bandwidth[start][dest];
                      prev = cur;
                   }
                }
@@ -245,8 +253,8 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
             /*
              * Move in y direction
              */
-            while( cur.y != dNode.y ) {
-               if( cur.y < dNode.y ) { //go up 
+            while (cur.y != dNode.y) {
+               if (cur.y < dNode.y) { //go up
                   cur.y++;
                } else { //go down 
                   cur.y--;
@@ -255,14 +263,15 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
                 * If current router position is a psudonode
                 * add connection to utilization matrix
                 */
-               if( routers[cur.y][cur.x].isPsudonode() ) {
+               if (routers[cur.y][cur.x].isPsudonode()) {
                   nodeIdPrev = prev.y * col + prev.x;
                   nodeIdCur = cur.y * col + cur.x;
                   dir = getDirection(prev, cur);
-                  if( dir != NO_DIR ) {
+                  if (dir != NO_DIR) {
                      utilization[nodeIdPrev][dir].toNodeId = nodeIdCur;
                      utilization[nodeIdPrev][dir].connection++;
-                     utilization[nodeIdPrev][dir].bandwidth += bandwidth[start][dest];
+                     utilization[nodeIdPrev][dir].bandwidth
+                           += bandwidth[start][dest];
                      prev = cur;
                   }
                }
@@ -274,9 +283,9 @@ void Network::updateNetwork(double** bandwidth, vector<Core> core) {
 
 double Network::calculateUtilization() {
    double util = 0;
-   for(int i = 0; i < (row*col); i++) {
-      for(int j = 0; j < MAX_DIRECTION; j++) {
-         if( utilization[i][j].toNodeId != NO_NODE ) {
+   for (int i = 0; i < (row * col); i++) {
+      for (int j = 0; j < MAX_DIRECTION; j++) {
+         if (utilization[i][j].toNodeId != NO_NODE) {
             util += utilization[i][j].connection * utilization[i][j].bandwidth;
          }
       }
@@ -285,14 +294,14 @@ double Network::calculateUtilization() {
 }
 
 Direction Network::getDirection(Coordinate from, Coordinate to) {
-   if( from.x < to.x ) {
+   if (from.x < to.x) {
       return RIGHT;
-   } else if( from.x > to.x ) {
+   } else if (from.x > to.x) {
       return LEFT;
    } else {
-      if( from.y < to.y ) {
+      if (from.y < to.y) {
          return TOP;
-      } else if( from.y > to.y ) {
+      } else if (from.y > to.y) {
          return BOTTOM;
       } else {
          return NO_DIR;
@@ -302,12 +311,12 @@ Direction Network::getDirection(Coordinate from, Coordinate to) {
 
 void Network::printMaxBandwidthLink() const {
    double max = 0;
-   int pos = -1,dir = -1;
-   int r=0;
-   for(int i = 0; i < (row*col); i++) {
-      for(int j = 0; j < MAX_DIRECTION; j++) {
-         if( utilization[i][j].toNodeId != NO_NODE ) {
-            if( utilization[i][j].bandwidth > max ) {
+   int pos = -1, dir = -1;
+   int r = 0;
+   for (int i = 0; i < (row * col); i++) {
+      for (int j = 0; j < MAX_DIRECTION; j++) {
+         if (utilization[i][j].toNodeId != NO_NODE) {
+            if (utilization[i][j].bandwidth > max) {
                max = utilization[i][j].bandwidth;
                pos = i;
                dir = j;
@@ -316,41 +325,45 @@ void Network::printMaxBandwidthLink() const {
       }
    }
    cout << "# Maximum bandwidth in a link = " << max << endl;
-   
-   while(pos > col) {
+
+   while (pos > col) {
       pos -= col;
       r++;
    }
 
    cout << "# at node position (" << pos << "," << r << ")\t";
    cout << "in direction : ";
-   if(dir == TOP) cout << "top\n";
-   else if(dir == BOTTOM) cout << "bottom\n";
-   else if(dir == LEFT) cout << "left\n";
-   else if(dir == RIGHT) cout << "right\n";
+   if (dir == TOP)
+      cout << "top\n";
+   else if (dir == BOTTOM)
+      cout << "bottom\n";
+   else if (dir == LEFT)
+      cout << "left\n";
+   else if (dir == RIGHT)
+      cout << "right\n";
 }
-
-bool Network::isLegal(int LINK_BANDWIDTH) {
-   int legal = true;
-   for(int i = 0; i < (row*col); i++) {
-      for(int j = 0; j < MAX_DIRECTION; j++) {
-         if( utilization[i][j].toNodeId != NO_NODE ) {
-            if( utilization[i][j].bandwidth > LINK_BANDWIDTH ) {
-               legal = false;
-            }
-         }
-      }
-   }
-   return legal;
-}
+/*
+ bool Network::isLegal(int LINK_BANDWIDTH) {
+ int legal = true;
+ for(int i = 0; i < (row*col); i++) {
+ for(int j = 0; j < MAX_DIRECTION; j++) {
+ if( utilization[i][j].toNodeId != NO_NODE ) {
+ if( utilization[i][j].bandwidth > LINK_BANDWIDTH ) {
+ legal = false;
+ }
+ }
+ }
+ }
+ return legal;
+ }*/
 
 void Network::printNetwork() const {
    cout << "        0 1 2 3 4 5 6 7\n";
-   for(int i = 0; i < row; i++) {
-      for(int j = 0; j < col; j++) {
+   for (int i = 0; i < row; i++) {
+      for (int j = 0; j < col; j++) {
          cout << setw(2) << i << "," << setw(2) << j << " = ";
-         for(int k = 0; k < 8; k++) {
-            if( routers[i][j].getTurn(k) != 0 ) {
+         for (int k = 0; k < 8; k++) {
+            if (routers[i][j].getTurn(k) != 0) {
                cout << routers[i][j].getTurn(k) << " ";
             } else {
                cout << "  ";
@@ -361,9 +374,9 @@ void Network::printNetwork() const {
    }
 
    cout << "psudo nodes\n";
-   for(int i = 0; i < row; i++) {
-      for(int j = 0; j < col; j++) {
-         if(routers[i][j].isPsudonode()) {
+   for (int i = 0; i < row; i++) {
+      for (int j = 0; j < col; j++) {
+         if (routers[i][j].isPsudonode()) {
             cout << j << "-" << i << endl;
          }
       }
@@ -372,19 +385,18 @@ void Network::printNetwork() const {
 
 void Network::showDiagram() const {
    int index;
-   for(int r = row-1; r >= 0; r--) {
+   for (int r = row - 1; r >= 0; r--) {
       cout << "#     ";
       //draw top link only
-      for(int c = 0; c < col; c++){
+      for (int c = 0; c < col; c++) {
          //check that current router has outgoing link to the top router
-         if(routers[r][c].getTurn(BOTTOM_TOP) > 0 || routers[r][c].getTurn(LEFT_TOP) > 0
-               || routers[r][c].getTurn(RIGHT_TOP) > 0) {
+         if (routers[r][c].getTurn(BOTTOM_TOP) > 0 || routers[r][c].getTurn(
+               LEFT_TOP) > 0 || routers[r][c].getTurn(RIGHT_TOP) > 0) {
             cout << setw(3) << "|";
-         } else if( (r < row-1 )&&
-                    (routers[r+1][c].getTurn(TOP_BOTTOM) > 0 ||
-                     routers[r+1][c].getTurn(LEFT_BOTTOM) > 0||
-                     routers[r+1][c].getTurn(RIGHT_BOTTOM) > 0)) {
-         //check that the top router has outgoing link to the bottom router (current router)
+         } else if ((r < row - 1) && (routers[r + 1][c].getTurn(TOP_BOTTOM) > 0
+               || routers[r + 1][c].getTurn(LEFT_BOTTOM) > 0
+               || routers[r + 1][c].getTurn(RIGHT_BOTTOM) > 0)) {
+            //check that the top router has outgoing link to the bottom router (current router)
             cout << setw(3) << "|";
          } else {
             cout << setw(3) << " ";
@@ -395,11 +407,11 @@ void Network::showDiagram() const {
       //print row number
       cout << "#" << setw(3) << r << "  ";
       //draw right side link only
-      for(int c = 0; c < col; c++){
-         if(routers[r][c].isPsudonode()) {
+      for (int c = 0; c < col; c++) {
+         if (routers[r][c].isPsudonode()) {
             index = routers[r][c].getCoreIndex();
-            if(index != NO_CORE) {
-               cout << setw(3) << index+1;
+            if (index != NO_CORE) {
+               cout << setw(3) << index + 1;
             } else {
                cout << setw(3) << "@";
             }
@@ -408,11 +420,12 @@ void Network::showDiagram() const {
          }
          //check that the current router position has output to right side (L->R)
          //or input from the right side (R->B), (R->T)
-         if(routers[r][c].getTurn(LEFT_RIGHT) > 0 || routers[r][c].getTurn(RIGHT_TOP) > 0
-               || routers[r][c].getTurn(RIGHT_BOTTOM) > 0) {
+         if (routers[r][c].getTurn(LEFT_RIGHT) > 0 || routers[r][c].getTurn(
+               RIGHT_TOP) > 0 || routers[r][c].getTurn(RIGHT_BOTTOM) > 0) {
             cout << "----";
-         } else if ( (c < col-1) && (routers[r][c+1].getTurn(RIGHT_LEFT) > 0) ) {
-         //check that the next right router has outgoint connection from to this router
+         } else if ((c < col - 1)
+               && (routers[r][c + 1].getTurn(RIGHT_LEFT) > 0)) {
+            //check that the next right router has outgoint connection from to this router
             cout << "----";
          } else {
             cout << "    ";
@@ -423,25 +436,24 @@ void Network::showDiagram() const {
    cout << "#" << endl;
    //print column number
    cout << "#     ";
-   for(int i = 0; i < col; i++) {
+   for (int i = 0; i < col; i++) {
       cout << setw(3) << i << "    ";
    }
    cout << endl;
 }
 
-
 void Network::printUtil() const {
    cout << "util\n";
    cout << "    ";
-   cout << setw(9) << "top" << setw(9) << "bottom" 
-        << setw(9) << "left" << setw(9) << "right\n";
-   for(int i = 0; i < (row*col); i++) {
+   cout << setw(9) << "top" << setw(9) << "bottom" << setw(9) << "left"
+         << setw(9) << "right\n";
+   for (int i = 0; i < (row * col); i++) {
       cout << setw(4) << i << " ";
-      for(int j = 0; j < MAX_DIRECTION; j++) {
-         if(utilization[i][j].toNodeId != NO_NODE) {
-            cout << "<" << setw(2) << utilization[i][j].toNodeId
-                 << "," << setw(2) << utilization[i][j].connection
-                 << "," << setw(2) << utilization[i][j].bandwidth << ">";
+      for (int j = 0; j < MAX_DIRECTION; j++) {
+         if (utilization[i][j].toNodeId != NO_NODE) {
+            cout << "<" << setw(2) << utilization[i][j].toNodeId << ","
+                  << setw(2) << utilization[i][j].connection << "," << setw(2)
+                  << utilization[i][j].bandwidth << ">";
          } else {
             cout << "           ";
          }

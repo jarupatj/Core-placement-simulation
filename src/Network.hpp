@@ -40,23 +40,50 @@ class Network{
       Network& operator=(const Network& sourceNetwork); 
       ~Network();
 
+      /*
+       * Initialize network
+       */
       void init(int r, int c);
-      int getRow();
-      int getCol();
+      /*
+       * place a core to a network
+       */
       void addCore(Coordinate pos, int coreIndex);
+      /*
+       * remove a core from a network
+       */
       void removeCore(Coordinate pos);
+
+      /*
+       * get indexing number of a core that is placed at "pos"
+       * the indexing number is used to access a core in core vector
+       */
       int getCoreIndex(Coordinate pos); 
-      bool hasCore(Coordinate pos);//check if position has a core or not
+      /*
+       * check if position "pos" contains a core or not
+       */
+      bool hasCore(Coordinate pos);
+      /*
+       * add/remove connection from a network
+       * op specifies operation ADD/REMOVE
+       */
       void changeConnection(Coordinate from, Coordinate to, int op);
+      /*
+       * change all connections to and from core[index]
+       * op specifies operation ADD/REMOVE
+       */
       void changeAllConnections(double** bandwidth, vector<Core> core, int index, int op);
 
-      bool isLegal(int LINK_BANDWIDTH);
+      //bool isLegal(int LINK_BANDWIDTH);
 
       void updateNetwork(double** bandwidth, vector<Core> core);
       double calculateUtilization();
 
       void printNetwork() const;
       void printUtil() const;
+      /*
+       * show network diagram
+       * - where the cores and psudonodes are located
+       */
       void showDiagram() const;
       void printMaxBandwidthLink() const;
       
@@ -70,13 +97,5 @@ class Network{
       void deepCopy(const Network& sourceNetwork);
       Direction getDirection(Coordinate from, Coordinate to);
 };
-
-inline int Network::getRow() {
-   return row;
-}
-
-inline int Network::getCol() {
-   return col;
-}
 
 #endif
