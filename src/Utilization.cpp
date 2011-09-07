@@ -6,8 +6,11 @@
  */
 
 #include <iostream>
+#include <iomanip>
 
 #include "Utilization.h"
+
+using namespace std;
 
 Utilization::Utilization() {
    utilization = NULL;
@@ -76,8 +79,8 @@ void Utilization::init(int row, int col) {
 }
 
 void Utilization::reset() {
-   for(int i = 0; i < size; i++) {
-      for(int j = 0; j < MAX_DIRECTION; j++) {
+   for (int i = 0; i < size; i++) {
+      for (int j = 0; j < MAX_DIRECTION; j++) {
          utilization[i][j].toNodeId = NO_NODE;
          utilization[i][j].connection = 0;
          utilization[i][j].bandwidth = 0;
@@ -118,5 +121,25 @@ double Utilization::getMaxBandwidth(int& pos, int& dir) const {
       }
    }
    return max;
+}
+
+void Utilization::printUtil() const {
+   cout << "util\n";
+   cout << "    ";
+   cout << setw(9) << "top" << setw(9) << "bottom" << setw(9) << "left"
+         << setw(9) << "right\n";
+   for (int i = 0; i < size; i++) {
+      cout << setw(4) << i << " ";
+      for (int j = 0; j < MAX_DIRECTION; j++) {
+         if (utilization[i][j].toNodeId != NO_NODE) {
+            cout << "<" << setw(2) << utilization[i][j].toNodeId << ","
+                  << setw(2) << utilization[i][j].connection << "," << setw(2)
+                  << utilization[i][j].bandwidth << ">";
+         } else {
+            cout << "           ";
+         }
+      }
+      cout << endl;
+   }
 }
 

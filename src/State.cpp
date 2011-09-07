@@ -259,7 +259,7 @@ void State::generateNewState() {
        * new position is empty then
        * the core is moved
        */
-      //remove old cost
+      //remove old cost (compaction, slack, proximity)
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, REMOVE);
       //remove all connections from the old position
       network.changeAllConnections(bandwidth, core, changedCore, REMOVE);
@@ -270,7 +270,7 @@ void State::generateNewState() {
       network.addCore(core[changedCore].getPosition(), changedCore);
       //add all connections 
       network.changeAllConnections(bandwidth, core, changedCore, ADD);
-      //calculate new cost
+      //calculate new cost (compaction, slack, proximity)
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, ADD);
       cost.calculateCost(bandwidth, core, network);
    }

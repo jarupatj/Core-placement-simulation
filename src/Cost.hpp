@@ -32,16 +32,16 @@ class Cost {
       double compaction, dilation, slack, proximity, utilization;
 
       //function
-      double compactionCost(double** bandwidth, vector<Core> core);
+      double initCompaction(double** bandwidth, vector<Core> core);
       double dilationCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network);
       double slackCost(double** latency, vector<Core> core, const double LINK_LATENCY);
-      double proximityCost(double** bandwidth, vector<Core> core);
+      double initProximity(double** bandwidth, vector<Core> core);
       double utilizationCost(double** bandwidth, vector<Core> core, Network& network);
 
       //calculate connection from/to one core (index) only
-      double compactionCost(double** bandwidth, vector<Core> core, int index);
+      double changeCompaction(double** bandwidth, vector<Core> core, int index);
       double slackCost(double** latency, vector<Core> core, const double LINK_LATENCY, int index);
-      double proximityCost(double** bandwidth, vector<Core> core, int index);
+      double changeProximity(double** bandwidth, vector<Core> core, int index);
 };
 
 #endif

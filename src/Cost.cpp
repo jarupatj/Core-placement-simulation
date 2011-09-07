@@ -25,12 +25,12 @@ double Cost::getCost() const {
 }
 
 void Cost::initCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network) {
-   compaction = compactionCost(bandwidth, core);
-   dilation = dilationCost(bandwidth, latency, core, LINK_LATENCY, network);
+   compaction = initCompaction(bandwidth, core);
+   dilation = initDilation(bandwidth, latency, core, LINK_LATENCY, network);
    cost = alpha * compaction + (1-alpha) * dilation;
 }
 
-double Cost::compactionCost(double** bandwidth, vector<Core> core) {
+double Cost::initCompaction(double** bandwidth, vector<Core> core) {
    double sum = 0;
    for(unsigned int i = 0; i < core.size(); i++) {
       for(unsigned int j = 0; j < core.size(); j++) {
@@ -42,14 +42,14 @@ double Cost::compactionCost(double** bandwidth, vector<Core> core) {
    return sum;
 }
 
-double Cost::dilationCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network) {
-   slack = slackCost(latency, core, LINK_LATENCY);
-   proximity = proximityCost(bandwidth, core);
+double Cost::initDilation(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network) {
+   slack = initSlack(latency, core, LINK_LATENCY);
+   proximity = initProximity(bandwidth, core);
    utilization = utilizationCost(bandwidth, core, network);
    return beta * slack + gamma * proximity + delta * utilization;
 }
 
-double Cost::slackCost(double** latency, vector<Core> core, const double LINK_LATENCY) {
+double Cost::initSlack(double** latency, vector<Core> core, const double LINK_LATENCY) {
    double sum = 0;
    int hops;
    for(unsigned int i = 0; i < core.size(); i++) {
@@ -63,7 +63,7 @@ double Cost::slackCost(double** latency, vector<Core> core, const double LINK_LA
    return sum;
 }
 
-double Cost::proximityCost(double** bandwidth, vector<Core> core) {
+double Cost::initProximity(double** bandwidth, vector<Core> core) {
    double sum = 0;
    int dist;
    for(unsigned int i = 0; i < core.size(); i++) {
@@ -91,17 +91,17 @@ void Cost::calculateCost(double** bandwidth, vector<Core> core, Network& network
 
 void Cost::updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int index, int op) {
    if( op == REMOVE ) {
-      compaction -= compactionCost(bandwidth, core, index);
-      slack -= slackCost(latency, core, LINK_LATENCY, index);
-      proximity -= proximityCost(bandwidth, core, index);
+      compaction -= changeCompaction(bandwidth, core, index);
+      slack -= changeSlack(latency, core, LINK_LATENCY, index);
+      proximity -= changeProximity(bandwidth, core, index);
    } else {
-      compaction += compactionCost(bandwidth, core, index);
-      slack += slackCost(latency, core, LINK_LATENCY, index);
-      proximity += proximityCost(bandwidth, core, index);
+      compaction += changeCompaction(bandwidth, core, index);
+      slack += changeSlack(latency, core, LINK_LATENCY, index);
+      proximity += changeProximity(bandwidth, core, index);
    }
 }
 
-double Cost::compactionCost(double** bandwidth, vector<Core> core, int index) {
+double Cost::changeCompaction(double** bandwidth, vector<Core> core, int index) {
    double change = 0;
    for(unsigned int i = 0; i < core.size(); i++) {
       //connection from index to node i
@@ -116,7 +116,7 @@ double Cost::compactionCost(double** bandwidth, vector<Core> core, int index) {
    return change;
 }
 
-double Cost::slackCost(double** latency, vector<Core> core, const double LINK_LATENCY, int index) {
+double Cost::changeSlack(double** latency, vector<Core> core, const double LINK_LATENCY, int index) {
    double change = 0;
    int hops;
    for(unsigned int i = 0; i < core.size(); i++) {
@@ -134,7 +134,7 @@ double Cost::slackCost(double** latency, vector<Core> core, const double LINK_LA
    return change;
 }
 
-double Cost::proximityCost(double** bandwidth, vector<Core> core, int index) {
+double Cost::changeProximity(double** bandwidth, vector<Core> core, int index) {
    double change = 0;
    int dist;
    for(unsigned int i = 0; i < core.size(); i++) {

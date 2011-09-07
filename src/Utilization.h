@@ -38,6 +38,8 @@ class Utilization {
       void addConnection(int nodeIdPrev, int dir, int nodeIdCur, double bw);
       double getMaxBandwidth(int& pos, int& dir) const;
 
+      void printUtil() const;
+
    private:
       int size;
       Link **utilization;
