@@ -50,7 +50,12 @@ class State {
        * - max bandwidth in a link
        */
       void printSummary() const;
-      
+      /*
+       * Generate output in an input format
+       * so that it can be used as input for simulator
+       */
+      void generateOutput(char* fileName);
+
    private:
       double LINK_BANDWIDTH;
       double LINK_LATENCY;

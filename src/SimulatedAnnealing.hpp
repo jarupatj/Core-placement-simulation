@@ -31,6 +31,11 @@ class SimulatedAnnealing {
        * print cost summary for quiet printing
        */
       void printFinalCost() const;
+      /*
+       * Generate output in an input format
+       * so that it can be used as input for simulator
+       */
+      void generateOutput(char* fileName);
 
    private:
       //constant

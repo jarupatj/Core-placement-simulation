@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
    bool verbose = false;
    bool quiet = false;
    char* inputfile = NULL;
-   string outputNext;
+   char* outputNext = NULL;
    string outfile;
    ofstream fout;
    streambuf* cout_buf = NULL;
@@ -183,6 +183,14 @@ int main(int argc, char* argv[]) {
    if (!outfile.empty()) {
       cout.rdbuf(cout_buf); //restore cout original buf
       fout.close();
+   }
+
+   /*
+    * Generate output in an input format
+    * so that it can be used as input for simulator
+    */
+   if (outputNext != NULL) {
+      sa.generateOutput(outputNext);
    }
 
    return 0;

@@ -290,3 +290,30 @@ void State::printSummary() const {
    network.printMaxBandwidthLink();
    network.showDiagram();
 }
+
+void State::generateOutput(char *fileName) {
+   ofstream file(fileName);
+
+   int numCore = core.size();
+
+   file << LINK_BANDWIDTH << " " << LINK_LATENCY << endl
+        << meshRow << " " << meshCol << endl
+        << numCore << endl;
+
+   Coordinate pos;
+   for(vector<Core>::iterator it = core.begin(); it < core.end(); it++) {
+      pos = (*it).getPosition();
+      file << pos.x << " " << pos.y << endl;
+   }
+
+   for(int i = 0; i < numCore; i++) {
+      for(int j = 0; j < numCore; j++) {
+         if(bandwidth[i][j] != 0) {
+            file << i+1 << " " << j+1 << " "
+                 << bandwidth[i][j] << " " << latency[i][j] << endl;
+         }
+      }
+   }
+
+   file.close();
+}
