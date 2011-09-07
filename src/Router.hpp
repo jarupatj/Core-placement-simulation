@@ -26,6 +26,7 @@ class Router {
       int getTurn(int t);
       /*
        * add or remove turn from a router
+       * op is either ADD or REMOVE
        */
       void changeTurn(int t, int op);
       /*

@@ -1,14 +1,7 @@
-/*
- * Utilization.cpp
- *
- *  Created on: Sep 6, 2011
- *      Author: nana
- */
-
 #include <iostream>
 #include <iomanip>
 
-#include "Utilization.h"
+#include "Utilization.hpp"
 
 using namespace std;
 
@@ -107,14 +100,14 @@ double Utilization::calculateUtil() {
    return util;
 }
 
-double Utilization::getMaxBandwidth(int& pos, int& dir) const {
+double Utilization::getMaxBandwidth(int& nodeId, int& dir) const {
    double max = 0;
-   for (int i = 0; i < (size); i++) {
+   for (int i = 0; i < size; i++) {
       for (int j = 0; j < MAX_DIRECTION; j++) {
          if (utilization[i][j].toNodeId != NO_NODE) {
             if (utilization[i][j].bandwidth > max) {
                max = utilization[i][j].bandwidth;
-               pos = i;
+               nodeId = i;
                dir = j;
             }
          }

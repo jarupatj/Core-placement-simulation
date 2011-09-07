@@ -23,19 +23,43 @@ class Utilization {
       ~Utilization();
 
       Utilization& operator=(const Utilization& sourceUtil);
-      void deepCopy(const Utilization& sourceUtil);
-
+      /*
+       * initialize utilization matrix
+       * allocate the memory
+       */
       void init(int row, int col);
+      /*
+       * set all element of the matrix to zero
+       */
       void reset();
+      /*
+       * calculate utilization cost
+       */
       double calculateUtil();
+      /*
+       * Update utilization matrix
+       * This adds connection between 2 psudonodes.
+       * The connection starts from "nodeIdPrev" to "nodeIdCur"
+       * in direction "dir" with bandwidth "bw"
+       */
       void addConnection(int nodeIdPrev, int dir, int nodeIdCur, double bw);
-      double getMaxBandwidth(int& pos, int& dir) const;
-
+      /*
+       * Get the maximum bandwidth of a link in a network
+       * nodeId is modified to nodeId of a utilization matrix
+       * dir is modified to indicate which direction a link is located
+       * relative to the node
+       */
+      double getMaxBandwidth(int& nodeId, int& dir) const;
+      /*
+       * print utilization matrix
+       */
       void printUtil() const;
 
    private:
       int size;
       Link **utilization;
+
+      void deepCopy(const Utilization& sourceUtil);
 };
 
 #endif /* UTILIZATION_HPP_ */

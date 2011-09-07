@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
    to.y = 4;
    network.changeConnection(from, to); //5-2
 
-   network.updateNetwork(bandwidth, core);
+   network.updateUtilization(bandwidth, core);
 
    int changedCore = 3;
    Coordinate newPos = {4,6};
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
    network.addAllConnections(bandwidth, core, changedCore);
    */
 
-   network.updateNetwork(bandwidth, core);
+   network.updateUtilization(bandwidth, core);
 
    network.printNetwork();
 

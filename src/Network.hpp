@@ -6,7 +6,7 @@
 #include "Defs.hpp"
 #include "Router.hpp"
 #include "Core.hpp"
-#include "Utilization.h"
+#include "Utilization.hpp"
 
 using std::vector;
 
@@ -60,11 +60,18 @@ class Network{
 
       //bool isLegal(int LINK_BANDWIDTH);
 
-      void updateNetwork(double** bandwidth, vector<Core> core);
+      /*
+       * Update utilization matrix by tracing route of all connections
+       */
+      void updateUtilization(double** bandwidth, vector<Core> core);
+      /*
+       * calculate utilization using utilization matrix
+       */
       double calculateUtilization();
 
       void printNetwork() const;
       //void printUtil() const;
+
       /*
        * show network diagram
        * - where the cores and psudonodes are located
@@ -80,6 +87,9 @@ class Network{
       Utilization utilization;
 
       void deepCopy(const Network& sourceNetwork);
+      /*
+       * get a direction that would take you from "from" to "to"
+       */
       Direction getDirection(Coordinate from, Coordinate to);
 };
 
