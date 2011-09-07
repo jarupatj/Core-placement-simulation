@@ -396,26 +396,3 @@ void Network::showDiagram() const {
    }
    cout << endl;
 }
-
-/*
-void Network::printUtil() const {
-   cout << "util\n";
-   cout << "    ";
-   cout << setw(9) << "top" << setw(9) << "bottom" << setw(9) << "left"
-         << setw(9) << "right\n";
-   for (int i = 0; i < (row * col); i++) {
-      cout << setw(4) << i << " ";
-      for (int j = 0; j < MAX_DIRECTION; j++) {
-         if (utilization[i][j].toNodeId != NO_NODE) {
-            cout << "<" << setw(2) << utilization[i][j].toNodeId << ","
-                  << setw(2) << utilization[i][j].connection << "," << setw(2)
-                  << utilization[i][j].bandwidth << ">";
-         } else {
-            cout << "           ";
-         }
-      }
-      cout << endl;
-   }
-
-   //printf("util = %f\n", calculateUtilization());
-} */

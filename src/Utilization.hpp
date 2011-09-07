@@ -1,12 +1,5 @@
-/*
- * Utilization.h
- *
- *  Created on: Sep 6, 2011
- *      Author: nana
- */
-
-#ifndef UTILIZATION_H_
-#define UTILIZATION_H_
+#ifndef UTILIZATION_HPP_
+#define UTILIZATION_HPP_
 
 #define MAX_DIRECTION 4
 
@@ -45,4 +38,4 @@ class Utilization {
       Link **utilization;
 };
 
-#endif /* UTILIZATION_H_ */
+#endif /* UTILIZATION_HPP_ */
