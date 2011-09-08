@@ -3,12 +3,14 @@
 
 #include <vector>
 #include <cmath>
+#include <string>
 
 #include "Defs.hpp"
 #include "Network.hpp"
 #include "Core.hpp"
 
 using std::vector;
+using std::string;
 
 class Cost {
    public:
@@ -48,7 +50,7 @@ class Cost {
        */
       void updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int index, int op);
 
-      void printQuiet() const;
+      string printQuiet() const;
 
    private:
       //variable

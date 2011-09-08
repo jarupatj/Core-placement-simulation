@@ -1,7 +1,11 @@
 #ifndef SA_HPP
 #define SA_HPP
 
+#include <sstream>
+
 #include "State.hpp"
+
+using std::stringstream;
 
 class SimulatedAnnealing {
    public:
@@ -30,7 +34,7 @@ class SimulatedAnnealing {
       /*
        * print cost summary for quiet printing
        */
-      void printFinalCost() const;
+      string printFinalCost() const;
       /*
        * Generate output in an input format
        * so that it can be used as input for simulator

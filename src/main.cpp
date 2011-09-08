@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include <sstream>
 
 #include "Defs.hpp"
 #include "SimulatedAnnealing.hpp"
@@ -48,6 +49,7 @@ int main(int argc, char* argv[]) {
    bool quiet = false;
    char* inputfile = NULL;
    char* outfile = NULL;
+   string outstr;
 
    if (argc == 1) {
       printUsage();
@@ -156,10 +158,12 @@ int main(int argc, char* argv[]) {
       cout << endl;
       sa.printSummary();
    } else {
-      cout << seed << " ";
-      cout << alpha << " " << beta << " " << gamma << " " << delta << " "
+      stringstream s;
+      s << seed << " ";
+      s << alpha << " " << beta << " " << gamma << " " << delta << " "
             << start << " " << end << " " << rate << " ";
-      sa.printFinalCost();
+      s << sa.printFinalCost();
+      cout << s.str();
    }
 
    /*

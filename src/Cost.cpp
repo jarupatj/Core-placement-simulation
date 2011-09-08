@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <sstream>
 
 #include "Defs.hpp"
 #include "Cost.hpp"
@@ -166,10 +167,12 @@ void Cost::printCost() const {
          << slack << setw(12) << proximity << setw(12) << utilization;
 }
 
-void Cost::printQuiet() const {
-   cout << right << setiosflags(ios::fixed) << setprecision(3)
+string Cost::printQuiet() const {
+   stringstream str;
+   str << right << setiosflags(ios::fixed) << setprecision(3)
         << cost << " " << compaction << " " << dilation << " "
         << slack << " " << proximity << " " << utilization;
+   return str.str();
 }
 
 void Cost::printSummary() const {

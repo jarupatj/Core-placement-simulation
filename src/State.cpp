@@ -291,8 +291,8 @@ void State::printSummary() const {
    network.showDiagram();
 }
 
-void State::printQuiet() const {
-   cost.printQuiet();
+string State::printQuiet() const {
+   return cost.printQuiet();
 }
 
 void State::generateOutput(char *fileName) {

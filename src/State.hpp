@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include <cmath>
+#include <string>
 
 #include "Defs.hpp"
 #include "Core.hpp"
@@ -12,6 +13,7 @@
 
 using std::vector;
 using std::pair;
+using std::string;
 
 class State {
    public:
@@ -56,7 +58,7 @@ class State {
        */
       void generateOutput(char* fileName);
 
-      void printQuiet() const;
+      string printQuiet() const;
 
    private:
       double LINK_BANDWIDTH;
