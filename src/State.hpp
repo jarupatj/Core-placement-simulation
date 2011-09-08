@@ -56,6 +56,8 @@ class State {
        */
       void generateOutput(char* fileName);
 
+      void printQuiet() const;
+
    private:
       double LINK_BANDWIDTH;
       double LINK_LATENCY;

@@ -9,7 +9,7 @@
 using namespace std;
 
 void printUsage() {
-   cout << "\nusage: ./sa [options] input_file [output_file]\n\n"
+   cout << "\nusage: ./sa [options] input_file\n\n"
          << "option lists are:\n"
          << "\t-a <value> : setting alpha value (default = 1)\n"
          << "\t-b <value> : setting beta value (default = 1)\n"
@@ -22,7 +22,7 @@ void printUsage() {
          << "\t-c <value> : setting number of consecutive rejection per temperature (default = 200)\n"
          << "\t-p <value> : setting threshold of state accept per temperature (default = 100)\n"
          << "\t-n <value> : setting seed value for random number\n"
-         << "\t-o <file>  : specify output of the simulation in a format "
+         << "\t-o <file>  : specify output of the simulation in an input format "
          << "that can be used as an input for next simulation\n"
          << "\t-v         : verbose printing\n"
          << "\t-q         : quiet printing\n"
@@ -47,10 +47,7 @@ int main(int argc, char* argv[]) {
    bool verbose = false;
    bool quiet = false;
    char* inputfile = NULL;
-   char* outputNext = NULL;
-   string outfile;
-   ofstream fout;
-   streambuf* cout_buf = NULL;
+   char* outfile = NULL;
 
    if (argc == 1) {
       printUsage();
@@ -102,7 +99,7 @@ int main(int argc, char* argv[]) {
          printUsage();
          return 0;
       case 'o':
-         outputNext = optarg;
+         outfile = optarg;
          break;
       case '?':
          cout << "Unknown arguments\n";
@@ -112,17 +109,6 @@ int main(int argc, char* argv[]) {
    }
 
    inputfile = argv[optind];
-
-   /*
-    * user has specified output file
-    */
-   if (optind + 1 < argc) {
-      outfile = argv[optind + 1];
-
-      cout_buf = cout.rdbuf(); //save original buf
-      fout.open(outfile.c_str());
-      cout.rdbuf(fout.rdbuf()); //redirect cout to the file
-   }
 
    srand(seed);
    //srand(10);
@@ -177,20 +163,11 @@ int main(int argc, char* argv[]) {
    }
 
    /*
-    * if we have redirected the output file
-    * then sent it back to stdout
-    */
-   if (!outfile.empty()) {
-      cout.rdbuf(cout_buf); //restore cout original buf
-      fout.close();
-   }
-
-   /*
     * Generate output in an input format
     * so that it can be used as input for simulator
     */
-   if (outputNext != NULL) {
-      sa.generateOutput(outputNext);
+   if (outfile != NULL) {
+      sa.generateOutput(outfile);
    }
 
    return 0;

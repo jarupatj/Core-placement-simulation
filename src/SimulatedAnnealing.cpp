@@ -164,8 +164,9 @@ void SimulatedAnnealing::printSummary() const {
 }
 
 void SimulatedAnnealing::printFinalCost() const {
-   cout << setiosflags(ios::fixed) << setprecision(3) << bestState.getCost()
-         << endl;
+   cout << setiosflags(ios::fixed) << setprecision(3);
+   bestState.printQuiet();
+   cout << endl;
 }
 
 void SimulatedAnnealing::generateOutput(char* fileName) {

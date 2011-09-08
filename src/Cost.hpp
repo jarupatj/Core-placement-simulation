@@ -48,6 +48,8 @@ class Cost {
        */
       void updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int index, int op);
 
+      void printQuiet() const;
+
    private:
       //variable
       double alpha, beta, gamma, delta;

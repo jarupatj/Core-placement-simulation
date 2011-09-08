@@ -291,6 +291,10 @@ void State::printSummary() const {
    network.showDiagram();
 }
 
+void State::printQuiet() const {
+   cost.printQuiet();
+}
+
 void State::generateOutput(char *fileName) {
    ofstream file(fileName);
 

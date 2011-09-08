@@ -166,6 +166,12 @@ void Cost::printCost() const {
          << slack << setw(12) << proximity << setw(12) << utilization;
 }
 
+void Cost::printQuiet() const {
+   cout << right << setiosflags(ios::fixed) << setprecision(3)
+        << cost << " " << compaction << " " << dilation << " "
+        << slack << " " << proximity << " " << utilization;
+}
+
 void Cost::printSummary() const {
    cout << setiosflags(ios::fixed) << setprecision(3)
          << "# " << "Alpha: " << alpha
