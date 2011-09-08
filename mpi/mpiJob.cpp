@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include <stdio.h>
 
 #include <mpi.h>
@@ -7,7 +8,10 @@
 #include "../src/SimulatedAnnealing.hpp"
 
 #define SIZE 4
-#define TAG 1
+#define INPUT 1
+#define OUTPUT 2
+#define MSG_SIZE 150
+#define ROOT 0
 
 using namespace std;
 
@@ -16,6 +20,8 @@ int main(int argc, char* argv[]) {
    int numProcess, rank;
    int i;
    double param[SIZE];
+   char sendMsg[MSG_SIZE];
+   char recvMsg[MSG_SIZE];
 
    unsigned int seed = time(NULL);
    double start = S_TEMP;
@@ -39,7 +45,9 @@ int main(int argc, char* argv[]) {
    MPI_Type_contiguous(SIZE, MPI_DOUBLE, &paramType);
    MPI_Type_commit(&paramType);
 
-   if (rank == 0) { //root process
+   srand(seed);
+
+   if (rank == ROOT) { //root process
       /*
        * create array to store different a, b, g, d values
        */
@@ -51,27 +59,22 @@ int main(int argc, char* argv[]) {
        * use MPI_send to send array of a,b,g,d to each child process
        */
       for (i = 1; i < numProcess; i++) {
-         MPI_Send(&parameters[i-1][0], 1, paramType, i, TAG, MPI_COMM_WORLD);
+         MPI_Send(&parameters[i-1][0], 1, paramType, i, INPUT, MPI_COMM_WORLD);
       }
-
       /*
        * use MPI_Recv to receive output from child process
        */
-      /*for (i = 1; i < numProcess; i++) {
-         MPI_Recv();
+      for (i = 1; i < numProcess; i++) {
+         MPI_Recv(&recvMsg, MSG_SIZE, MPI_CHAR, i, OUTPUT, MPI_COMM_WORLD, &status);
+         cout << "process #" << i << endl;
+         cout << recvMsg;
       }
 
-      FILE *fp = fopen("mpiJob.out");
-      if (fp == NULL) {
-         printf("can't open file");
-      }*/
-
    } else { //child process
-
       /*
        * receive parameters setting from root process
        */
-      MPI_Recv(param, SIZE, MPI_DOUBLE, 0, TAG, MPI_COMM_WORLD, &status);
+      MPI_Recv(param, SIZE, MPI_DOUBLE, ROOT, INPUT, MPI_COMM_WORLD, &status);
 
       SimulatedAnnealing sa;
       int err = sa.init(param[0], param[1], param[2], param[3], start, end, rate, iter,
@@ -89,17 +92,23 @@ int main(int argc, char* argv[]) {
        */
       sa.run();
 
-      cout << "proc #" << rank << endl;
       /*
        * quiet printing
-       * - print seed, parameters and costs
+       * - print seed, parameters and cost
        */
       stringstream s;
       s << seed << " ";
       s << param[0] << " " << param[1] << " " << param[2] << " " << param[3] << " " << start
             << " " << end << " " << rate << " ";
       s << sa.printFinalCost();
-      cout << s.str();
+
+      size_t length = s.str().copy(sendMsg,s.str().length(), 0);
+      sendMsg[length] = '\0';
+
+      /*
+       * send result to root process
+       */
+      MPI_Send(&sendMsg, MSG_SIZE, MPI_CHAR, ROOT, OUTPUT, MPI_COMM_WORLD);
    }
 
    MPI_Type_free(&paramType);
