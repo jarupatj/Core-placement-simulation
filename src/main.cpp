@@ -27,8 +27,7 @@ void printUsage() {
          << "that can be used as an input for next simulation\n"
          << "\t-v         : verbose printing\n"
          << "\t-q         : quiet printing\n"
-         << "\t-h         : print usage\n\n"
-         << "If no output_file, then the default output is stdout.\n\n";
+         << "\t-h         : print usage\n\n";
 }
 
 int main(int argc, char* argv[]) {
@@ -127,6 +126,7 @@ int main(int argc, char* argv[]) {
       return 0;
    } else if (err == ILLEGAL_STATE_ERR) {
       cout << "# Illegal initial state" << endl;
+      sa.printIllegalConnection();
       return 0;
    }
 

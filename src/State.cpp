@@ -93,6 +93,7 @@ void State::deepCopy(const State& sourceState) {
 int State::init(double alpha, double beta, double gamma, double delta,
       char* filename) {
    int numCore;
+
    ifstream file(filename);
    if (!file.is_open()) {
       return FILE_OPEN_ERR;
@@ -152,14 +153,6 @@ int State::init(double alpha, double beta, double gamma, double delta,
    }
 
    if (!isLegal()) {
-      vector<pair<unsigned int, unsigned int> >::iterator p;
-      cout << "# Contain illegal connection" << endl;
-      for (p = illegalConnection.begin(); p != illegalConnection.end(); p++) {
-         cout << "# (" << (*p).first + 1 << "," << (*p).second + 1 << ") ";
-         cout << bandwidth[(*p).first][(*p).second] << " "
-               << latency[(*p).first][(*p).second];
-         cout << endl;
-      }
       return ILLEGAL_STATE_ERR;
    }
 
@@ -300,24 +293,34 @@ void State::generateOutput(char *fileName) {
 
    int numCore = core.size();
 
-   file << LINK_BANDWIDTH << " " << LINK_LATENCY << endl
-        << meshRow << " " << meshCol << endl
-        << numCore << endl;
+   file << LINK_BANDWIDTH << " " << LINK_LATENCY << endl << meshRow << " "
+         << meshCol << endl << numCore << endl;
 
    Coordinate pos;
-   for(vector<Core>::iterator it = core.begin(); it < core.end(); it++) {
+   for (vector<Core>::iterator it = core.begin(); it < core.end(); it++) {
       pos = (*it).getPosition();
       file << pos.x << " " << pos.y << endl;
    }
 
-   for(int i = 0; i < numCore; i++) {
-      for(int j = 0; j < numCore; j++) {
-         if(bandwidth[i][j] != 0) {
-            file << i+1 << " " << j+1 << " "
-                 << bandwidth[i][j] << " " << latency[i][j] << endl;
+   for (int i = 0; i < numCore; i++) {
+      for (int j = 0; j < numCore; j++) {
+         if (bandwidth[i][j] != 0) {
+            file << i + 1 << " " << j + 1 << " " << bandwidth[i][j] << " "
+                  << latency[i][j] << endl;
          }
       }
    }
 
    file.close();
+}
+
+void State::printIllegalConnection() {
+   vector<pair<unsigned int, unsigned int> >::iterator p;
+   cout << "# Contain illegal connection" << endl;
+   for (p = illegalConnection.begin(); p != illegalConnection.end(); p++) {
+      cout << "# (" << (*p).first + 1 << "," << (*p).second + 1 << ") ";
+      cout << bandwidth[(*p).first][(*p).second] << " "
+            << latency[(*p).first][(*p).second];
+      cout << endl;
+   }
 }

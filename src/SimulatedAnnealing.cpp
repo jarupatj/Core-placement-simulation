@@ -174,3 +174,7 @@ string SimulatedAnnealing::printFinalCost() const {
 void SimulatedAnnealing::generateOutput(char* fileName) {
    bestState.generateOutput(fileName);
 }
+
+void SimulatedAnnealing::printIllegalConnection() {
+   currentState.printIllegalConnection();
+}

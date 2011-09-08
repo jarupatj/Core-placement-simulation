@@ -60,6 +60,8 @@ class State {
 
       string printQuiet() const;
 
+      void printIllegalConnection();
+
    private:
       double LINK_BANDWIDTH;
       double LINK_LATENCY;

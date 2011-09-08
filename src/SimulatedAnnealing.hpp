@@ -41,6 +41,8 @@ class SimulatedAnnealing {
        */
       void generateOutput(char* fileName);
 
+      void printIllegalConnection();
+
    private:
       //constant
       int MAX_STATE_CHANGE_PER_TEMP;
