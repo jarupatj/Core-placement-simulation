@@ -1,6 +1,5 @@
 #include <cassert>
 
-#include "Defs.hpp"
 #include "Router.hpp"
 
 using namespace std;

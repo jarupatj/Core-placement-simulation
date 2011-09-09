@@ -10,14 +10,6 @@
 
 using std::vector;
 
-enum Direction {
-	NO_DIR = -1,
-	TOP,
-	BOTTOM,
-	LEFT,
-	RIGHT
-};
-
 class Network{
    public:
       Network();

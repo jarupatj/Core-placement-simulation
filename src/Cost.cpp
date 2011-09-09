@@ -99,63 +99,149 @@ void Cost::calculateCost(double** bandwidth, vector<Core> core,
 }
 
 void Cost::updateCost(double** bandwidth, double** latency,
-      double LINK_LATENCY, vector<Core> core, int index, int op) {
+      double LINK_LATENCY, vector<Core> core, int op, int coreA, int coreB) {
    if (op == REMOVE) {
-      compaction -= changeCompaction(bandwidth, core, index);
-      slack -= changeSlack(latency, LINK_LATENCY, core, index);
-      proximity -= changeProximity(bandwidth, core, index);
+      compaction -= changeCompaction(bandwidth, core, coreA, coreB);
+      slack -= changeSlack(latency, LINK_LATENCY, core, coreA, coreB);
+      proximity -= changeProximity(bandwidth, core, coreA, coreB);
    } else {
-      compaction += changeCompaction(bandwidth, core, index);
-      slack += changeSlack(latency, LINK_LATENCY, core, index);
-      proximity += changeProximity(bandwidth, core, index);
+      compaction += changeCompaction(bandwidth, core, coreA, coreB);
+      slack += changeSlack(latency, LINK_LATENCY, core, coreA, coreB);
+      proximity += changeProximity(bandwidth, core, coreA, coreB);
    }
 }
 
-double Cost::changeCompaction(double** bandwidth, vector<Core> core, int index) {
+double Cost::changeCompaction(double** bandwidth, vector<Core> core, int coreA,
+      int coreB) {
    double change = 0;
    for (unsigned int i = 0; i < core.size(); i++) {
-      //connection from index to node i
-      if (bandwidth[index][i] != 0) {
-         change += bandwidth[index][i] * getHops(core[index].getPosition(),
+      /*
+       * calculate compaction cost of connection from/to coreA
+       * but do not calculate cost of connection between coreA and coreB
+       * to prevent calculating duplicates
+       */
+      if ((int) i != coreB) {
+         //connection from coreA to node i
+         change += bandwidth[coreA][i] * getHops(core[coreA].getPosition(),
                core[i].getPosition());
+         //connection from node i to coreA
+         change += bandwidth[i][coreA] * getHops(core[i].getPosition(),
+               core[coreA].getPosition());
       }
-      //connection from node i to index
-      if (bandwidth[i][index] != 0) {
-         change += bandwidth[i][index] * getHops(core[i].getPosition(),
-               core[index].getPosition());
+      /*
+       * calculate compaction cost of connection from/to coreB
+       */
+      if (coreB != NO_CORE && (int)i != coreA) {
+         //connection from coreB to node i
+         change += bandwidth[coreB][i] * getHops(core[coreB].getPosition(),
+               core[i].getPosition());
+         //connection from node i to coreB
+         change += bandwidth[i][coreB] * getHops(core[i].getPosition(),
+               core[coreB].getPosition());
       }
+   }
+   /*
+    * calculate cost of connection between coreA and coreB
+    */
+   if (coreB != NO_CORE) {
+      //connection from coreB to node i
+      change += bandwidth[coreA][coreB] * getHops(core[coreA].getPosition(),
+            core[coreB].getPosition());
+      //connection from node i to coreB
+      change += bandwidth[coreB][coreA] * getHops(core[coreB].getPosition(),
+            core[coreB].getPosition());
    }
    return change;
 }
 
-double Cost::changeSlack(double** latency, const double LINK_LATENCY,
-      vector<Core> core, int index) {
+double Cost::changeSlack(double** latency, const double LINK_LATENCY, vector<
+      Core> core, int coreA, int coreB) {
    double change = 0;
    int hops;
    for (unsigned int i = 0; i < core.size(); i++) {
-      //connection from index to node i
-      if (latency[index][i] != 0) {
-         hops = getHops(core[index].getPosition(), core[i].getPosition());
-         change += latency[index][i] - hops * LINK_LATENCY;
+      /*
+       * calculate slack cost of connection from/to coreA
+       * but do not calculate cost of connection between coreA and coreB
+       * to prevent calculating duplicates
+       */
+      if ((int) i != coreB) {
+         //connection from index to node i
+         if (latency[coreA][i] != 0) {
+            hops = getHops(core[coreA].getPosition(), core[i].getPosition());
+            change += latency[coreA][i] - hops * LINK_LATENCY;
+         }
+         //connection from node i to index
+         if (latency[i][coreA] != 0) {
+            hops = getHops(core[i].getPosition(), core[coreA].getPosition());
+            change += latency[i][coreA] - hops * LINK_LATENCY;
+         }
       }
-      //connection from node i to index
-      if (latency[i][index] != 0) {
-         hops = getHops(core[i].getPosition(), core[index].getPosition());
-         change += latency[i][index] - hops * LINK_LATENCY;
+      /*
+       * calculate slack cost of connection from/to coreB
+       */
+      if (coreB != NO_CORE && (int) i != coreA) {
+         //connection from index to node i
+         if (latency[coreB][i] != 0) {
+            hops = getHops(core[coreB].getPosition(), core[i].getPosition());
+            change += latency[coreB][i] - hops * LINK_LATENCY;
+         }
+         //connection from node i to index
+         if (latency[i][coreB] != 0) {
+            hops = getHops(core[i].getPosition(), core[coreB].getPosition());
+            change += latency[i][coreB] - hops * LINK_LATENCY;
+         }
       }
    }
+   /*
+    * calculate slack cost of connections between coreA and coreB
+    */
+   if (coreB != NO_CORE) {
+      if (latency[coreA][coreB] != 0) {
+         hops = getHops(core[coreA].getPosition(), core[coreB].getPosition());
+         change += latency[coreA][coreB] - hops * LINK_LATENCY;
+      }
+      if (latency[coreB][coreA] != 0) {
+         hops = getHops(core[coreB].getPosition(), core[coreA].getPosition());
+         change += latency[coreB][coreA] - hops * LINK_LATENCY;
+      }
+   }
+
    return change;
 }
 
-double Cost::changeProximity(double** bandwidth, vector<Core> core, int index) {
+double Cost::changeProximity(double** bandwidth, vector<Core> core, int coreA,
+      int coreB) {
    double change = 0;
    int dist;
    for (unsigned int i = 0; i < core.size(); i++) {
-      if (i != (unsigned int) index) {
-         if (bandwidth[index][i] == 0 && bandwidth[i][index] == 0) {
-            dist = getHops(core[i].getPosition(), core[index].getPosition());
+      /*
+       * calculate proximity cost of connection from/to core A
+       * do not calculate proximity cost between coreA and coreB
+       * to prevent calculating duplicates
+       */
+      if ((int) i != coreB) {
+         if (bandwidth[coreA][i] == 0 && bandwidth[i][coreA] == 0) {
+            dist = getHops(core[i].getPosition(), core[coreA].getPosition());
             change -= dist;
          }
+      }
+      /*
+       * calculate proximity cost of connection from/to core B
+       */
+      if (coreB != NO_CORE && (int) i != coreA) {
+         if (bandwidth[coreB][i] == 0 && bandwidth[i][coreB] == 0) {
+            dist = getHops(core[i].getPosition(), core[coreB].getPosition());
+            change -= dist;
+         }
+      }
+   }
+   /*
+    * calculate proximity cost of connection between coreA and core B
+    */
+   if (coreB != NO_CORE) {
+      if (bandwidth[coreA][coreB] == 0 && bandwidth[coreB][coreA] == 0) {
+         dist = getHops(core[coreB].getPosition(), core[coreA].getPosition());
+         change -= dist;
       }
    }
    return change;
@@ -169,23 +255,17 @@ void Cost::printCost() const {
 
 string Cost::printQuiet() const {
    stringstream str;
-   str << right << setiosflags(ios::fixed) << setprecision(3)
-        << cost << " " << compaction << " " << dilation << " "
-        << slack << " " << proximity << " " << utilization;
+   str << right << setiosflags(ios::fixed) << setprecision(3) << cost << " "
+         << compaction << " " << dilation << " " << slack << " " << proximity
+         << " " << utilization;
    return str.str();
 }
 
 void Cost::printSummary() const {
-   cout << setiosflags(ios::fixed) << setprecision(3)
-         << "# " << "Alpha: " << alpha
-         << "\tBeta: " << beta
-         << "\tGamma: " << gamma
-         << "\tDelta: " << delta
-         << "\n# Cost: " << cost
-         << "\tCompaction: " << compaction
-         << "\tDilation: " << dilation
-         << "\n# Slack: " << slack
-         << "\tProximity: " << proximity
-         << "\tUtilization: " << utilization
+   cout << setiosflags(ios::fixed) << setprecision(3) << "# " << "Alpha: "
+         << alpha << "\tBeta: " << beta << "\tGamma: " << gamma << "\tDelta: "
+         << delta << "\n# Cost: " << cost << "\tCompaction: " << compaction
+         << "\tDilation: " << dilation << "\n# Slack: " << slack
+         << "\tProximity: " << proximity << "\tUtilization: " << utilization
          << endl;
 }

@@ -58,22 +58,6 @@ void Network::deepCopy(const Network& sourceNetwork) {
    } else {
       routers = NULL;
    }
-   /*
-    if (sourceNetwork.utilization) {
-    utilization = new Link*[row * col];
-    for (int i = 0; i < (row * col); i++) {
-    utilization[i] = new Link[MAX_DIRECTION];
-    }
-
-    for (int i = 0; i < (row * col); i++) {
-    for (int j = 0; j < MAX_DIRECTION; j++) {
-    utilization[i][j] = sourceNetwork.utilization[i][j];
-    }
-    }
-    } else {
-    utilization = NULL;
-    }
-    */
 }
 
 void Network::init(int r, int c) {

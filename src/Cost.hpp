@@ -48,7 +48,7 @@ class Cost {
        * index specifies indexing number to access moved core in core vector
        * op specifies operation ADD or REMOVE
        */
-      void updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int index, int op);
+      void updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int op, int coreA, int coreB = NO_CORE);
 
       string printQuiet() const;
 
@@ -78,9 +78,9 @@ class Cost {
        * index specifies indexing number to access moved core in core vector
        * the change in cost is calculated using connection from/to core[index]
        */
-      double changeCompaction(double** bandwidth, vector<Core> core, int index);
-      double changeSlack(double** latency, const double LINK_LATENCY, vector<Core> core, int index);
-      double changeProximity(double** bandwidth, vector<Core> core, int index);
+      double changeCompaction(double** bandwidth, vector<Core> core, int coreA, int coreB);
+      double changeSlack(double** latency, const double LINK_LATENCY, vector<Core> core, int coreA, int coreB);
+      double changeProximity(double** bandwidth, vector<Core> core, int coreA, int coreB);
 };
 
 #endif

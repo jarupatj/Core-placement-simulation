@@ -26,4 +26,26 @@ struct Coordinate {
    int y;
 };
 
+#define MAX_TURNS 8
+#define NO_CORE -1
+
+enum Turn {
+   TOP_BOTTOM,
+   BOTTOM_TOP,
+   LEFT_RIGHT,
+   RIGHT_LEFT,
+   LEFT_BOTTOM,
+   LEFT_TOP,
+   RIGHT_BOTTOM,
+   RIGHT_TOP
+};
+
+enum Direction {
+   NO_DIR = -1,
+   TOP,
+   BOTTOM,
+   LEFT,
+   RIGHT
+};
+
 #endif

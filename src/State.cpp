@@ -214,6 +214,9 @@ void State::generateNewState() {
       Coordinate oldPos = core[changedCore].getPosition();
       int swapCore = network.getCoreIndex(newPos);
 
+      //remove old cost (compaction, slack, proximity)
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, REMOVE,
+            changedCore, swapCore);
       //remove all connections from the changed core 
       network.changeAllConnections(bandwidth, core, changedCore, REMOVE);
       //remove all connections from the old position of the swap core
@@ -247,8 +250,11 @@ void State::generateNewState() {
          network.changeConnection(core[swapCore].getPosition(),
                core[changedCore].getPosition(), REMOVE);
       }
+      //calculate new cost (compaction, slack, proximity)
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, ADD, changedCore, swapCore);
       //calculate new cost
-      cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
+      //cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
+      cost.calculateCost(bandwidth, core, network);
 
    } else {
       /*
@@ -256,8 +262,8 @@ void State::generateNewState() {
        * the core is moved
        */
       //remove old cost (compaction, slack, proximity)
-      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore,
-            REMOVE);
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, REMOVE,
+            changedCore);
       //remove all connections from the old position
       network.changeAllConnections(bandwidth, core, changedCore, REMOVE);
       //move core from old pos
@@ -268,7 +274,7 @@ void State::generateNewState() {
       //add all connections 
       network.changeAllConnections(bandwidth, core, changedCore, ADD);
       //calculate new cost (compaction, slack, proximity)
-      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, changedCore, ADD);
+      cost.updateCost(bandwidth, latency, LINK_LATENCY, core, ADD, changedCore);
 
       cost.calculateCost(bandwidth, core, network);
    }
