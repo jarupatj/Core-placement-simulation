@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <cstring>
 
 #include "Utilization.hpp"
 
@@ -43,12 +44,7 @@ void Utilization::deepCopy(const Utilization& sourceUtil) {
       utilization = new Link*[size];
       for (int i = 0; i < (size); i++) {
          utilization[i] = new Link[MAX_DIRECTION];
-      }
-
-      for (int i = 0; i < (size); i++) {
-         for (int j = 0; j < MAX_DIRECTION; j++) {
-            utilization[i][j] = sourceUtil.utilization[i][j];
-         }
+         memcpy(utilization[i], sourceUtil.utilization[i], sizeof(Link)*MAX_DIRECTION);
       }
    } else {
       utilization = NULL;

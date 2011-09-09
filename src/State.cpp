@@ -62,12 +62,7 @@ void State::deepCopy(const State& sourceState) {
       bandwidth = new double*[core.size()];
       for (unsigned int i = 0; i < core.size(); i++) {
          bandwidth[i] = new double[core.size()];
-      }
-      //copy 
-      for (unsigned int i = 0; i < core.size(); i++) {
-         for (unsigned int j = 0; j < core.size(); j++) {
-            bandwidth[i][j] = sourceState.bandwidth[i][j];
-         }
+         memcpy(bandwidth[i], sourceState.bandwidth[i], sizeof(double)*core.size());
       }
    } else {
       bandwidth = NULL;
@@ -78,12 +73,7 @@ void State::deepCopy(const State& sourceState) {
       latency = new double*[core.size()];
       for (unsigned int i = 0; i < core.size(); i++) {
          latency[i] = new double[core.size()];
-      }
-      //copy 
-      for (unsigned int i = 0; i < core.size(); i++) {
-         for (unsigned int j = 0; j < core.size(); j++) {
-            latency[i][j] = sourceState.latency[i][j];
-         }
+         memcpy(latency[i], sourceState.latency[i], sizeof(double)*core.size());
       }
    } else {
       latency = NULL;

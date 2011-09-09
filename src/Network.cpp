@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cassert>
+#include <cstring>
 #include <cstdio>
 
 #include "Network.hpp"
@@ -48,12 +49,7 @@ void Network::deepCopy(const Network& sourceNetwork) {
       routers = new Router*[row];
       for (int i = 0; i < row; i++) {
          routers[i] = new Router[col];
-      }
-
-      for (int i = 0; i < row; i++) {
-         for (int j = 0; j < col; j++) {
-            routers[i][j] = sourceNetwork.routers[i][j];
-         }
+         memcpy(routers[i], sourceNetwork.routers[i], sizeof(Router)*col);
       }
    } else {
       routers = NULL;
