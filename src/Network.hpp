@@ -60,15 +60,19 @@ class Network{
        * calculate utilization using utilization matrix
        */
       double calculateUtilization();
-
+      /*
+       * printing turn counts for each router
+       * and list of psudonodes
+       */
       void printNetwork() const;
-      //void printUtil() const;
-
       /*
        * show network diagram
        * - where the cores and psudonodes are located
        */
       void showDiagram() const;
+      /*
+       * print the maximum bandwidth used in a link
+       */
       void printMaxBandwidthLink() const;
       
    private:

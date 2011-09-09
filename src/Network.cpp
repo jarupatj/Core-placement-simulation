@@ -287,22 +287,10 @@ void Network::printMaxBandwidthLink() const {
       cout << "right\n";
 }
 
-/*
- bool Network::isLegal(int LINK_BANDWIDTH) {
- int legal = true;
- for(int i = 0; i < (row*col); i++) {
- for(int j = 0; j < MAX_DIRECTION; j++) {
- if( utilization[i][j].toNodeId != NO_NODE ) {
- if( utilization[i][j].bandwidth > LINK_BANDWIDTH ) {
- legal = false;
- }
- }
- }
- }
- return legal;
- }*/
-
 void Network::printNetwork() const {
+   /*
+    * print turn counts for each router
+    */
    cout << "        0 1 2 3 4 5 6 7\n";
    for (int i = 0; i < row; i++) {
       for (int j = 0; j < col; j++) {
@@ -317,7 +305,9 @@ void Network::printNetwork() const {
          cout << endl;
       }
    }
-
+   /*
+    * print list of psudonodes
+    */
    cout << "psudo nodes\n";
    for (int i = 0; i < row; i++) {
       for (int j = 0; j < col; j++) {
