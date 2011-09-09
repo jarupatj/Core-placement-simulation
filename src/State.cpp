@@ -253,7 +253,6 @@ void State::generateNewState() {
       //calculate new cost (compaction, slack, proximity)
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, ADD, changedCore, swapCore);
       //calculate new cost
-      //cost.initCost(bandwidth, latency, core, LINK_LATENCY, network);
       cost.calculateCost(bandwidth, core, network);
 
    } else {
@@ -275,7 +274,7 @@ void State::generateNewState() {
       network.changeAllConnections(bandwidth, core, changedCore, ADD);
       //calculate new cost (compaction, slack, proximity)
       cost.updateCost(bandwidth, latency, LINK_LATENCY, core, ADD, changedCore);
-
+      //calculate new cost
       cost.calculateCost(bandwidth, core, network);
    }
 }
@@ -302,12 +301,17 @@ void State::generateOutput(char *fileName) {
    file << LINK_BANDWIDTH << " " << LINK_LATENCY << endl << meshRow << " "
          << meshCol << endl << numCore << endl;
 
+   /*
+    * print core position
+    */
    Coordinate pos;
    for (vector<Core>::iterator it = core.begin(); it < core.end(); it++) {
       pos = (*it).getPosition();
       file << pos.x << " " << pos.y << endl;
    }
-
+   /*
+    * print list of connections
+    */
    for (int i = 0; i < numCore; i++) {
       for (int j = 0; j < numCore; j++) {
          if (bandwidth[i][j] != 0) {

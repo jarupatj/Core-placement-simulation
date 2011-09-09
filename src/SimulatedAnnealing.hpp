@@ -32,16 +32,21 @@ class SimulatedAnnealing {
        */
       void initTable() const;
       /*
-       * print cost summary for quiet printing
-       */
-      string printFinalCost() const;
-      /*
        * Generate output in an input format
        * so that it can be used as input for simulator
        */
       void generateOutput(char* fileName);
-
+      /*
+       * print a list of illegal connections
+       */
       void printIllegalConnection();
+      /*
+       * print cost summary for quiet printing
+       * Return a string which consists of cost value
+       * This function returns a string instead of printing because
+       * we will used this function to send a result in MPI job
+       */
+      string printFinalCost() const;
 
    private:
       //constant
@@ -60,9 +65,14 @@ class SimulatedAnnealing {
       bool quiet;
 
       //function
+      /*
+       * get current cost of a state
+       */
       int getCost();
-
-      //void printState(const State& state) const;
+      /*
+       * print a state detail in tabular format
+       * used for verbose and normal printing
+       */
       void printState(const State& state, int& iterations, \
                       const char& newStateFlag = 'Y', \
                       const double& randomNum = -1) const;

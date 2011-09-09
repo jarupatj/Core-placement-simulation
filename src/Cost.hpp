@@ -31,11 +31,12 @@ class Cost {
        */
       double getCost() const;
       /*
-       * print cost in a format for verbose and normal printing
+       * print cost in a tabular format for verbose and normal printing
        */
       void printCost() const;
       /*
-       * print cost in a format for quiet print
+       * print cost in a detail cost in summary format
+       * for verbose and normal printing
        */
       void printSummary() const;
 
@@ -48,8 +49,13 @@ class Cost {
        * index specifies indexing number to access moved core in core vector
        * op specifies operation ADD or REMOVE
        */
-      void updateCost(double** bandwidth, double** latency, double LINK_LATENCY, vector<Core> core, int op, int coreA, int coreB = NO_CORE);
-
+      void updateCost(double** bandwidth, double** latency, double LINK_LATENCY,
+            vector<Core> core, int op, int coreA, int coreB = NO_CORE);
+      /*
+       * Return a string which consists of cost value
+       * This function returns a string instead of printing because
+       * we will used this function to send a result in MPI job
+       */
       string printQuiet() const;
 
    private:
@@ -74,9 +80,10 @@ class Cost {
 
       /*
        * calculate change in compation, slack and proximity cost
-       * the change is calculate when core[index] is moved
-       * index specifies indexing number to access moved core in core vector
-       * the change in cost is calculated using connection from/to core[index]
+       * the change is calculate when core[coreA] is moved
+       * or core[coreA] is swapped with core[coreB]
+       * coreA, coreB specify indexing number to access moved core in core vector
+       * the change in cost is calculated using connection from/to core[coreA] and core[coreB]
        */
       double changeCompaction(double** bandwidth, vector<Core> core, int coreA, int coreB);
       double changeSlack(double** latency, const double LINK_LATENCY, vector<Core> core, int coreA, int coreB);

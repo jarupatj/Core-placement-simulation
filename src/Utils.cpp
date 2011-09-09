@@ -13,7 +13,7 @@
 #include "Defs.hpp"
 
 int getHops(Coordinate a, Coordinate b) {
-   return fabs(a.x - b.x) + fabs(a.y - b.y);
+   return (int)(fabs(a.x - b.x) + fabs(a.y - b.y));
 }
 
 double uniform_0_1() {

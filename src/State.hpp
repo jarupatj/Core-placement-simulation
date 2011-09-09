@@ -57,10 +57,16 @@ class State {
        * so that it can be used as input for simulator
        */
       void generateOutput(char* fileName);
-
-      string printQuiet() const;
-
+      /*
+       * print a list of illegal connections
+       */
       void printIllegalConnection();
+      /*
+       * Return a string which consists of cost value
+       * This function returns a string instead of printing because
+       * we will used this function to send a result in MPI job
+       */
+      string printQuiet() const;
 
    private:
       double LINK_BANDWIDTH;

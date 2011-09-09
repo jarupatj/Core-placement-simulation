@@ -40,7 +40,8 @@ int SimulatedAnnealing::init(double alpha, double beta, double gamma,
 }
 
 void SimulatedAnnealing::run() {
-   int changeCost, cReject, cAccept, iterations;
+   int cReject, cAccept, iterations;
+   double changeCost;
    bool setCurrent = false;
    double random, prob;
 
