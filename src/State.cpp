@@ -102,7 +102,7 @@ int State::init(double alpha, double beta, double gamma, double delta,
       memset(bandwidth[i], 0, sizeof(double) * numCore);
 
       latency[i] = new double[numCore];
-      memset(bandwidth[i], 0, sizeof(double) * numCore);
+      memset(latency[i], 0, sizeof(double) * numCore);
    }
 
    /*
