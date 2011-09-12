@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
       for (i = 1; i < numProcess; i++) {
          MPI_Recv(&recvMsg, MSG_SIZE, MPI_CHAR, i, OUTPUT, MPI_COMM_WORLD,
                &status);
-         cout << "process #" << i << endl;
+         cout << "# Process " << i << endl;
          cout << recvMsg;
       }
 
