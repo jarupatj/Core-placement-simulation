@@ -47,6 +47,10 @@ class SimulatedAnnealing {
        * we will used this function to send a result in MPI job
        */
       string printFinalCost() const;
+      /*
+       * print latency table
+       */
+      void printLatencyTable();
 
    private:
       //constant

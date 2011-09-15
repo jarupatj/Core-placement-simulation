@@ -157,6 +157,7 @@ int main(int argc, char* argv[]) {
    if (!quiet) {
       cout << endl;
       sa.printSummary();
+      sa.printLatencyTable();
    } else {
       stringstream s;
       s << seed << " ";

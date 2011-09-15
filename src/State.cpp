@@ -2,6 +2,7 @@
 #include <cmath>
 #include <fstream>
 #include <cstring>
+#include <iomanip>
 
 #include "Defs.hpp"
 #include "State.hpp"
@@ -62,7 +63,7 @@ void State::deepCopy(const State& sourceState) {
       bandwidth = new double*[core.size()];
       for (unsigned int i = 0; i < core.size(); i++) {
          bandwidth[i] = new double[core.size()];
-         memcpy(bandwidth[i], sourceState.bandwidth[i], sizeof(double)*core.size());
+         memcpy(bandwidth[i], sourceState.bandwidth[i], sizeof(double) * core.size());
       }
    } else {
       bandwidth = NULL;
@@ -73,7 +74,7 @@ void State::deepCopy(const State& sourceState) {
       latency = new double*[core.size()];
       for (unsigned int i = 0; i < core.size(); i++) {
          latency[i] = new double[core.size()];
-         memcpy(latency[i], sourceState.latency[i], sizeof(double)*core.size());
+         memcpy(latency[i], sourceState.latency[i], sizeof(double) * core.size());
       }
    } else {
       latency = NULL;
@@ -322,5 +323,25 @@ void State::printIllegalConnection() {
       cout << bandwidth[(*p).first][(*p).second] << " "
             << latency[(*p).first][(*p).second];
       cout << endl;
+   }
+}
+
+void State::printLatencyTable() {
+   int numCore = core.size();
+   cout << "#\n# Latency Table" << endl;
+   cout << "# " << setfill('=') << setw(36) << "=" << setfill(' ') << endl;
+   cout << "# " << setw(10) << "Connection" << setw(12) << "Constraint" << setw(10)
+        << "Result" << endl;
+   cout << "# " << setw(10) << "----------" << setw(12) << "----------" << setw(10)
+        << "------" << endl;
+   for (int i = 0; i < numCore; i++) {
+      for (int j = 0; j < numCore; j++) {
+         if (latency[i][j] != 0) {
+            cout << "# " << setw(5) << i + 1 << "," << setw(4) << left << j + 1
+                 << setw(12) << right << latency[i][j]
+                 << setw(10) << getHops(core[i].getPosition(), core[j].getPosition()) * LINK_LATENCY
+                 << endl;
+         }
+      }
    }
 }

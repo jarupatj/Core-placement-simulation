@@ -67,7 +67,10 @@ class State {
        * we will used this function to send a result in MPI job
        */
       string printQuiet() const;
-
+      /*
+       * print latency table
+       */
+      void printLatencyTable();
    private:
       double LINK_BANDWIDTH;
       double LINK_LATENCY;

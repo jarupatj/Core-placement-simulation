@@ -127,6 +127,10 @@ void SimulatedAnnealing::initTable() const {
          << "Cost" << setw(12) << "Compaction" << setw(12) << "Dilation"
          << setw(12) << "Slack" << setw(12) << "Proximity" << setw(12)
          << "Util" << setw(12) << "New state" << setw(12) << "Random #" << endl;
+   cout << "#" << setw(11) << "----------" << setw(12) << "----" << setw(12)
+            << "----" << setw(12) << "----------" << setw(12) << "--------"
+            << setw(12) << "-----" << setw(12) << "---------" << setw(12)
+            << "----" << setw(12) << "---------" << setw(12) << "--------" << endl;
 }
 
 void SimulatedAnnealing::printState(const State& state, int& iterations,
@@ -138,7 +142,7 @@ void SimulatedAnnealing::printState(const State& state, int& iterations,
     */
    cout << (newStateFlag == 'Y' ? " " : "#");
    cout << setw(11) << iterations;
-   cout << setw(12) /*<< setiosflags(ios::fixed)*/<< setprecision(6) << temp;
+   cout << setw(12) << setprecision(3) << temp;
 
    /*
     * print detail cost of a state
@@ -178,4 +182,8 @@ void SimulatedAnnealing::generateOutput(char* fileName) {
 
 void SimulatedAnnealing::printIllegalConnection() {
    currentState.printIllegalConnection();
+}
+
+void SimulatedAnnealing::printLatencyTable() {
+   bestState.printLatencyTable();
 }
