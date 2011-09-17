@@ -161,8 +161,8 @@ int main(int argc, char* argv[]) {
    } else {
       stringstream s;
       s << seed << " ";
-      s << alpha << " " << beta << " " << gamma << " " << delta << " "
-            << start << " " << end << " " << rate << " ";
+      s << setw(3) << alpha << setw(5) << beta << setw(5) << gamma << setw(5) << delta << setw(7)
+            << start << setw(7) << end << setw(7) << rate;
       s << sa.printFinalCost();
       cout << s.str();
    }

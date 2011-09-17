@@ -83,6 +83,7 @@ void State::deepCopy(const State& sourceState) {
 
 int State::init(double alpha, double beta, double gamma, double delta,
       char* filename) {
+
    int numCore;
 
    ifstream file(filename);
