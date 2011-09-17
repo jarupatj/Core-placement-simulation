@@ -99,7 +99,7 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
        */
       MPI_Recv(&recvMsg, MSG_SIZE, MPI_CHAR, MPI_ANY_SOURCE, OUTPUT,
             MPI_COMM_WORLD, &status);
-      cout << "# Process " << status.MPI_SOURCE << endl;
+      //cout << "# Process " << status.MPI_SOURCE << endl;
       cout << recvMsg;
       numRunning--;
       /*
