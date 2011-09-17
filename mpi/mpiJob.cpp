@@ -10,7 +10,7 @@
 #include <mpi.h>
 
 #include "../src/Defs.hpp"
-#include "../src/SimulatedAnnealing.hpp"
+#include "../src/Simulator.hpp"
 
 #define SIZE 4
 #define INPUT 1
@@ -136,7 +136,7 @@ void child_process(double start, double end, double rate, int iter, int reject,
     */
    while (param[ALPHA_INDEX] != -1) {
       stringstream s;
-      SimulatedAnnealing sa;
+      Simulator sa;
       int err = sa.init(param[ALPHA_INDEX], param[BETA_INDEX],
             param[GAMMA_INDEX], param[DELTA_INDEX], start, end, rate, iter,
             reject, accept, inputFile, verbose, quiet);

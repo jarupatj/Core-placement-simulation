@@ -6,7 +6,7 @@
 #include <iomanip>
 
 #include "Defs.hpp"
-#include "SimulatedAnnealing.hpp"
+#include "Simulator.hpp"
 
 using namespace std;
 
@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
    /*
     * Initialize simulated annealing
     */
-   SimulatedAnnealing sa;
+   Simulator sa;
    int err = sa.init(alpha, beta, gamma, delta, start, end, rate, iter, reject,
          accept, inputfile, verbose, quiet);
 

@@ -4,18 +4,18 @@
 #include <cstdlib>
 #include <sstream>
 
-#include "SimulatedAnnealing.hpp"
+#include "Simulator.hpp"
 #include "Utils.hpp"
 
 using namespace std;
 
-SimulatedAnnealing::SimulatedAnnealing() {
+Simulator::Simulator() {
 }
 
-SimulatedAnnealing::~SimulatedAnnealing() {
+Simulator::~Simulator() {
 }
 
-int SimulatedAnnealing::init(double alpha, double beta, double gamma,
+int Simulator::init(double alpha, double beta, double gamma,
       double delta, double startTemp, double endTemp, double rate, int iter,
       int reject, int accept, char* inputfile, bool verbose, bool quiet) {
    temp = startTemp;
@@ -39,7 +39,7 @@ int SimulatedAnnealing::init(double alpha, double beta, double gamma,
    return 0;
 }
 
-void SimulatedAnnealing::run() {
+void Simulator::run() {
    int cReject, cAccept, iterations;
    double changeCost;
    bool setCurrent = false;
@@ -122,7 +122,7 @@ void SimulatedAnnealing::run() {
    }
 }
 
-void SimulatedAnnealing::initTable() const {
+void Simulator::initTable() const {
    cout << "#" << setw(11) << "Iterations" << setw(12) << "Temp" << setw(12)
          << "Cost" << setw(12) << "Compaction" << setw(12) << "Dilation"
          << setw(12) << "Slack" << setw(12) << "Proximity" << setw(12)
@@ -133,7 +133,7 @@ void SimulatedAnnealing::initTable() const {
             << "----" << setw(12) << "---------" << setw(12) << "--------" << endl;
 }
 
-void SimulatedAnnealing::printState(const State& state, int& iterations,
+void Simulator::printState(const State& state, int& iterations,
       const char& newStateFlag, const double& randomNum) const {
 
    /*
@@ -163,12 +163,12 @@ void SimulatedAnnealing::printState(const State& state, int& iterations,
    cout << endl;
 }
 
-void SimulatedAnnealing::printSummary() const {
+void Simulator::printSummary() const {
    cout << "# Temperature achieve: " << setprecision(6) << bestTemp << endl;
    bestState.printSummary();
 }
 
-string SimulatedAnnealing::printFinalCost() const {
+string Simulator::printFinalCost() const {
    stringstream str;
    str << setiosflags(ios::fixed) << setprecision(3);
    str << bestState.printQuiet();
@@ -176,14 +176,14 @@ string SimulatedAnnealing::printFinalCost() const {
    return str.str();
 }
 
-void SimulatedAnnealing::generateOutput(char* fileName) {
+void Simulator::generateOutput(char* fileName) {
    bestState.generateOutput(fileName);
 }
 
-void SimulatedAnnealing::printIllegalConnection() {
+void Simulator::printIllegalConnection() {
    currentState.printIllegalConnection();
 }
 
-void SimulatedAnnealing::printLatencyTable() {
+void Simulator::printLatencyTable() {
    bestState.printLatencyTable();
 }

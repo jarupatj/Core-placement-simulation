@@ -3,7 +3,7 @@ CXXFLAGS = -c
 DEBUG = -g
 LDFLAGS =-L /usr/local/lib 
 SOURCES = mpiJob.cpp State.cpp Core.cpp Utils.cpp Router.cpp\
-		   Network.cpp SimulatedAnnealing.cpp Cost.cpp Utilization.cpp
+		   Network.cpp Simulator.cpp Cost.cpp Utilization.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE=mpiJob
 #specify the directory that make should search

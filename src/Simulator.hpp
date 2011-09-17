@@ -7,10 +7,10 @@
 
 using std::stringstream;
 
-class SimulatedAnnealing {
+class Simulator {
    public:
-      SimulatedAnnealing();
-      ~SimulatedAnnealing();
+      Simulator();
+      ~Simulator();
 
       /*
        * Initialize simulated annealing
