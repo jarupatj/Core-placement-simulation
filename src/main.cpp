@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <sstream>
+#include <iomanip>
 
 #include "Defs.hpp"
 #include "SimulatedAnnealing.hpp"

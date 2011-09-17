@@ -70,32 +70,46 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
          }
       }
    }
-   int numJob = parameters.size();
-   int jobCount = 0;
+   int numJob = parameters.size(); /* total number of jobs that need to be done */
+   int jobCount = 0; /* number of jobs that we've processed */
    int minJob = 0;
-   while (jobCount < numJob) {
-      /*
-       * Calculate how many children processes are needed.
-       * Minimum number of children processes needed is the mininum between
-       * number of available child process and number of jobs left
-       */
-      minJob = min(numProcess - 1, numJob - jobCount);
-      /*
-       * use MPI_send to send array of a,b,g,d to each child process
-       */
-      for (int i = 1; i <= minJob; i++) {
-         MPI_Send(&parameters[jobCount][0], 1, paramType, i, INPUT,
-               MPI_COMM_WORLD);
-         jobCount++;
-      }
+   int numRunning = 0; /* count number of process running */
+   /*
+    * Calculate how many children processes are needed.
+    * Minimum number of children processes needed is the mininum between
+    * number of available child process and number of jobs left
+    */
+   minJob = min(numProcess - 1, numJob - jobCount);
+   /*
+    * use MPI_send to send array of a,b,g,d to each child process
+    */
+   for (int i = 1; i <= minJob; i++) {
+      MPI_Send(&parameters[jobCount][0], 1, paramType, i, INPUT, MPI_COMM_WORLD);
+      jobCount++;
+      numRunning++;
+   }
+
+   /*
+    * If there's still at least one process running then we need to
+    * wait until we received the result of that process
+    */
+   while (numRunning != 0) {
       /*
        * use MPI_Recv to receive output from child process
        */
-      for (int i = 1; i <= minJob; i++) {
-         MPI_Recv(&recvMsg, MSG_SIZE, MPI_CHAR, i, OUTPUT, MPI_COMM_WORLD,
-               &status);
-         cout << "# Process " << i << endl;
-         cout << recvMsg;
+      MPI_Recv(&recvMsg, MSG_SIZE, MPI_CHAR, MPI_ANY_SOURCE, OUTPUT,
+            MPI_COMM_WORLD, &status);
+      cout << "# Process " << status.MPI_SOURCE << endl;
+      cout << recvMsg;
+      numRunning--;
+      /*
+       * We still have more jobs to be done
+       */
+      if (jobCount < numJob) {
+         MPI_Send(&parameters[jobCount][0], 1, paramType, status.MPI_SOURCE,
+               INPUT, MPI_COMM_WORLD);
+         jobCount++;
+         numRunning++;
       }
    }
    /*
