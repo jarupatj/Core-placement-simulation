@@ -17,6 +17,10 @@
 #define OUTPUT 2
 #define MSG_SIZE 150
 #define ROOT 0
+#define ALPHA_INDEX 0
+#define BETA_INDEX 1
+#define GAMMA_INDEX 2
+#define DELTA_INDEX 3
 
 using namespace std;
 
@@ -52,15 +56,15 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
     * create array to store different a, b, g, d values
     */
    vector<vector<double> > parameters;
-   vector<double> t(4);
+   vector<double> t(SIZE);
    for (double i = aS; i <= aE; i += aI) {
-      t[0] = i;
+      t[ALPHA_INDEX] = i;
       for (double j = bS; j <= bE; j += bI) {
-         t[1] = j;
+         t[BETA_INDEX] = j;
          for (double k = gS; k <= gE; k += gI) {
-            t[2] = k;
+            t[GAMMA_INDEX] = k;
             for (double l = dS; l <= dE; l += dI) {
-               t[3] = l;
+               t[DELTA_INDEX] = l;
                parameters.push_back(t);
             }
          }
@@ -70,7 +74,11 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
    int jobCount = 0;
    int minJob = 0;
    while (jobCount < numJob) {
-      //min of (number of process we have (not including root) or job left)
+      /*
+       * Calculate how many children processes are needed.
+       * Minimum number of children processes needed is the mininum between
+       * number of available child process and number of jobs left
+       */
       minJob = min(numProcess - 1, numJob - jobCount);
       /*
        * use MPI_send to send array of a,b,g,d to each child process
@@ -109,12 +117,15 @@ void child_process(double start, double end, double rate, int iter, int reject,
     * receive parameters setting from root process
     */
    MPI_Recv(param, SIZE, MPI_DOUBLE, ROOT, INPUT, MPI_COMM_WORLD, &status);
-
-   while (param[0] != -1) {
+   /*
+    * loop until receive the end indicator which is when alpha == -1
+    */
+   while (param[ALPHA_INDEX] != -1) {
       stringstream s;
       SimulatedAnnealing sa;
-      int err = sa.init(param[0], param[1], param[2], param[3], start, end,
-            rate, iter, reject, accept, inputFile, verbose, quiet);
+      int err = sa.init(param[ALPHA_INDEX], param[BETA_INDEX],
+            param[GAMMA_INDEX], param[DELTA_INDEX], start, end, rate, iter,
+            reject, accept, inputFile, verbose, quiet);
       if (err == FILE_OPEN_ERR) {
          s << "# File open error exit" << endl;
       } else if (err == ILLEGAL_STATE_ERR) {
@@ -131,8 +142,10 @@ void child_process(double start, double end, double rate, int iter, int reject,
           */
 
          s << seed << " ";
-         s << setw(3) << param[0] << setw(5) << param[1] << setw(5) << param[2] << setw(5) << param[3]
-               << setw(7) << start << setw(7) << end << setw(7) << rate;
+         s << setw(3) << param[ALPHA_INDEX] << setw(5) << param[BETA_INDEX]
+               << setw(5) << param[GAMMA_INDEX] << setw(5)
+               << param[DELTA_INDEX] << setw(7) << start << setw(7) << end
+               << setw(7) << rate;
          s << sa.printFinalCost();
 
       }
