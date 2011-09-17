@@ -1,5 +1,5 @@
-#ifndef SA_HPP
-#define SA_HPP
+#ifndef SIMULATOR_HPP
+#define SIMULATOR_HPP
 
 #include <sstream>
 
