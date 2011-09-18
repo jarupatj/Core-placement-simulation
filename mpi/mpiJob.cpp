@@ -127,6 +127,9 @@ void child_process(double start, double end, double rate, int iter, int reject,
    MPI_Status status;
    char sendMsg[MSG_SIZE];
    double param[SIZE];
+   
+   srand(seed);
+
    /*
     * receive parameters setting from root process
     */
@@ -200,7 +203,6 @@ int main(int argc, char* argv[]) {
    MPI_Type_contiguous(SIZE, MPI_DOUBLE, &paramType);
    MPI_Type_commit(&paramType);
 
-   srand(seed);
 
    while ((c = getopt(argc, argv, "s:e:r:i:c:p:n:h")) != -1) {
       switch (c) {
@@ -244,7 +246,7 @@ int main(int argc, char* argv[]) {
       root_process(configFile, numProcess, paramType);
    } else {
       child_process(start, end, rate, iter, reject, accept, inputFile, verbose,
-            quiet, seed);
+            quiet, seed+rank);
    }
 
    MPI_Type_free(&paramType);
