@@ -7,64 +7,14 @@
 using namespace std;
 
 Utilization::Utilization() {
-   utilization = NULL;
    size = 0;
 }
 
 Utilization::~Utilization() {
-   if (utilization != NULL) {
-      for (int i = 0; i < (size); i++) {
-         delete[] utilization[i];
-      }
-      delete[] utilization;
-   }
-}
-
-Utilization& Utilization::operator=(const Utilization& sourceUtil) {
-   if (this == &sourceUtil) {
-      return *this;
-   }
-
-   if (utilization != NULL) {
-      for (int i = 0; i < (size); i++) {
-         delete[] utilization[i];
-      }
-      delete[] utilization;
-   }
-
-   deepCopy(sourceUtil);
-
-   return *this;
-}
-
-void Utilization::deepCopy(const Utilization& sourceUtil) {
-   size = sourceUtil.size;
-
-   if (sourceUtil.utilization) {
-      utilization = new Link*[size];
-      for (int i = 0; i < (size); i++) {
-         utilization[i] = new Link[MAX_DIRECTION];
-         memcpy(utilization[i], sourceUtil.utilization[i], sizeof(Link)*MAX_DIRECTION);
-      }
-   } else {
-      utilization = NULL;
-   }
 }
 
 void Utilization::init(int row, int col) {
    size = row * col;
-
-   if (utilization != NULL) {
-      for (int i = 0; i < (size); i++) {
-         delete[] utilization[i];
-      }
-      delete[] utilization;
-   }
-
-   utilization = new Link*[size];
-   for (int i = 0; i < (size); i++) {
-      utilization[i] = new Link[MAX_DIRECTION];
-   }
 }
 
 void Utilization::reset() {

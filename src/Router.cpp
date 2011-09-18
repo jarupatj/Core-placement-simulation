@@ -15,7 +15,7 @@ Router::Router() {
 Router::~Router() {
 }
 
-int Router::getTurn(int t) {
+int Router::getTurn(int t) const{
    assert(t >= 0 && t < 8);
    return turns[t];
 }

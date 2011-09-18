@@ -11,7 +11,7 @@ class Router {
       /*
        * get turn count of turn "t"
        */
-      int getTurn(int t);
+      int getTurn(int t) const;
       /*
        * add or remove turn from a router
        * op is either ADD or REMOVE
@@ -20,12 +20,12 @@ class Router {
       /*
        * check if a router is psudonode or not
        */
-      bool isPsudonode();
+      bool isPsudonode() const;
       /*
        * get indexing number of a core
        * so we can access the core in core vector
        */
-      int getCoreIndex();
+      int getCoreIndex() const;
       /*
        * place a core to a router
        * index corresponds to vector indexing
@@ -43,11 +43,11 @@ class Router {
       void checkPsudonode();
 };
 
-inline bool Router::isPsudonode() {
+inline bool Router::isPsudonode() const {
    return psudonode;
 }
 
-inline int Router::getCoreIndex() {
+inline int Router::getCoreIndex() const {
    return coreIndex;
 }
 

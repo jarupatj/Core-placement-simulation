@@ -13,8 +13,6 @@ using std::vector;
 class Network{
    public:
       Network();
-      Network(const Network& sourceNetwork);
-      Network& operator=(const Network& sourceNetwork); 
       ~Network();
 
       /*
@@ -48,14 +46,14 @@ class Network{
        * change all connections to and from core[index]
        * op specifies operation ADD/REMOVE
        */
-      void changeAllConnections(double** bandwidth, vector<Core> core, int index, int op);
+      void changeAllConnections(double bandwidth[][MAX_CORE_SIZE], vector<Core> core, int index, int op);
 
       //bool isLegal(int LINK_BANDWIDTH);
 
       /*
        * Update utilization matrix by tracing route of all connections
        */
-      void updateUtilization(double** bandwidth, vector<Core> core);
+      void updateUtilization(double bandwidth[][MAX_CORE_SIZE], vector<Core> core);
       /*
        * calculate utilization using utilization matrix
        */
@@ -79,7 +77,7 @@ class Network{
       int row;
       int col;
       bool legal;
-      Router **routers;
+      Router routers[MAX_MESH_ROW][MAX_MESH_COL];
       Utilization utilization;
 
       void deepCopy(const Network& sourceNetwork);

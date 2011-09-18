@@ -11,60 +11,14 @@ using namespace std;
 Network::Network() {
    row = 0;
    col = 0;
-   routers = NULL;
 }
 
 Network::~Network() {
-   for (int i = 0; i < row; i++) {
-      delete[] routers[i];
-   }
-   delete[] routers;
-}
-
-Network::Network(const Network& sourceNetwork) {
-   deepCopy(sourceNetwork);
-}
-
-Network& Network::operator=(const Network& sourceNetwork) {
-   if (this == &sourceNetwork) {
-      return *this;
-   }
-
-   for (int i = 0; i < row; i++) {
-      delete[] routers[i];
-   }
-   delete[] routers;
-
-   deepCopy(sourceNetwork);
-
-   return *this;
-}
-
-void Network::deepCopy(const Network& sourceNetwork) {
-   row = sourceNetwork.row;
-   col = sourceNetwork.col;
-   utilization = sourceNetwork.utilization;
-
-   if (sourceNetwork.routers) {
-      routers = new Router*[row];
-      for (int i = 0; i < row; i++) {
-         routers[i] = new Router[col];
-         memcpy(routers[i], sourceNetwork.routers[i], sizeof(Router)*col);
-      }
-   } else {
-      routers = NULL;
-   }
 }
 
 void Network::init(int r, int c) {
    row = r;
    col = c;
-
-   routers = new Router*[row];
-   for (int i = 0; i < row; i++) {
-      routers[i] = new Router[col];
-   }
-
    utilization.init(r, c);
 }
 
@@ -149,7 +103,7 @@ void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    }
 }
 
-void Network::changeAllConnections(double** bandwidth, vector<Core> core,
+void Network::changeAllConnections(double bandwidth[][MAX_CORE_SIZE], vector<Core> core,
       int index, int op) {
    for (unsigned int i = 0; i < core.size(); i++) {
       /*
@@ -167,7 +121,7 @@ void Network::changeAllConnections(double** bandwidth, vector<Core> core,
    }
 }
 
-void Network::updateUtilization(double** bandwidth, vector<Core> core) {
+void Network::updateUtilization(double bandwidth[][MAX_CORE_SIZE], vector<Core> core) {
    int nodeIdPrev, nodeIdCur;
    Direction dir;
    Coordinate prev, cur, dNode;

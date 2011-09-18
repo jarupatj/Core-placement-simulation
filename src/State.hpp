@@ -19,8 +19,6 @@ class State {
    public:
       //function
       State();
-      State(const State& sourceState); //copy constructor
-      State& operator=(const State& sourceState); 
       ~State();
 
       /*
@@ -76,8 +74,8 @@ class State {
       double LINK_LATENCY;
       
       //variable
-      double **bandwidth;
-      double **latency;
+      double bandwidth[MAX_CORE_SIZE][MAX_CORE_SIZE];
+      double latency[MAX_CORE_SIZE][MAX_CORE_SIZE];
       int meshRow;
       int meshCol;
 

@@ -27,14 +27,14 @@ double Cost::getCost() const {
    return cost;
 }
 
-void Cost::initCost(double** bandwidth, double** latency, vector<Core> core,
+void Cost::initCost(double bandwidth[][MAX_CORE_SIZE], double latency[][MAX_CORE_SIZE], vector<Core> core,
       const double LINK_LATENCY, Network& network) {
    compaction = initCompaction(bandwidth, core);
    dilation = initDilation(bandwidth, latency, core, LINK_LATENCY, network);
    cost = alpha * compaction + (1 - alpha) * dilation;
 }
 
-double Cost::initCompaction(double** bandwidth, vector<Core> core) {
+double Cost::initCompaction(double bandwidth[][MAX_CORE_SIZE], vector<Core> core) {
    double sum = 0;
    for (unsigned int i = 0; i < core.size(); i++) {
       for (unsigned int j = 0; j < core.size(); j++) {
@@ -47,7 +47,7 @@ double Cost::initCompaction(double** bandwidth, vector<Core> core) {
    return sum;
 }
 
-double Cost::initDilation(double** bandwidth, double** latency,
+double Cost::initDilation(double bandwidth[][MAX_CORE_SIZE], double latency[][MAX_CORE_SIZE],
       vector<Core> core, const double LINK_LATENCY, Network& network) {
    slack = initSlack(latency, core, LINK_LATENCY);
    proximity = initProximity(bandwidth, core);
@@ -55,7 +55,7 @@ double Cost::initDilation(double** bandwidth, double** latency,
    return beta * slack + gamma * proximity + delta * utilization;
 }
 
-double Cost::initSlack(double** latency, vector<Core> core,
+double Cost::initSlack(double latency[][MAX_CORE_SIZE], vector<Core> core,
       const double LINK_LATENCY) {
    double sum = 0;
    int hops;
@@ -70,7 +70,7 @@ double Cost::initSlack(double** latency, vector<Core> core,
    return sum;
 }
 
-double Cost::initProximity(double** bandwidth, vector<Core> core) {
+double Cost::initProximity(double bandwidth[][MAX_CORE_SIZE], vector<Core> core) {
    double sum = 0;
    int dist;
    for (unsigned int i = 0; i < core.size(); i++) {
@@ -85,20 +85,20 @@ double Cost::initProximity(double** bandwidth, vector<Core> core) {
    return sum;
 }
 
-double Cost::utilizationCost(double** bandwidth, vector<Core> core,
+double Cost::utilizationCost(double bandwidth[][MAX_CORE_SIZE], vector<Core> core,
       Network& network) {
    network.updateUtilization(bandwidth, core);
    return network.calculateUtilization();
 }
 
-void Cost::calculateCost(double** bandwidth, vector<Core> core,
+void Cost::calculateCost(double bandwidth[][MAX_CORE_SIZE], vector<Core> core,
       Network& network) {
    utilization = utilizationCost(bandwidth, core, network);
    dilation = beta * slack + gamma * proximity + delta * utilization;
    cost = alpha * compaction + (1 - alpha) * dilation;
 }
 
-void Cost::updateCost(double** bandwidth, double** latency,
+void Cost::updateCost(double bandwidth[][MAX_CORE_SIZE], double latency[][MAX_CORE_SIZE],
       double LINK_LATENCY, vector<Core> core, int op, int coreA, int coreB) {
    if (op == REMOVE) {
       compaction -= changeCompaction(bandwidth, core, coreA, coreB);
@@ -111,7 +111,7 @@ void Cost::updateCost(double** bandwidth, double** latency,
    }
 }
 
-double Cost::changeCompaction(double** bandwidth, vector<Core> core, int coreA,
+double Cost::changeCompaction(double bandwidth[][MAX_CORE_SIZE], vector<Core> core, int coreA,
       int coreB) {
    double change = 0;
    for (unsigned int i = 0; i < core.size(); i++) {
@@ -154,7 +154,7 @@ double Cost::changeCompaction(double** bandwidth, vector<Core> core, int coreA,
    return change;
 }
 
-double Cost::changeSlack(double** latency, const double LINK_LATENCY, vector<
+double Cost::changeSlack(double latency[][MAX_CORE_SIZE], const double LINK_LATENCY, vector<
       Core> core, int coreA, int coreB) {
    double change = 0;
    int hops;
@@ -209,7 +209,7 @@ double Cost::changeSlack(double** latency, const double LINK_LATENCY, vector<
    return change;
 }
 
-double Cost::changeProximity(double** bandwidth, vector<Core> core, int coreA,
+double Cost::changeProximity(double bandwidth[][MAX_CORE_SIZE], vector<Core> core, int coreA,
       int coreB) {
    double change = 0;
    int dist;
