@@ -11,6 +11,7 @@
 
 #include "../src/Defs.hpp"
 #include "../src/Simulator.hpp"
+#include "../src/SFMT/SFMT.h"
 
 #define SIZE 4
 #define INPUT 1
@@ -128,7 +129,7 @@ void child_process(double start, double end, double rate, int iter, int reject,
    char sendMsg[MSG_SIZE];
    double param[SIZE];
    
-   srand(seed);
+   init_gen_rand(seed);
 
    /*
     * receive parameters setting from root process

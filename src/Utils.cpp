@@ -10,18 +10,19 @@
 #include <ctime>
 #include <cassert>
 
-#include "Defs.hpp"
+#include "Utils.hpp"
+#include "SFMT/SFMT.h"
 
 int getHops(Coordinate a, Coordinate b) {
    return (int)(fabs(a.x - b.x) + fabs(a.y - b.y));
 }
 
 double uniform_0_1() {
-   return (double) rand() / RAND_MAX;
+   return genrand_real1() ;
 }
 
 int uniform_n(int n) {
    assert(n > 0);
-   return (int) (uniform_0_1() * (n));
+   return (int) (genrand_real2() * (n));
    //return uniform_0_1() * (n-1) + 1; //from [1,...,n]
 }

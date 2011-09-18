@@ -7,6 +7,7 @@
 
 #include "Defs.hpp"
 #include "Simulator.hpp"
+#include "SFMT/SFMT.h"
 
 using namespace std;
 
@@ -112,8 +113,7 @@ int main(int argc, char* argv[]) {
 
    inputfile = argv[optind];
 
-   srand(seed);
-   //srand(10);
+   init_gen_rand(seed);
 
    /*
     * Initialize simulated annealing
