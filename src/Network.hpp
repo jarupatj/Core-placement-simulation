@@ -48,14 +48,14 @@ class Network{
        * change all connections to and from core[index]
        * op specifies operation ADD/REMOVE
        */
-      void changeAllConnections(double** bandwidth, vector<Core> core, int index, int op);
+      void changeAllConnections(double** bandwidth, vector<Core> &core, int index, int op);
 
       //bool isLegal(int LINK_BANDWIDTH);
 
       /*
        * Update utilization matrix by tracing route of all connections
        */
-      void updateUtilization(double** bandwidth, vector<Core> core);
+      void updateUtilization(double** bandwidth, vector<Core> &core);
       /*
        * calculate utilization using utilization matrix
        */

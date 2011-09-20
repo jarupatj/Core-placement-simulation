@@ -149,7 +149,7 @@ void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    }
 }
 
-void Network::changeAllConnections(double** bandwidth, vector<Core> core,
+void Network::changeAllConnections(double** bandwidth, vector<Core> &core,
       int index, int op) {
    for (unsigned int i = 0; i < core.size(); i++) {
       /*
@@ -167,7 +167,7 @@ void Network::changeAllConnections(double** bandwidth, vector<Core> core,
    }
 }
 
-void Network::updateUtilization(double** bandwidth, vector<Core> core) {
+void Network::updateUtilization(double** bandwidth, vector<Core> &core) {
    int nodeIdPrev, nodeIdCur;
    Direction dir;
    Coordinate prev, cur, dNode;
