@@ -13,8 +13,6 @@ using std::vector;
 class Network{
    public:
       Network();
-      Network(const Network& sourceNetwork);
-      Network& operator=(const Network& sourceNetwork); 
       ~Network();
 
       /*
@@ -82,7 +80,6 @@ class Network{
       vector< vector<Router> > routers;
       Utilization utilization;
 
-      void deepCopy(const Network& sourceNetwork);
       /*
        * get a direction that would take you from "from" to "to"
        */

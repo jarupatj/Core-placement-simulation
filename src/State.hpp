@@ -19,8 +19,6 @@ class State {
    public:
       //function
       State();
-      State(const State& sourceState); //copy constructor
-      State& operator=(const State& sourceState); 
       ~State();
 
       /*
@@ -90,8 +88,6 @@ class State {
        */
       vector< pair <unsigned int,unsigned int> > illegalConnection;
 
-      //function
-      void deepCopy(const State& sourceState);
 };
 
 #endif

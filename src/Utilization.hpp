@@ -28,7 +28,6 @@ class Utilization {
       Utilization();
       ~Utilization();
 
-      Utilization& operator=(const Utilization& sourceUtil);
       /*
        * initialize utilization matrix
        * allocate the memory
@@ -64,8 +63,6 @@ class Utilization {
    private:
       int size;
       vector< vector<Link> > utilization;
-
-      void deepCopy(const Utilization& sourceUtil);
 };
 
 #endif /* UTILIZATION_HPP_ */

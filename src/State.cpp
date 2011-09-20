@@ -11,74 +11,11 @@
 using namespace std;
 
 State::State() {
-   bandwidth = NULL;
-   latency = NULL;
    meshRow = 0;
    meshCol = 0;
 }
 
 State::~State() {
-   for (unsigned int i = 0; i < core.size(); i++) {
-      delete[] bandwidth[i];
-      delete[] latency[i];
-   }
-   delete[] bandwidth;
-   delete[] latency;
-}
-
-State::State(const State& sourceState) {
-   deepCopy(sourceState);
-}
-
-State& State::operator=(const State& sourceState) {
-   //check for self-assignment (same obj)
-   if (this == &sourceState) {
-      return *this;
-   }
-
-   for (unsigned int i = 0; i < core.size(); i++) {
-      delete[] bandwidth[i];
-      delete[] latency[i];
-   }
-   delete[] bandwidth;
-   delete[] latency;
-
-   core.clear();
-   deepCopy(sourceState);
-   return *this;
-}
-
-void State::deepCopy(const State& sourceState) {
-   LINK_BANDWIDTH = sourceState.LINK_BANDWIDTH;
-   LINK_LATENCY = sourceState.LINK_LATENCY;
-   meshRow = sourceState.meshRow;
-   meshCol = sourceState.meshCol;
-
-   core = sourceState.core;
-   network = sourceState.network;
-   cost = sourceState.cost;
-
-   if (sourceState.bandwidth) {
-      //allocate memory
-      bandwidth = new double*[core.size()];
-      for (unsigned int i = 0; i < core.size(); i++) {
-         bandwidth[i] = new double[core.size()];
-         memcpy(bandwidth[i], sourceState.bandwidth[i], sizeof(double) * core.size());
-      }
-   } else {
-      bandwidth = NULL;
-   }
-
-   if (sourceState.latency) {
-      //allocate memory
-      latency = new double*[core.size()];
-      for (unsigned int i = 0; i < core.size(); i++) {
-         latency[i] = new double[core.size()];
-         memcpy(latency[i], sourceState.latency[i], sizeof(double) * core.size());
-      }
-   } else {
-      latency = NULL;
-   }
 }
 
 int State::init(double alpha, double beta, double gamma, double delta,

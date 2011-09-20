@@ -11,49 +11,9 @@ using namespace std;
 Network::Network() {
    row = 0;
    col = 0;
-   routers = NULL;
 }
 
 Network::~Network() {
-   for (int i = 0; i < row; i++) {
-      delete[] routers[i];
-   }
-   delete[] routers;
-}
-
-Network::Network(const Network& sourceNetwork) {
-   deepCopy(sourceNetwork);
-}
-
-Network& Network::operator=(const Network& sourceNetwork) {
-   if (this == &sourceNetwork) {
-      return *this;
-   }
-
-   for (int i = 0; i < row; i++) {
-      delete[] routers[i];
-   }
-   delete[] routers;
-
-   deepCopy(sourceNetwork);
-
-   return *this;
-}
-
-void Network::deepCopy(const Network& sourceNetwork) {
-   row = sourceNetwork.row;
-   col = sourceNetwork.col;
-   utilization = sourceNetwork.utilization;
-
-   if (sourceNetwork.routers) {
-      routers = new Router*[row];
-      for (int i = 0; i < row; i++) {
-         routers[i] = new Router[col];
-         memcpy(routers[i], sourceNetwork.routers[i], sizeof(Router)*col);
-      }
-   } else {
-      routers = NULL;
-   }
 }
 
 void Network::init(int r, int c) {
