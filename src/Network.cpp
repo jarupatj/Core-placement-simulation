@@ -59,16 +59,7 @@ void Network::deepCopy(const Network& sourceNetwork) {
 void Network::init(int r, int c) {
    row = r;
    col = c;
-<<<<<<< HEAD
-
-   routers = new Router*[row];
-   for (int i = 0; i < row; i++) {
-      routers[i] = new Router[col];
-   }
-
-=======
    routers = vector< vector<Router> > (row, vector<Router> (col));
->>>>>>> dynamicArrayVector
    utilization.init(r, c);
 }
 

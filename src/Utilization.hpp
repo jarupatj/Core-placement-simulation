@@ -1,13 +1,10 @@
 #ifndef UTILIZATION_HPP_
 #define UTILIZATION_HPP_
 
-<<<<<<< HEAD
-=======
 #include <vector>
 
 #include "Defs.hpp"
 
->>>>>>> dynamicArrayVector
 #define MAX_DIRECTION 4
 
 #define NO_NODE -1
