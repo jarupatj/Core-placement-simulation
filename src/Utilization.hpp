@@ -1,8 +1,6 @@
 #ifndef UTILIZATION_HPP_
 #define UTILIZATION_HPP_
 
-#include "Defs.hpp"
-
 #define MAX_DIRECTION 4
 
 #define NO_NODE -1
@@ -23,6 +21,8 @@ class Utilization {
    public:
       Utilization();
       ~Utilization();
+
+      Utilization& operator=(const Utilization& sourceUtil);
       /*
        * initialize utilization matrix
        * allocate the memory
@@ -57,7 +57,7 @@ class Utilization {
 
    private:
       int size;
-      Link utilization[MAX_UTIL_SIZE][MAX_DIRECTION];
+      Link **utilization;
 
       void deepCopy(const Utilization& sourceUtil);
 };

@@ -5,11 +5,6 @@
 #define FILE_OPEN_ERR      1
 #define ILLEGAL_STATE_ERR  2
 
-#define MAX_CORE_SIZE 50
-#define MAX_MESH_ROW 50
-#define MAX_MESH_COL 50
-#define MAX_UTIL_SIZE MAX_MESH_ROW*MAX_MESH_COL
-
 //Default value
 #define ALPHA  1
 #define BETA   1

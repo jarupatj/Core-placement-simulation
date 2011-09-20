@@ -25,7 +25,7 @@ class Cost {
       /*
        * Initialize cost of a state
        */
-      void initCost(double bandwidth[][MAX_CORE_SIZE], double latency[][MAX_CORE_SIZE], vector<Core> core, const double LINK_LATENCY, Network& network);
+      void initCost(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network);
       /*
        * Get cost
        */
@@ -43,13 +43,13 @@ class Cost {
       /*
        * calculate cost when compation, slack and proximity are initialized
        */
-      void calculateCost(double bandwidth[][MAX_CORE_SIZE], vector<Core> core, Network& network);
+      void calculateCost(double** bandwidth, vector<Core> core, Network& network);
       /*
        * Add/remove compaction, slack and proximity cost when a core is moved.
        * index specifies indexing number to access moved core in core vector
        * op specifies operation ADD or REMOVE
        */
-      void updateCost(double bandwidth[][MAX_CORE_SIZE], double latency[][MAX_CORE_SIZE], double LINK_LATENCY,
+      void updateCost(double** bandwidth, double** latency, double LINK_LATENCY,
             vector<Core> core, int op, int coreA, int coreB = NO_CORE);
       /*
        * Return a string which consists of cost value
@@ -68,15 +68,15 @@ class Cost {
       /*
        * initialize compaction, dilation, slack and proximity cost
        */
-      double initCompaction(double bandwidth[][MAX_CORE_SIZE], vector<Core> core);
-      double initDilation(double bandwidth[][MAX_CORE_SIZE], double latency[][MAX_CORE_SIZE], vector<Core> core, const double LINK_LATENCY, Network& network);
-      double initSlack(double latency[][MAX_CORE_SIZE], vector<Core> core, const double LINK_LATENCY);
-      double initProximity(double bandwidth[][MAX_CORE_SIZE], vector<Core> core);
+      double initCompaction(double** bandwidth, vector<Core> core);
+      double initDilation(double** bandwidth, double** latency, vector<Core> core, const double LINK_LATENCY, Network& network);
+      double initSlack(double** latency, vector<Core> core, const double LINK_LATENCY);
+      double initProximity(double** bandwidth, vector<Core> core);
 
       /*
        * Update and calculate utilization cost
        */
-      double utilizationCost(double bandwidth[][MAX_CORE_SIZE], vector<Core> core, Network& network);
+      double utilizationCost(double** bandwidth, vector<Core> core, Network& network);
 
       /*
        * calculate change in compation, slack and proximity cost
@@ -85,9 +85,9 @@ class Cost {
        * coreA, coreB specify indexing number to access moved core in core vector
        * the change in cost is calculated using connection from/to core[coreA] and core[coreB]
        */
-      double changeCompaction(double bandwidth[][MAX_CORE_SIZE], vector<Core> core, int coreA, int coreB);
-      double changeSlack(double latency[][MAX_CORE_SIZE], const double LINK_LATENCY, vector<Core> core, int coreA, int coreB);
-      double changeProximity(double bandwidth[][MAX_CORE_SIZE], vector<Core> core, int coreA, int coreB);
+      double changeCompaction(double** bandwidth, vector<Core> core, int coreA, int coreB);
+      double changeSlack(double** latency, const double LINK_LATENCY, vector<Core> core, int coreA, int coreB);
+      double changeProximity(double** bandwidth, vector<Core> core, int coreA, int coreB);
 };
 
 #endif

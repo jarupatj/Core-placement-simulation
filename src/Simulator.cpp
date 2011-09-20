@@ -57,7 +57,7 @@ void Simulator::run() {
        */
       for (int numChange = 0; (numChange < MAX_STATE_CHANGE_PER_TEMP)
             && (cReject < MAX_REJECT) && (cAccept < MAX_ACCEPT); numChange++) {
-         State newState = currentState; //deep copy
+         State newState(currentState); //deep copy
          newState.generateNewState();
          changeCost = newState.getCost() - currentState.getCost();
 
