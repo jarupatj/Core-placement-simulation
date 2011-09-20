@@ -255,14 +255,9 @@ void Cost::printCost() const {
 
 string Cost::printQuiet() const {
    stringstream str;
-   /*
-   str << right << setiosflags(ios::fixed) << setprecision(3) << cost << " "
-         << compaction << " " << dilation << " " << slack << " " << proximity
-         << " " << utilization;
-   */
-   str << right << setiosflags(ios::fixed) << setprecision(3) << setw(10) << cost << setw(10)
-            << compaction << setw(10) << dilation << setw(10) << slack << setw(10) << proximity
-            << setw(10) << utilization;
+   str << right << setiosflags(ios::fixed) << setprecision(2) << setw(12) << cost << setw(12)
+            << compaction << setw(12) << dilation << setw(12) << slack << setw(12) << proximity
+            << setw(12) << utilization;
    return str.str();
 }
 
