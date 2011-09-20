@@ -53,18 +53,7 @@ void Utilization::deepCopy(const Utilization& sourceUtil) {
 
 void Utilization::init(int row, int col) {
    size = row * col;
-
-   if (utilization != NULL) {
-      for (int i = 0; i < (size); i++) {
-         delete[] utilization[i];
-      }
-      delete[] utilization;
-   }
-
-   utilization = new Link*[size];
-   for (int i = 0; i < (size); i++) {
-      utilization[i] = new Link[MAX_DIRECTION];
-   }
+   utilization = vector< vector<Link> > (size, vector<Link> (MAX_DIRECTION));
 }
 
 void Utilization::reset() {

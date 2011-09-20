@@ -1,9 +1,18 @@
 #ifndef UTILIZATION_HPP_
 #define UTILIZATION_HPP_
 
+<<<<<<< HEAD
+=======
+#include <vector>
+
+#include "Defs.hpp"
+
+>>>>>>> dynamicArrayVector
 #define MAX_DIRECTION 4
 
 #define NO_NODE -1
+
+using std::vector;
 
 struct Link {
    int toNodeId; //link to what nodeId
@@ -57,7 +66,7 @@ class Utilization {
 
    private:
       int size;
-      Link **utilization;
+      vector< vector<Link> > utilization;
 
       void deepCopy(const Utilization& sourceUtil);
 };

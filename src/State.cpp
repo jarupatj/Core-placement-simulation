@@ -97,15 +97,8 @@ int State::init(double alpha, double beta, double gamma, double delta,
     * allocate memory for bandwidth and latency
     * initialize them to zero
     */
-   bandwidth = new double*[numCore];
-   latency = new double*[numCore];
-   for (int i = 0; i < numCore; i++) {
-      bandwidth[i] = new double[numCore];
-      memset(bandwidth[i], 0, sizeof(double) * numCore);
-
-      latency[i] = new double[numCore];
-      memset(latency[i], 0, sizeof(double) * numCore);
-   }
+   bandwidth = vector< vector<double> > (numCore, vector<double> (numCore));
+   latency = vector< vector<double> > (numCore, vector<double> (numCore));
 
    /*
     * Initialize the network by placing cores on the network
