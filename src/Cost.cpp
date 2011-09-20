@@ -27,14 +27,14 @@ double Cost::getCost() const {
    return cost;
 }
 
-void Cost::initCost(vector< vector<double> > bandwidth, vector< vector<double> > latency, vector<Core> core,
+void Cost::initCost(vector< vector<double> > &bandwidth, vector< vector<double> > &latency, vector<Core> &core,
       const double LINK_LATENCY, Network& network) {
    compaction = initCompaction(bandwidth, core);
    dilation = initDilation(bandwidth, latency, core, LINK_LATENCY, network);
    cost = alpha * compaction + (1 - alpha) * dilation;
 }
 
-double Cost::initCompaction(vector< vector<double> > bandwidth, vector<Core> core) {
+double Cost::initCompaction(vector< vector<double> > &bandwidth, vector<Core> &core) {
    double sum = 0;
    for (unsigned int i = 0; i < core.size(); i++) {
       for (unsigned int j = 0; j < core.size(); j++) {
@@ -47,15 +47,15 @@ double Cost::initCompaction(vector< vector<double> > bandwidth, vector<Core> cor
    return sum;
 }
 
-double Cost::initDilation(vector< vector<double> > bandwidth, vector< vector<double> > latency,
-      vector<Core> core, const double LINK_LATENCY, Network& network) {
+double Cost::initDilation(vector< vector<double> > &bandwidth, vector< vector<double> > &latency,
+      vector<Core> &core, const double LINK_LATENCY, Network& network) {
    slack = initSlack(latency, core, LINK_LATENCY);
    proximity = initProximity(bandwidth, core);
    utilization = utilizationCost(bandwidth, core, network);
    return beta * slack + gamma * proximity + delta * utilization;
 }
 
-double Cost::initSlack(vector< vector<double> > latency, vector<Core> core,
+double Cost::initSlack(vector< vector<double> > &latency, vector<Core> &core,
       const double LINK_LATENCY) {
    double sum = 0;
    int hops;
@@ -70,7 +70,7 @@ double Cost::initSlack(vector< vector<double> > latency, vector<Core> core,
    return sum;
 }
 
-double Cost::initProximity(vector< vector<double> > bandwidth, vector<Core> core) {
+double Cost::initProximity(vector< vector<double> > &bandwidth, vector<Core> &core) {
    double sum = 0;
    int dist;
    for (unsigned int i = 0; i < core.size(); i++) {
@@ -85,21 +85,21 @@ double Cost::initProximity(vector< vector<double> > bandwidth, vector<Core> core
    return sum;
 }
 
-double Cost::utilizationCost(vector< vector<double> > bandwidth, vector<Core> core,
+double Cost::utilizationCost(vector< vector<double> > &bandwidth, vector<Core> &core,
       Network& network) {
    network.updateUtilization(bandwidth, core);
    return network.calculateUtilization();
 }
 
-void Cost::calculateCost(vector< vector<double> > bandwidth, vector<Core> core,
+void Cost::calculateCost(vector< vector<double> > &bandwidth, vector<Core> &core,
       Network& network) {
    utilization = utilizationCost(bandwidth, core, network);
    dilation = beta * slack + gamma * proximity + delta * utilization;
    cost = alpha * compaction + (1 - alpha) * dilation;
 }
 
-void Cost::updateCost(vector< vector<double> > bandwidth, vector< vector<double> > latency,
-      double LINK_LATENCY, vector<Core> core, int op, int coreA, int coreB) {
+void Cost::updateCost(vector< vector<double> > &bandwidth, vector< vector<double> > &latency,
+      double LINK_LATENCY, vector<Core> &core, int op, int coreA, int coreB) {
    if (op == REMOVE) {
       compaction -= changeCompaction(bandwidth, core, coreA, coreB);
       slack -= changeSlack(latency, LINK_LATENCY, core, coreA, coreB);
@@ -111,7 +111,7 @@ void Cost::updateCost(vector< vector<double> > bandwidth, vector< vector<double>
    }
 }
 
-double Cost::changeCompaction(vector< vector<double> > bandwidth, vector<Core> core, int coreA,
+double Cost::changeCompaction(vector< vector<double> > &bandwidth, vector<Core> &core, int coreA,
       int coreB) {
    double change = 0;
    for (unsigned int i = 0; i < core.size(); i++) {
@@ -154,8 +154,8 @@ double Cost::changeCompaction(vector< vector<double> > bandwidth, vector<Core> c
    return change;
 }
 
-double Cost::changeSlack(vector< vector<double> > latency, const double LINK_LATENCY, vector<
-      Core> core, int coreA, int coreB) {
+double Cost::changeSlack(vector< vector<double> > &latency, const double LINK_LATENCY, vector<
+      Core> &core, int coreA, int coreB) {
    double change = 0;
    int hops;
    for (unsigned int i = 0; i < core.size(); i++) {
@@ -209,7 +209,7 @@ double Cost::changeSlack(vector< vector<double> > latency, const double LINK_LAT
    return change;
 }
 
-double Cost::changeProximity(vector< vector<double> > bandwidth, vector<Core> core, int coreA,
+double Cost::changeProximity(vector< vector<double> > &bandwidth, vector<Core> &core, int coreA,
       int coreB) {
    double change = 0;
    int dist;

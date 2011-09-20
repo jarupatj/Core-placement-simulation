@@ -34,10 +34,8 @@ int State::init(double alpha, double beta, double gamma, double delta,
     * allocate memory for bandwidth and latency
     * initialize them to zero
     */
-   for (int i = 0; i < numCore; i++) {
-      bandwidth.push_back(vector<double> (numCore, 0));
-      latency.push_back(vector<double> (numCore, 0));
-   }
+   bandwidth = vector< vector<double> > (numCore, vector<double> (numCore));
+   latency = vector< vector<double> > (numCore, vector<double> (numCore));
 
    /*
     * Initialize the network by placing cores on the network

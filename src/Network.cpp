@@ -19,9 +19,7 @@ Network::~Network() {
 void Network::init(int r, int c) {
    row = r;
    col = c;
-   for(int i = 0; i < row; i++) {
-      routers.push_back(vector<Router> (col));
-   }
+   routers = vector< vector<Router> > (row, vector<Router> (col));
    utilization.init(r, c);
 }
 
@@ -106,7 +104,7 @@ void Network::changeConnection(Coordinate from, Coordinate to, int op) {
    }
 }
 
-void Network::changeAllConnections(vector< vector<double> > bandwidth, vector<Core> core,
+void Network::changeAllConnections(vector< vector<double> > &bandwidth, vector<Core> &core,
       int index, int op) {
    for (unsigned int i = 0; i < core.size(); i++) {
       /*
@@ -124,7 +122,7 @@ void Network::changeAllConnections(vector< vector<double> > bandwidth, vector<Co
    }
 }
 
-void Network::updateUtilization(vector< vector<double> > bandwidth, vector<Core> core) {
+void Network::updateUtilization(vector< vector<double> > &bandwidth, vector<Core> &core) {
    int nodeIdPrev, nodeIdCur;
    Direction dir;
    Coordinate prev, cur, dNode;
