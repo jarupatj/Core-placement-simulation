@@ -15,6 +15,9 @@ Utilization::~Utilization() {
 
 void Utilization::init(int row, int col) {
    size = row * col;
+   for(int i = 0; i < size; i++) {
+      utilization.push_back(vector<Link> (MAX_DIRECTION));
+   }
 }
 
 void Utilization::reset() {

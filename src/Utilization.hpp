@@ -1,11 +1,15 @@
 #ifndef UTILIZATION_HPP_
 #define UTILIZATION_HPP_
 
+#include <vector>
+
 #include "Defs.hpp"
 
 #define MAX_DIRECTION 4
 
 #define NO_NODE -1
+
+using std::vector;
 
 struct Link {
    int toNodeId; //link to what nodeId
@@ -57,7 +61,7 @@ class Utilization {
 
    private:
       int size;
-      Link utilization[MAX_UTIL_SIZE][MAX_DIRECTION];
+      vector< vector<Link> > utilization;
 
       void deepCopy(const Utilization& sourceUtil);
 };

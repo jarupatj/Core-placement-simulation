@@ -74,8 +74,8 @@ class State {
       double LINK_LATENCY;
       
       //variable
-      double bandwidth[MAX_CORE_SIZE][MAX_CORE_SIZE];
-      double latency[MAX_CORE_SIZE][MAX_CORE_SIZE];
+      vector< vector<double> > bandwidth;
+      vector< vector<double> > latency;
       int meshRow;
       int meshCol;
 

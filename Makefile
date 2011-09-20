@@ -1,4 +1,4 @@
-CXXFLAGS = -c -Wall -Werror -O2
+CXXFLAGS = -c -Wall -Werror 
 DEBUG = -g
 LDFLAGS =-L /usr/local/lib 
 SOURCES = main.cpp State.cpp Core.cpp Utils.cpp Router.cpp\

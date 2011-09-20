@@ -35,8 +35,8 @@ int State::init(double alpha, double beta, double gamma, double delta,
     * initialize them to zero
     */
    for (int i = 0; i < numCore; i++) {
-      memset(bandwidth[i], 0, sizeof(double) * numCore);
-      memset(latency[i], 0, sizeof(double) * numCore);
+      bandwidth.push_back(vector<double> (numCore, 0));
+      latency.push_back(vector<double> (numCore, 0));
    }
 
    /*
