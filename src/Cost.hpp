@@ -61,7 +61,7 @@ class Cost {
    private:
       //variable
       double alpha, beta, gamma, delta;
-      double cost;
+      double cost, initialCost;
       double compaction, dilation, slack, proximity, utilization;
 
       //function
