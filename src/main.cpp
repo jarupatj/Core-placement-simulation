@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
 
    inputfile = argv[optind];
 
-   init_gen_rand(seed);
+   srand(seed);
 
    /*
     * Initialize simulated annealing

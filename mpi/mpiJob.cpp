@@ -16,6 +16,7 @@
 #define SIZE 4
 #define INPUT 1
 #define OUTPUT 2
+#define SEED 3
 #define MSG_SIZE 150
 #define ROOT 0
 #define ALPHA_INDEX 0
@@ -43,6 +44,10 @@ void printUsage() {
 void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
    MPI_Status status;
    char recvMsg[MSG_SIZE];
+   unsigned int r;
+
+   srand(time(NULL));
+
    ifstream file(configFile);
    double aS, aE, aI, bS, bE, bI, gS, gE, gI, dS, dE, dI;
 
@@ -86,6 +91,8 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
     */
    for (int i = 1; i <= minJob; i++) {
       MPI_Send(&parameters[jobCount][0], 1, paramType, i, INPUT, MPI_COMM_WORLD);
+      r = (unsigned int) rand();
+      MPI_Send(&r, 1, MPI_UNSIGNED, i, SEED, MPI_COMM_WORLD);
       jobCount++;
       numRunning++;
    }
@@ -109,6 +116,8 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
       if (jobCount < numJob) {
          MPI_Send(&parameters[jobCount][0], 1, paramType, status.MPI_SOURCE,
                INPUT, MPI_COMM_WORLD);
+         r = (unsigned int) rand();
+         MPI_Send(&r, 1, MPI_UNSIGNED, status.MPI_SOURCE, SEED, MPI_COMM_WORLD);
          jobCount++;
          numRunning++;
       }
@@ -124,21 +133,30 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
 }
 
 void child_process(double start, double end, double rate, int iter, int reject,
-      int accept, char *inputFile, bool verbose, bool quiet, unsigned int seed) {
+      int accept, char *inputFile, bool verbose, bool quiet) {
    MPI_Status status;
    char sendMsg[MSG_SIZE];
    double param[SIZE];
-   
-   init_gen_rand(seed);
+   unsigned int seed;
 
    /*
     * receive parameters setting from root process
     */
    MPI_Recv(param, SIZE, MPI_DOUBLE, ROOT, INPUT, MPI_COMM_WORLD, &status);
+
    /*
     * loop until receive the end indicator which is when alpha == -1
     */
    while (param[ALPHA_INDEX] != -1) {
+      /*
+       * receive seed setting from root process
+       */
+      MPI_Recv(&seed, 1, MPI_UNSIGNED, ROOT, SEED, MPI_COMM_WORLD, &status);
+      /*
+       * seed random number generator
+       */
+      srand(seed);
+
       stringstream s;
       Simulator sa;
       int err = sa.init(param[ALPHA_INDEX], param[BETA_INDEX],
@@ -153,13 +171,11 @@ void child_process(double start, double end, double rate, int iter, int reject,
           * start simulated annealing
           */
          sa.run();
-
          /*
           * quiet printing
           * - print seed, parameters and cost
           */
-
-         s << seed << " ";
+         s << seed << "\t";
          s << setw(3) << param[ALPHA_INDEX] << setw(5) << param[BETA_INDEX]
                << setw(5) << param[GAMMA_INDEX] << setw(5)
                << param[DELTA_INDEX] << setw(7) << start << setw(7) << end
@@ -204,7 +220,6 @@ int main(int argc, char* argv[]) {
    MPI_Type_contiguous(SIZE, MPI_DOUBLE, &paramType);
    MPI_Type_commit(&paramType);
 
-
    while ((c = getopt(argc, argv, "s:e:r:i:c:p:n:h")) != -1) {
       switch (c) {
       case 's':
@@ -247,7 +262,7 @@ int main(int argc, char* argv[]) {
       root_process(configFile, numProcess, paramType);
    } else {
       child_process(start, end, rate, iter, reject, accept, inputFile, verbose,
-            quiet, seed+rank);
+            quiet);
    }
 
    MPI_Type_free(&paramType);

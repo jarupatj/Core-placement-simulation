@@ -18,11 +18,12 @@ int getHops(Coordinate a, Coordinate b) {
 }
 
 double uniform_0_1() {
-   return genrand_real1() ;
+   //return genrand_real1() ;
+   return (double) rand()/RAND_MAX;
 }
 
 int uniform_n(int n) {
    assert(n > 0);
-   return (int) (genrand_real2() * (n));
-   //return uniform_0_1() * (n-1) + 1; //from [1,...,n]
+   //return (int) (genrand_real2() * (n));
+   return rand() % n;
 }
