@@ -276,3 +276,8 @@ void Cost::printSummary() const {
          << "\tProximity: " << proximity << "\tUtilization: " << utilization
          << "\n# (Initial-Final)/Initial cost: " << (initialCost -  cost) / initialCost << endl;
 }
+
+double Cost::getCostRatio() {
+   return (initialCost -  cost) / initialCost;
+
+}

@@ -7,7 +7,6 @@
 
 #include "Defs.hpp"
 #include "Simulator.hpp"
-#include "SFMT/SFMT.h"
 
 using namespace std;
 

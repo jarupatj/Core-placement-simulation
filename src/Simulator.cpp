@@ -187,3 +187,7 @@ void Simulator::printIllegalConnection() {
 void Simulator::printLatencyTable() {
    bestState.printLatencyTable();
 }
+
+double Simulator::getCostRatio() {
+   return bestState.getCostRatio();
+}

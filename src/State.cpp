@@ -93,6 +93,10 @@ double State::getCost() const {
    return cost.getCost();
 }
 
+double State::getCostRatio() {
+   return cost.getCostRatio();
+}
+
 bool State::isLegal() {
    int hops;
    bool legal = true;

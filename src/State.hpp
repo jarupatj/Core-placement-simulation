@@ -69,6 +69,9 @@ class State {
        * print latency table
        */
       void printLatencyTable();
+
+      double getCostRatio();
+
    private:
       double LINK_BANDWIDTH;
       double LINK_LATENCY;

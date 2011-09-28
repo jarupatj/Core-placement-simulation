@@ -52,6 +52,8 @@ class Simulator {
        */
       void printLatencyTable();
 
+      double getCostRatio();
+
    private:
       //constant
       int MAX_STATE_CHANGE_PER_TEMP;
@@ -68,11 +70,6 @@ class Simulator {
       bool verbose;
       bool quiet;
 
-      //function
-      /*
-       * get current cost of a state
-       */
-      int getCost();
       /*
        * print a state detail in tabular format
        * used for verbose and normal printing

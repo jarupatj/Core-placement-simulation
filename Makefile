@@ -3,10 +3,10 @@ DEBUG = -g
 LDFLAGS =-L /usr/local/lib 
 SOURCES = main.cpp State.cpp Core.cpp Utils.cpp Router.cpp\
 		   Network.cpp Simulator.cpp Cost.cpp Utilization.cpp
-OBJECTS = $(SOURCES:.cpp=.o) SFMT.o
+OBJECTS = $(SOURCES:.cpp=.o)
 EXECUTABLE=sa
 #specify the directory that make should search
-VPATH = src:src/SFMT
+VPATH = src
 
 all: $(EXECUTABLE)
 
@@ -17,11 +17,8 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@
 
 #create .o file from .cpp file
-SFMT.o : SFMT.c
-	$(CXX) -c -O2 -DMEXP=19937 $< -o $@
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
-	
 
 clean:
 	rm -fr *.o *~ $(EXECUTABLE)

@@ -58,6 +58,8 @@ class Cost {
        */
       string printQuiet() const;
 
+      double getCostRatio();
+
    private:
       //variable
       double alpha, beta, gamma, delta;

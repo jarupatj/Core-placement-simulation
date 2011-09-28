@@ -11,7 +11,6 @@
 
 #include "../src/Defs.hpp"
 #include "../src/Simulator.hpp"
-#include "../src/SFMT/SFMT.h"
 
 #define SIZE 4
 #define INPUT 1
@@ -40,6 +39,8 @@ void printUsage() {
          << "\t-n <value> : setting seed value for random number\n"
          << "\t-h         : print usage\n\n";
 }
+
+bool ratio_printing = false;
 
 void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
    MPI_Status status;
@@ -138,6 +139,11 @@ void child_process(double start, double end, double rate, int iter, int reject,
    char sendMsg[MSG_SIZE];
    double param[SIZE];
    unsigned int seed;
+   double sumRatio = 0;
+   int numSimulation = 1;
+   if (ratio_printing) {
+      numSimulation = 10;
+   }
 
    /*
     * receive parameters setting from root process
@@ -157,31 +163,45 @@ void child_process(double start, double end, double rate, int iter, int reject,
        */
       srand(seed);
 
+      sumRatio = 0;
+
       stringstream s;
-      Simulator sa;
-      int err = sa.init(param[ALPHA_INDEX], param[BETA_INDEX],
-            param[GAMMA_INDEX], param[DELTA_INDEX], start, end, rate, iter,
-            reject, accept, inputFile, verbose, quiet);
-      if (err == FILE_OPEN_ERR) {
-         s << "# File open error exit" << endl;
-      } else if (err == ILLEGAL_STATE_ERR) {
-         s << "# Illegal initial state" << endl;
-      } else {
-         /*
-          * start simulated annealing
-          */
-         sa.run();
-         /*
-          * quiet printing
-          * - print seed, parameters and cost
-          */
-         s << seed << "\t";
+      for (int i = 0; i < numSimulation; i++) {
+         Simulator sa;
+         int err = sa.init(param[ALPHA_INDEX], param[BETA_INDEX],
+               param[GAMMA_INDEX], param[DELTA_INDEX], start, end, rate, iter,
+               reject, accept, inputFile, verbose, quiet);
+         if (err == FILE_OPEN_ERR) {
+            s << "# File open error exit" << endl;
+         } else if (err == ILLEGAL_STATE_ERR) {
+            s << "# Illegal initial state" << endl;
+         } else {
+            /*
+             * start simulated annealing
+             */
+            sa.run();
+            /*
+             * quiet printing
+             * - print seed, parameters and cost
+             */
+            if (ratio_printing) {
+               sumRatio += sa.getCostRatio();
+            } else {
+               s << seed << "\t";
+               s << setw(3) << param[ALPHA_INDEX] << setw(5)
+                     << param[BETA_INDEX] << setw(5) << param[GAMMA_INDEX]
+                     << setw(5) << param[DELTA_INDEX] << setw(7) << start
+                     << setw(7) << end << setw(7) << rate;
+               s << sa.printFinalCost();
+            } /* end else */
+         } /* end else */
+      } /* end for */
+
+      if (ratio_printing) {
          s << setw(3) << param[ALPHA_INDEX] << setw(5) << param[BETA_INDEX]
                << setw(5) << param[GAMMA_INDEX] << setw(5)
-               << param[DELTA_INDEX] << setw(7) << start << setw(7) << end
-               << setw(7) << rate;
-         s << sa.printFinalCost();
-
+               << param[DELTA_INDEX] << setw(7) << setprecision(4) << sumRatio / numSimulation
+               << endl;
       }
       /*
        * send result to root process
@@ -220,7 +240,7 @@ int main(int argc, char* argv[]) {
    MPI_Type_contiguous(SIZE, MPI_DOUBLE, &paramType);
    MPI_Type_commit(&paramType);
 
-   while ((c = getopt(argc, argv, "s:e:r:i:c:p:n:h")) != -1) {
+   while ((c = getopt(argc, argv, "s:e:r:i:c:p:n:ha")) != -1) {
       switch (c) {
       case 's':
          start = atof(optarg);
@@ -242,6 +262,9 @@ int main(int argc, char* argv[]) {
          break;
       case 'n':
          seed = (unsigned int) atoi(optarg);
+         break;
+      case 'a':
+         ratio_printing = true;
          break;
       case 'h':
          printUsage();
