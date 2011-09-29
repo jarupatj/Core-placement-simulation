@@ -43,6 +43,7 @@ void printUsage() {
 bool ratio_printing = false;
 
 void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
+
    MPI_Status status;
    char recvMsg[MSG_SIZE];
    unsigned int r;
@@ -59,30 +60,52 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
    //alpha must be between [0,1]
    assert(aS >= 0 && aE <= 1);
 
+   double stepA, stepB, stepG, stepD;
+   if (aE == aS) {
+      stepA = 0;
+   } else {
+      stepA = (aE - aS) / aI;
+   }
+   if (bE == bS) {
+      stepB = 0;
+   } else {
+      stepB = (bE - bS) / bI;
+   }
+   if (gE == gS) {
+      stepG = 0;
+   } else {
+      stepG = (gE - gS) / gI;
+   }
+   if (dE == dS) {
+      stepD = 0;
+   } else {
+      stepD = (dE - dS) / dI;
+   }
    /*
     * create array to store different a, b, g, d values
     */
    vector<vector<double> > parameters;
    vector<double> t(SIZE);
-   for (double i = aS; i <= aE; i += aI) {
-      t[ALPHA_INDEX] = i;
-      for (double j = bS; j <= bE; j += bI) {
-         t[BETA_INDEX] = j;
-         for (double k = gS; k <= gE; k += gI) {
-            t[GAMMA_INDEX] = k;
-            for (double l = dS; l <= dE; l += dI) {
-               t[DELTA_INDEX] = l;
+   t[ALPHA_INDEX] = aS;
+   for (int i = 0; i <= stepA; i++, t[ALPHA_INDEX] += aI) {
+      t[BETA_INDEX] = bS;
+      for (int j = 0; j <= stepB; j++, t[BETA_INDEX] += bI) {
+         t[GAMMA_INDEX] = gS;
+         for (int k = 0; k <= stepG; k++, t[GAMMA_INDEX] += gI) {
+            t[DELTA_INDEX] = dS;
+            for (int l = 0; l <= stepD; l++, t[DELTA_INDEX] += dI) {
                parameters.push_back(t);
             }
          }
       }
    }
-   int numJob = parameters.size(); /* total number of jobs that need to be done */
-   int jobCount = 0; /* number of jobs that we've processed */
+
+   int numJob = parameters.size(); //total number of jobs that need to be done
+   int jobCount = 0; //number of jobs that we've processed
    int minJob = 0;
-   int numRunning = 0; /* count number of process running */
-   /*
-    * Calculate how many children processes are needed.
+   int numRunning = 0; //count number of process running
+
+   /* Calculate how many children processes are needed.
     * Minimum number of children processes needed is the mininum between
     * number of available child process and number of jobs left
     */
@@ -97,7 +120,6 @@ void root_process(char *configFile, int numProcess, MPI_Datatype & paramType) {
       jobCount++;
       numRunning++;
    }
-
    /*
     * If there's still at least one process running then we need to
     * wait until we received the result of that process
@@ -200,8 +222,8 @@ void child_process(double start, double end, double rate, int iter, int reject,
       if (ratio_printing) {
          s << setw(3) << param[ALPHA_INDEX] << setw(5) << param[BETA_INDEX]
                << setw(5) << param[GAMMA_INDEX] << setw(5)
-               << param[DELTA_INDEX] << setw(7) << setprecision(4) << sumRatio / numSimulation
-               << endl;
+               << param[DELTA_INDEX] << setw(7) << setprecision(4) << sumRatio
+               / numSimulation << endl;
       }
       /*
        * send result to root process
@@ -285,7 +307,7 @@ int main(int argc, char* argv[]) {
       root_process(configFile, numProcess, paramType);
    } else {
       child_process(start, end, rate, iter, reject, accept, inputFile, verbose,
-            quiet);
+       quiet);
    }
 
    MPI_Type_free(&paramType);

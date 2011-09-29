@@ -262,7 +262,8 @@ void Cost::printCost() const {
 string Cost::printQuiet() const {
    stringstream str;
    str << right << setiosflags(ios::fixed) << setprecision(2) << setw(12)
-         << (initialCost -  cost) / initialCost << setw(12) << initialCost << setw(12) << cost
+         << (fabs(initialCost -  cost) / fabs(initialCost))
+         << setw(12) << initialCost << setw(12) << cost
          << setw(12) << compaction << setw(12) << dilation << setw(12) << slack
          << setw(12) << proximity << setw(12) << utilization;
    return str.str();
@@ -274,10 +275,11 @@ void Cost::printSummary() const {
          << delta << "\n# Cost: " << cost << "\tCompaction: " << compaction
          << "\tDilation: " << dilation << "\n# Slack: " << slack
          << "\tProximity: " << proximity << "\tUtilization: " << utilization
-         << "\n# (Initial-Final)/Initial cost: " << (initialCost -  cost) / initialCost << endl;
+         << "\n# (Initial-Final)/Initial cost: "
+         << (fabs(initialCost -  cost) / fabs(initialCost)) << endl;
 }
 
 double Cost::getCostRatio() {
-   return (initialCost -  cost) / initialCost;
+   return (fabs(initialCost -  cost) / fabs(initialCost));
 
 }
