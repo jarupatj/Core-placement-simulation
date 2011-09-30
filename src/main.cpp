@@ -20,7 +20,7 @@ void printUsage() {
          << "\t-s <value> : setting initial temperature (default = 1000)\n"
          << "\t-e <value> : setting final threshold temperature (default = 0.1)\n"
          << "\t-r <value> : setting temperature reduction rate (default = 0.9)\n"
-         << "\t-t <value> : setting iterations per temperature (default = 400)\n"
+         << "\t-i <value> : setting iterations per temperature (default = 400)\n"
          << "\t-c <value> : setting number of consecutive rejection per temperature (default = 200)\n"
          << "\t-p <value> : setting threshold of state accept per temperature (default = 100)\n"
          << "\t-n <value> : setting seed value for random number\n"

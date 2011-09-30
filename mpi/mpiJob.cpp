@@ -16,7 +16,7 @@
 #define INPUT 1
 #define OUTPUT 2
 #define SEED 3
-#define MSG_SIZE 150
+#define MSG_SIZE 200
 #define ROOT 0
 #define ALPHA_INDEX 0
 #define BETA_INDEX 1
@@ -209,8 +209,8 @@ void child_process(double start, double end, double rate, int iter, int reject,
             if (ratio_printing) {
                sumRatio += sa.getCostRatio();
             } else {
-               s << seed << "\t";
-               s << setw(3) << param[ALPHA_INDEX] << setw(5)
+               s << setw(13) << left << seed;
+               s << right << setw(3) << param[ALPHA_INDEX] << setw(5)
                      << param[BETA_INDEX] << setw(5) << param[GAMMA_INDEX]
                      << setw(5) << param[DELTA_INDEX] << setw(7) << start
                      << setw(7) << end << setw(7) << rate;
@@ -222,7 +222,7 @@ void child_process(double start, double end, double rate, int iter, int reject,
       if (ratio_printing) {
          s << setw(3) << param[ALPHA_INDEX] << setw(5) << param[BETA_INDEX]
                << setw(5) << param[GAMMA_INDEX] << setw(5)
-               << param[DELTA_INDEX] << setw(7) << setprecision(4) << sumRatio
+               << param[DELTA_INDEX] << setw(10) << setprecision(4) << sumRatio
                / numSimulation << endl;
       }
       /*
